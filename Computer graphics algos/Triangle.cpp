@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include<tuple> //for std::tie
+#include <map>
 
 
 Triangle::Triangle(const std::array<Vec2, 3>& vertices)
@@ -112,6 +113,7 @@ Box2D Triangle::getBoundingBoxDimensions()
 }
 
 
+
 std::vector<Vec2> Triangle::getPointsThatFillFlatBottomTriangle()
 {
 	/*Local vars for convenience of visualization:*/
@@ -179,4 +181,74 @@ std::vector<Vec2> Triangle::getPointsThatFillFlatTopTriangle()
 std::vector<Vec2> Triangle::getPointsThatFillFlatTopTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2)
 {
 	return std::vector<Vec2>();
+}
+
+
+std::map<Edge, float> Triangle::getMapOfEdgeLengths() const
+{
+	std::map<Edge, float> edgesToDistances; 
+
+	//first get all edges [there are THREE of them :) ] -> don't overkill it and use std::next_permutation
+	std::array<Edge, 3> edges =
+	{
+		Edge(vertices[0], vertices[1]),
+		Edge(vertices[1], vertices[2]),
+		Edge(vertices[2], vertices[0]),
+	};
+
+	for (const auto& edge : edges)
+	{
+		//get distance: 
+		float distance = sqrt(
+			pow(edge.v2.x - edge.v1.x, 2) + pow(edge.v2.y - edge.v1.y, 2)
+		);
+
+		edgesToDistances.insert({ edge, distance });
+	}
+
+	return edgesToDistances;
+
+}
+
+std::map<std::pair<Edge, Edge>, float> Triangle::getMapOfAngles() const
+{
+	using edgePair = std::pair<Edge, Edge>; 
+
+	std::map<edgePair, float> edgePairsToAngles; 
+	//enumerate edge pairs by hand [there are only THREE of them :) ] -> perhaps use std::next_permutation later
+	
+	std::array<edgePair, 3> edgePairs =
+	{
+
+		std::make_pair(Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2])),
+		std::make_pair(Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[0])),
+		std::make_pair(Edge(vertices[2], vertices[0]), Edge(vertices[0], vertices[1]))
+	};
+
+	//std::vector<edgePair> edgePairs =
+	//{
+
+	//	{Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2])},
+	//	{Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[0]) },
+	//	{Edge(vertices[2], vertices[0]), Edge(vertices[0], vertices[1])}
+	//};
+	//the above WORKS but won't for std::array. Damned inconvenient container 	
+
+	return edgePairsToAngles;
+
+}
+
+float Triangle::getEdgeLength(const Edge& edge) const
+{ 
+	auto edgesToLengths = getMapOfEdgeLengths(); 
+	
+	if (edgesToLengths.find(edge) != edgesToLengths.end())
+	{
+		return edgesToLengths.at(edge); 
+	}
+	
+	else
+	{
+		throw std::runtime_error("Edge was not found in the map of edges to lengths");
+	}
 }
