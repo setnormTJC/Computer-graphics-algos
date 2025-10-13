@@ -11,45 +11,41 @@
 
 #include"Demos.h"
 
+
+std::string getFileTimestamp()
+{
+	std::string time = __TIME__; 
+
+	std::replace(time.begin(), time.end(), ':', '_');
+
+	return time; 
+}
+
 int main()
 {
 	try
 	{
 		//general example (gets split into two triangles - a flat top and a flat bottom): 
-		Vec2 v0 = { 0, 0 };
-		Vec2 v1 = { 7, 0 };
-		Vec2 v2 = { 0, 8 }; 
+		Vec2 v0 = { 000, 000 };
+		Vec2 v1 = { 700, 300 };
+		Vec2 v2 = { 200, 800 }; 
 
 		Triangle triangle({v0, v1, v2});
-
-		//std::cout << "Edge length: " << triangle.getEdgeLength(Edge(v0, v1));
 		
-		auto edges = triangle.getEdges(); 
-
-		int indexOfFirstEdge = 0; 
-		int indexOfSecondEdge = 1; 
-
-		std::cout << "Angle between edges " << edges[indexOfFirstEdge] << " and " 
-			<< edges[indexOfSecondEdge]
-			<< ": " << triangle.getAngleOfAdjacentEdges(indexOfFirstEdge, indexOfSecondEdge)
-			<< " degrees\n";
 
 
-		//__debugbreak(); 
+		auto dims = triangle.getBoundingBoxDimensions(); 
+		const int PADDING = 10; 
+		ImageBMP image(dims.width + PADDING, dims.height + PADDING, Color(0, 0, 0));
+
+		auto points = triangle.getPointsThatFillTriangle(); 
+		image.drawFilledTriangle(points, Color(255, 255, 255));
 
 
-		//auto dims = triangle.getBoundingBoxDimensions(); 
-		//ImageBMP image(dims.width, dims.height, Color(0, 0, 0));
+		std::string filename = getFileTimestamp() + ".bmp";
+		image.writeImageFile(filename);
 
-		//auto points = triangle.getPointsThatFillTriangle(); 
-		//image.drawFilledTriangle(points, Color(255, 255, 255));
-
-		//std::string filename = "image.bmp"; 
-		//image.writeImageFile(filename);
-
-		//std::system(filename.c_str());
-
-		//demoFlatBottomAndFlatTopTriangles(); 
+		std::system(filename.c_str());
 
 		
 	}

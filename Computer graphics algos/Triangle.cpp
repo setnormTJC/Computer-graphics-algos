@@ -92,25 +92,30 @@ std::vector<Vec2> Triangle::getPointsThatFillTriangle()
 
 		std::cout << "Constructing a general triangle (by making a flat top, then a flat bottom):\n";
 		
-		float alphaSplit =
-			static_cast<float>(vertices[1].y - vertices[0].y) / (vertices[2].y - vertices[0].y);
+		int y = vertices[1].y;
 
-		const Vec2 vi = vertices[0] +  (vertices[2] - vertices[0]) * alphaSplit;
+		//now find intermediate vertex's x value based on slope from v0 to v2
+		float slope = static_cast<float>(vertices[2].y - vertices[0].y) / (vertices[2].x - vertices[0].x);
+		float b = vertices[0].y - slope*vertices[0].x;
 
-		if (vertices[1].x < vi.x) //major right (longer (longest?) leg is on right
-		{
-			pointsThatFillGeneralTriangle = getPointsThatFillFlatBottomTriangle(); 
+		float x = (y - b)/slope;
 
-			//tack points that fill flat TOP triangle onto the end: 
-			//pointsThatFillGeneralTriangle.insert(pointsThatFillGeneralTriangle.end(), )
+		Vec2 intermediateVertex = {(int) x, (int)y };
+		
+		Triangle lower({ vertices[0], vertices[1], intermediateVertex });
+		Triangle upper({ intermediateVertex, vertices[1], vertices[2]});
 
-			//finish filling me out 
-		}
+		auto lowerPoints = lower.getPointsThatFillFlatTopTriangle(); 
+		auto upperPoints = upper.getPointsThatFillFlatBottomTriangle(); 
 
-		else //means major left 
-		{
-			//fill me out 
-		}
+		std::vector<Vec2> filledPoints; 
+		filledPoints.reserve(lowerPoints.size() + upperPoints.size());
+
+		filledPoints.insert(filledPoints.end(), lowerPoints.begin(), lowerPoints.end());
+		filledPoints.insert(filledPoints.end(), upperPoints.begin(), upperPoints.end()); 
+		
+
+		return filledPoints;
 	}
 }
 
