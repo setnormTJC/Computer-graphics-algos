@@ -17,28 +17,39 @@ int main()
 	{
 		//general example (gets split into two triangles - a flat top and a flat bottom): 
 		Vec2 v0 = { 0, 0 };
-		Vec2 v1 = { 7, 3 };
-		Vec2 v2 = { 2, 8 }; //NOT working yet
+		Vec2 v1 = { 7, 0 };
+		Vec2 v2 = { 0, 8 }; 
 
 		Triangle triangle({v0, v1, v2});
 
-		triangle.getEdgeLength(Edge(v0, v1));
+		//std::cout << "Edge length: " << triangle.getEdgeLength(Edge(v0, v1));
+		
+		auto edges = triangle.getEdges(); 
+
+		int indexOfFirstEdge = 0; 
+		int indexOfSecondEdge = 1; 
+
+		std::cout << "Angle between edges " << edges[indexOfFirstEdge] << " and " 
+			<< edges[indexOfSecondEdge]
+			<< ": " << triangle.getAngleOfAdjacentEdges(indexOfFirstEdge, indexOfSecondEdge)
+			<< " degrees\n";
 
 
-		auto dims = triangle.getBoundingBoxDimensions(); 
-		ImageBMP image(dims.width, dims.height, Color(0, 0, 0));
+		//__debugbreak(); 
 
-		auto points = triangle.getPointsThatFillTriangle(); 
-		image.drawFilledTriangle(points, Color(255, 255, 255));
 
-		std::string filename = "image.bmp"; 
-		image.writeImageFile(filename);
+		//auto dims = triangle.getBoundingBoxDimensions(); 
+		//ImageBMP image(dims.width, dims.height, Color(0, 0, 0));
 
-		std::system(filename.c_str());
+		//auto points = triangle.getPointsThatFillTriangle(); 
+		//image.drawFilledTriangle(points, Color(255, 255, 255));
+
+		//std::string filename = "image.bmp"; 
+		//image.writeImageFile(filename);
+
+		//std::system(filename.c_str());
 
 		//demoFlatBottomAndFlatTopTriangles(); 
-
-
 
 		
 	}

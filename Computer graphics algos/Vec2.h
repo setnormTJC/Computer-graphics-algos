@@ -12,9 +12,9 @@ struct Vec2
 
 	}
 
-	bool operator == (const Vec2& lhs) const
+	bool operator == (const Vec2& rhs) const
 	{
-		return (this->x == lhs.x && this->y == lhs.y);	
+		return (this->x == rhs.x && this->y == rhs.y);	
 	}
 
 	template<typename T> 

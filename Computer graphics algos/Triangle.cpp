@@ -38,7 +38,14 @@ Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 
 	sortVertices(); 
 
-	/*Determine extrema (for bounding box and scaline algorithm)*/
+	edges =
+	{
+		Edge(vertices[0], vertices[1]),
+		Edge(vertices[1], vertices[2]),
+		Edge(vertices[2], vertices[0])
+	};
+
+	/*Determine extrema (for bounding box and scanline algorithm)*/
 	for (const auto& v : vertices)
 	{
 		if (v.x < xMin) xMin = v.x;
@@ -113,7 +120,6 @@ Box2D Triangle::getBoundingBoxDimensions()
 }
 
 
-
 std::vector<Vec2> Triangle::getPointsThatFillFlatBottomTriangle()
 {
 	/*Local vars for convenience of visualization:*/
@@ -146,10 +152,6 @@ std::vector<Vec2> Triangle::getPointsThatFillFlatBottomTriangle()
 	return filledPoints;
 }
 
-std::vector<Vec2> Triangle::getPointsThatFillFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2)
-{
-	return std::vector<Vec2>();
-}
 
 std::vector<Vec2> Triangle::getPointsThatFillFlatTopTriangle()
 {
@@ -178,77 +180,119 @@ std::vector<Vec2> Triangle::getPointsThatFillFlatTopTriangle()
 	return filledPoints; 
 }
 
-std::vector<Vec2> Triangle::getPointsThatFillFlatTopTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2)
-{
-	return std::vector<Vec2>();
-}
 
-
-std::map<Edge, float> Triangle::getMapOfEdgeLengths() const
-{
-	std::map<Edge, float> edgesToDistances; 
-
-	//first get all edges [there are THREE of them :) ] -> don't overkill it and use std::next_permutation
-	std::array<Edge, 3> edges =
+float Triangle::getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int indexOfSecondEdge) const
+{	
+	if (indexOfFirstEdge < 0 || indexOfFirstEdge > edges.size() - 1
+		||
+		indexOfSecondEdge < 0 || indexOfSecondEdge > edges.size() - 1)
 	{
-		Edge(vertices[0], vertices[1]),
-		Edge(vertices[1], vertices[2]),
-		Edge(vertices[2], vertices[0]),
-	};
-
-	for (const auto& edge : edges)
-	{
-		//get distance: 
-		float distance = sqrt(
-			pow(edge.v2.x - edge.v1.x, 2) + pow(edge.v2.y - edge.v1.y, 2)
-		);
-
-		edgesToDistances.insert({ edge, distance });
+		throw std::runtime_error("Edge indices must be between 0 and 2");
 	}
 
-	return edgesToDistances;
+	//perhaps ASSUME that a user will not pass in two of the same number!
 
+	float a = edges[0].getEdgeLength(); 
+	float b = edges[1].getEdgeLength(); 
+	float c = edges[2].getEdgeLength(); 
+
+	const float degreeConversionFactor = (180/ 3.14);
+	//see: https://en.wikipedia.org/wiki/Law_of_cosines
+	float abAngle = degreeConversionFactor * acos((c * c - a * a - b * b) / (-2 * a * b)); //gamma
+	float bcAngle = degreeConversionFactor * acos((a * a - b * b - c * c) / (-2 * b * c)); //alpha
+	float caAngle = degreeConversionFactor * acos((b * b - a * a - c * c) / (-2 * a * c)); //beta
+
+	if (indexOfFirstEdge == 0)
+	{
+		if (indexOfSecondEdge == 1) return abAngle;
+		else return caAngle; 
+	}
+
+	else if (indexOfFirstEdge == 1)
+	{
+		if (indexOfSecondEdge == 0) return abAngle;
+		else return bcAngle;
+	}
+
+	else //indexOfFirstEdge == 2
+	{
+		if (indexOfSecondEdge == 0) return caAngle;
+		else return bcAngle;
+	}
 }
 
-std::map<std::pair<Edge, Edge>, float> Triangle::getMapOfAngles() const
+std::array<Edge, 3> Triangle::getEdges()
 {
-	using edgePair = std::pair<Edge, Edge>; 
+	return edges;
+}
 
-	std::map<edgePair, float> edgePairsToAngles; 
-	//enumerate edge pairs by hand [there are only THREE of them :) ] -> perhaps use std::next_permutation later
-	
-	std::array<edgePair, 3> edgePairs =
+
+#pragma region Edge
+Edge::Edge(const Vec2& clientV1, const Vec2& clientV2)
+	:v1(clientV1), v2(clientV2)
+{
+	if (v1 == v2)
 	{
+		throw std::runtime_error("An edge cannot be made of 2 identical vertices");
+	}
 
-		std::make_pair(Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2])),
-		std::make_pair(Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[0])),
-		std::make_pair(Edge(vertices[2], vertices[0]), Edge(vertices[0], vertices[1]))
-	};
+	//sort edges by y (make v1 have the lowest y-value)
+	if (v1.y > v2.y)
+	{
+		std::swap(v1, v2);
+	}
 
-	//std::vector<edgePair> edgePairs =
+	//sort by x if y values are equal:
+	else if (v1.y == v2.y)
+	{
+		if (v1.x > v2.x)
+		{
+			std::swap(v1, v2);
+		}
+	}
+}
+
+bool Edge::operator<(const Edge& rhs) const
+{
+	return std::tie(v1.x, v1.y, v2.x, v2.y) < std::tie(rhs.v1.x, rhs.v1.y, rhs.v2.x, rhs.v2.y);
+	//I THINK this orders by x first. And if x values are equal for v1 and v2, compare y values
+}
+
+bool Edge::operator==(const Edge& rhs) const
+{
+	return (v1 == rhs.v1 && v2 == rhs.v2); 
+}
+
+float Edge::getEdgeLength() const
+{
+	return sqrt(
+		pow(v2.x - v1.x, 2) + pow(v2.y - v1.y, 2)
+	);
+}
+
+
+bool Edge::isAdjacentEdge(const Edge& rhs) const
+{
+	//if (v1 == rhs.v1 && v2 == rhs.v2)
 	//{
-
-	//	{Edge(vertices[0], vertices[1]), Edge(vertices[1], vertices[2])},
-	//	{Edge(vertices[1], vertices[2]), Edge(vertices[2], vertices[0]) },
-	//	{Edge(vertices[2], vertices[0]), Edge(vertices[0], vertices[1])}
-	//};
-	//the above WORKS but won't for std::array. Damned inconvenient container 	
-
-	return edgePairsToAngles;
-
+	//	throw std::runtime_error("Don't ask if an edge is adjacent to itself");
+	//}
+	return (v1 == rhs.v1 || v2 == rhs.v2 
+		||
+		v2 == rhs.v1 || v1 == rhs.v2);
 }
+	//this SHOULD work without testing, for example, v1 == rhs.v2
+	//-because the Edge constructor sorts the vertices 
 
-float Triangle::getEdgeLength(const Edge& edge) const
-{ 
-	auto edgesToLengths = getMapOfEdgeLengths(); 
-	
-	if (edgesToLengths.find(edge) != edgesToLengths.end())
-	{
-		return edgesToLengths.at(edge); 
-	}
-	
-	else
-	{
-		throw std::runtime_error("Edge was not found in the map of edges to lengths");
-	}
+
+
+#pragma endregion
+
+std::ostream& operator<<(std::ostream& os, const Edge& e)
+{
+	os << "(" << e.v1.x << "," << e.v1.y << ")"
+		<< " -> "
+		<< "(" << e.v2.x << "," << e.v2.y << ")";
+
+	return os; 
 }

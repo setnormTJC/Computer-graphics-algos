@@ -1,29 +1,34 @@
 #pragma once
 #include <array>
+#include<iostream>
+#include<map> 
+#include<tuple> //for std::tie
 #include <vector>
 
 #include"Vec2.h"
 
-#include<map> 
-#include<tuple> //for std::tie
-
-struct Edge
+class Edge
 {
 	Vec2 v1; 
 	Vec2 v2; 
 
+public: 
 	Edge() = default; 
-	Edge(const Vec2& v1, const Vec2& v2)
-		:v1(v1), v2(v2)
-	{
+	Edge(const Vec2& clientV1, const Vec2& clientV2);	
 
-	}
+	bool operator < (const Edge& rhs) const;
+	bool operator == (const Edge& rhs) const; 
 
-	bool operator < (const Edge& rhs) const 
-	{
-		return std::tie(v1.x, v1.y, v2.x, v2.y) < std::tie(rhs.v1.x, rhs.v1.y, rhs.v2.x, rhs.v2.y);
-		//I THINK this orders by x first. And if x values are equal for v1 and v2, compare y values
-	}
+	float getEdgeLength() const;
+
+	friend std::ostream& operator << (std::ostream& os, const Edge& e);
+private: 
+	//"adjacent" edges share a vertex 
+	bool isAdjacentEdge(const Edge& rhs) const;
+
+
+
+	friend class Triangle; //give Triangle access to v1 and v2 
 };
 
 
@@ -34,12 +39,14 @@ private:
 	bool isFlatBottom{};
 	bool isFlatTop{}; 
 
+	/*Gets filled based on supplied vertices in the constructor*/
+	std::array<Edge, 3> edges{};
+
 	/*extrema for scanline algo (and drawing box)*/
 	int xMin = INT_MAX; 
 	int xMax = INT_MIN; 
 	int yMin = INT_MAX;
 	int yMax = INT_MIN; 
-
 
 public: 
 	Triangle() = delete;
@@ -50,24 +57,18 @@ public:
 	/*@returns */
 	Box2D getBoundingBoxDimensions(); 
 
-	float getEdgeLength(const Edge& edge) const;
+	float getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int indexOfSecondEdge) const;
+
+	std::array<Edge, 3> getEdges(); 
+
 
 private: 
 	/*modifies the member variable vertices such that v[0].y <= v[1].y <= v[2].y*/
 	void sortVertices();
 	std::vector<Vec2> getPointsThatFillFlatBottomTriangle(); 
-	
-	/*Overload for working with Chili approach*/
-	std::vector<Vec2> getPointsThatFillFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2);
-	
+		
 	std::vector<Vec2> getPointsThatFillFlatTopTriangle();
 	
-	/*Overload for working with Chili approach*/
-	std::vector<Vec2> getPointsThatFillFlatTopTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2);
-
-
-	std::map<Edge, float> getMapOfEdgeLengths() const;
-	std::map<std::pair<Edge, Edge>, float> getMapOfAngles() const; 
 };
 
 
