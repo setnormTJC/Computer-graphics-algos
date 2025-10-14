@@ -93,15 +93,24 @@ std::vector<Vec2> Triangle::getPointsThatFillTriangle()
 		std::cout << "Constructing a general triangle (by making a flat top, then a flat bottom):\n";
 		
 		int y = vertices[1].y;
+		//a bit on the logic here: 
+		//since v0, v1, and v2 are sorted by ascending y AND this triangle is neither flat top nor flat bottom ...
+		//v1's y value will be between (and not equal to) either v0 or v2's y value
+		
+		//we should split this general triangle into: 
+		//tlower = {v0, v1, vNew} //a flat top triangle
+		//and 
+		//tUpper = {vNew, v1, v2} //a flat bottom triangle
+		//and the y-coordinate of vNew will get assigned v1's y value
+		 		 
+		//now find intermediate/new vertex's x value based on slope from v0 to v2
+		float slope = static_cast<float>(vertices[2].y - vertices[0].y) / (vertices[2].x - vertices[0].x); //dy/dx
+		float b = vertices[0].y - slope*vertices[0].x; //b = y1 - mx1
 
-		//now find intermediate vertex's x value based on slope from v0 to v2
-		float slope = static_cast<float>(vertices[2].y - vertices[0].y) / (vertices[2].x - vertices[0].x);
-		float b = vertices[0].y - slope*vertices[0].x;
-
-		float x = (y - b)/slope;
+		float x = (y - b)/slope; 
 
 		Vec2 intermediateVertex = {(int) x, (int)y };
-		
+
 		Triangle lower({ vertices[0], vertices[1], intermediateVertex });
 		Triangle upper({ intermediateVertex, vertices[1], vertices[2]});
 
