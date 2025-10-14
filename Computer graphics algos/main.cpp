@@ -28,7 +28,8 @@ int main()
 	{
 		GraphicsDemo graphicsDemo;
 
-		graphicsDemo.getPointsOfSquare(100, 200, 50); 
+		//graphicsDemo.getPointsOfSquare(100, 200, 50); 
+		graphicsDemo.fillPointsOfCheckerboard(8, 8, 50); 
 
 		graphicsDemo.draw(getTimestampForFilename() + ".bmp");
 
