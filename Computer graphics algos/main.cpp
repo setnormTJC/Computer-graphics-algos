@@ -1,16 +1,15 @@
 // Computer graphics algos.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
 #include<array> 
+#include <iostream>
 #include <vector>
-
-#include"ImageBMP.h"
-
-#include"Triangle.h"
 
 #include"Demos.h"
 #include "GraphicsDemo.h"
+#include"ImageBMP.h"
+#include"Polygon.h"
+#include"Triangle.h"
 
 
 std::string getTimestampForFilename()
@@ -26,21 +25,15 @@ int main()
 {
 	try
 	{
-		GraphicsDemo graphicsDemo;
+		std::vector<Vec2> verts =
+		{
+			Vec2(1, 2),
+			Vec2(3, 3),
+			Vec2(5, 1),
 
-		//Edge AB = { Vec2(0, 0), Vec2(0, 50) }; //test case for +60 degree rotation into negative x axis for third vertex
-		Edge AB = { Vec2(0, 0), Vec2(1000, 0) };
+		};
 
-		Triangle rootTriangle(AB);
-
-		int triangleCount = 0; 
-
-		graphicsDemo.fillPointsOfSierpinski(rootTriangle, 5, Color(255, 223, 0), triangleCount);
-
-		std::cout << "Number of triangles rendered: " << triangleCount << "\n";
-		graphicsDemo.draw("Sierpinski-depth-5-1000pixelWidth.png");
-
-		//Triangle t(AB);
+		Polygon polygon(verts); 
 
 	}
 

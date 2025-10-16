@@ -13,15 +13,15 @@
 
 Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 {
-	//if (std::find_if(vertices.begin(), vertices.end(),
-	//	[](const Vec2& v)
-	//	{
-	//		return (v.x < 0 || v.y < 0);
-	//	}) 
-	//	!= vertices.end()) 
-	//{
-	//	throw std::runtime_error("triangle vertices cannot contain negative values\n");
-	//}
+	if (std::find_if(vertices.begin(), vertices.end(),
+		[](const Vec2& v)
+		{
+			return (v.x < 0 || v.y < 0);
+		}) 
+		!= vertices.end()) 
+	{
+		throw std::runtime_error("triangle vertices cannot contain negative values\n");
+	}
 
 	if (vertices[0] == vertices[1] ||
 		vertices[1] == vertices[2] ||
