@@ -51,6 +51,50 @@ void GraphicsDemo::fillPointsOfSquare(const int xPos, const int yPos, const int 
 
 }
 
+void GraphicsDemo::fillPointsOfEquilateralTriangle(const Edge& edgeOfEquilateralTriangle)
+{
+	
+	Triangle equilateralTriangle(edgeOfEquilateralTriangle);
+
+	auto fillpoints = equilateralTriangle.getPointsThatFillTriangle();
+
+	pixels.insert(pixels.end(), fillpoints.begin(), fillpoints.end());
+
+}
+
+void GraphicsDemo::fillPointsOfSierpinski(const Edge& baseEdge, int depth, const Color& color)
+{
+	if (depth <= 0)
+	{
+		Triangle tri(baseEdge); 
+		auto pts = tri.getPointsThatFillTriangle(); 
+		pixels.insert(pixels.end(), pts.begin(), pts.end());
+		return; 
+	}
+
+	// Construct main triangle
+	Triangle tri(baseEdge);
+
+	auto edges = tri.getEdges(); 
+	
+	// Compute midpoints
+	//auto midAB = midpoint(edges[0].v1, );
+	auto midAB = edges[0].v1.midpoint(edges[0].v2);
+	auto midBC = edges[1].v1.midpoint(edges[1].v2);
+	auto midCA = edges[2].v1.midpoint(edges[2].v2);
+
+	// vary color each recursion
+	Color c1(255, 0, 0);
+	Color c2(0, 255, 255);
+	Color c3(0, 0, 255);
+
+
+	// Recursive calls on the three corner triangles
+	fillPointsOfSierpinski(Edge{ edges[1].v1, midAB}, depth - 1, c1);
+	fillPointsOfSierpinski(Edge{ midAB, midCA }, depth - 1, c2);
+	fillPointsOfSierpinski(Edge{ midCA, edges[1].v1 }, depth - 1, c3);
+}
+
 void GraphicsDemo::draw(const std::string& filename)
 {
 	//get dimensions of bounding box
@@ -74,7 +118,8 @@ void GraphicsDemo::draw(const std::string& filename)
 
 	image.drawFilledTriangle(pixels, Color(255, 0, 255)); 
 
-	image.writeImageFile(filename); 
+	//image.writeImageFile(filename); 
+	image.saveAsPNG(filename);
 
 	std::system(filename.c_str());
 }

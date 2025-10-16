@@ -1,4 +1,6 @@
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "ImageBMP.h"
+
 
 void ImageBMP::writeImageFile(std::string filename)
 {
@@ -77,6 +79,29 @@ void ImageBMP::drawFilledTriangle(const std::vector<Vec2>& filledPoints, const C
 	{
 		pixelData.pixelMatrix[point.y][point.x] = color;
 	}
+}
+
+void ImageBMP::saveAsPNG(const std::string& PNGfilename)
+{
+	int channels = 3; 
+	int height = pixelData.pixelMatrix.size();
+	int width = pixelData.pixelMatrix[0].size();
+
+	std::vector<unsigned char> buffer(width * height * 3);
+	for (int y = 0; y < height; ++y)
+	{
+		int srcY = height - 1 - y;  // flip vertically (BMP stores from bottom to top, PNG stores top to bottom)
+		for (int x = 0; x < width; ++x)
+		{
+			unsigned int bgra = pixelData.pixelMatrix[srcY][x].bgra;
+			buffer[(y * width + x) * 3 + 0] = (bgra >> 16) & 0xFF; // R
+			buffer[(y * width + x) * 3 + 1] = (bgra >> 8) & 0xFF;  // G
+			buffer[(y * width + x) * 3 + 2] = bgra & 0xFF;         // B
+		}
+	}
+
+	stbi_write_png(PNGfilename.c_str(), infoHeader.imageWidth, infoHeader.imageHeight,
+		channels, buffer.data(), width*3);
 }
 
 ImageBMP::ImageBMP(unsigned int imageWidth, unsigned int imageHeight, const Color& fillColor, const Color& middleDotColor)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include"stb_image_write.h"
+
 #include<algorithm>
 #include<array>
 #include<cassert>
@@ -119,6 +121,9 @@ struct Color
 	Color(ColorEnum colorEnum);
 
 	unsigned int convertToUnsignedInt();
+
+
+
 };
 
 class PixelData
@@ -168,6 +173,10 @@ public:
 
 	void drawFilledTriangle(const std::vector<Vec2>& filledPoints, const Color& color);
 
+	/*requires stb_image_write.h from: https://github.com/nothings/stb
+	* PNG file sizes can potentially be much (100x) smaller than BMP
+	*/
+	void saveAsPNG(const std::string& PNGfilename);
 };
 
 

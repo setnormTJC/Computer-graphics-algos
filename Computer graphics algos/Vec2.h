@@ -55,7 +55,15 @@ struct Vec2
 		return Vec2(*this) -= rhs;
 	}
 
+	Vec2 midpoint(const Vec2& b)
+	{
+		return Vec2{ int((x + b.x) / 2.0), int(( b.y) / 2.0) };
+	}
 };
+
+//external helper function:
+
+
 
 /*Anticipated use: adding some clarity to width and height when drawing images*/
 struct Box2D

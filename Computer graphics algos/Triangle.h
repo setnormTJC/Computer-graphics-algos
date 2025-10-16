@@ -9,6 +9,7 @@
 
 class Edge
 {
+public: 
 	Vec2 v1; 
 	Vec2 v2; 
 
@@ -40,7 +41,7 @@ private:
 	bool isFlatTop{}; 
 
 	/*Gets filled based on supplied vertices in the constructor*/
-	std::array<Edge, 3> edges{};
+	std::array<Edge, 3> edges{}; //bit misleading perhaps?
 
 	/*extrema for scanline algo (and drawing box)*/
 	int xMin = INT_MAX; 
@@ -51,7 +52,8 @@ private:
 public: 
 	Triangle() = delete;
 	Triangle(const std::array<Vec2, 3>& vertices);
-
+	/*construct an EQUILATERAL triangle given one edge*/
+	Triangle(const Edge& equilateralEdge);
 
 	std::vector<Vec2> getPointsThatFillTriangle();
 	/*@returns */
@@ -60,6 +62,8 @@ public:
 	float getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int indexOfSecondEdge) const;
 
 	std::array<Edge, 3> getEdges(); 
+
+	std::array<Vec2, 3> getVertices(); 
 
 
 private: 

@@ -20,6 +20,11 @@ public:
 	*/
 	void fillPointsOfSquare(const int xPos, const int yPos, const int sideLength);
 
+	void fillPointsOfEquilateralTriangle(const Edge& edgeOfEquilateralTriangle);
+
+	void fillPointsOfSierpinski(const Edge& baseEdge, int depth, const Color& color);
+
+
 	void draw(const std::string& filename);
 };
 

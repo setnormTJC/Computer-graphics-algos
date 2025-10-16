@@ -10,15 +10,15 @@
 
 Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 {
-	if (std::find_if(vertices.begin(), vertices.end(),
-		[](const Vec2& v)
-		{
-			return (v.x < 0 || v.y < 0);
-		}) 
-		!= vertices.end()) 
-	{
-		throw std::runtime_error("triangle vertices cannot contain negative values\n");
-	}
+	//if (std::find_if(vertices.begin(), vertices.end(),
+	//	[](const Vec2& v)
+	//	{
+	//		return (v.x < 0 || v.y < 0);
+	//	}) 
+	//	!= vertices.end()) 
+	//{
+	//	throw std::runtime_error("triangle vertices cannot contain negative values\n");
+	//}
 
 	if (vertices[0] == vertices[1] ||
 		vertices[1] == vertices[2] ||
@@ -35,6 +35,47 @@ Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 	}
 
 	this->vertices = vertices; 
+
+	sortVertices(); 
+
+	edges =
+	{
+		Edge(vertices[0], vertices[1]),
+		Edge(vertices[1], vertices[2]),
+		Edge(vertices[2], vertices[0])
+	};
+
+	/*Determine extrema (for bounding box and scanline algorithm)*/
+	for (const auto& v : vertices)
+	{
+		if (v.x < xMin) xMin = v.x;
+		if (v.x > xMax) xMax = v.x;
+		if (v.y < yMin) yMin = v.y;
+		if (v.y > yMax) yMax = v.y;
+	}
+
+	/*Determine if triangle is flat bottom or flat top or neither*/
+	isFlatBottom = this->vertices[0].y == this->vertices[1].y;
+	isFlatTop = this->vertices[1].y == this->vertices[2].y;
+}
+
+Triangle::Triangle(const Edge& equilateralEdge)
+{
+	const auto A = equilateralEdge.v1;
+	const auto B = equilateralEdge.v2;
+
+	double dx = B.x - A.x;
+	double dy = B.y - A.y;
+
+	// rotate AB by +60° around A to get vertex C
+	double angle = 3.14 / 3.0; // 60 degrees in radians
+	double cx = A.x + dx * cos(angle) - dy * sin(angle);
+	double cy = A.y + dx * sin(angle) + dy * cos(angle);
+
+	// choose the “above-edge” orientation
+	vertices[0] = A;
+	vertices[1] = B;
+	vertices[2] = {(int)cx, (int)cy};
 
 	sortVertices(); 
 
@@ -238,6 +279,11 @@ float Triangle::getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int in
 std::array<Edge, 3> Triangle::getEdges()
 {
 	return edges;
+}
+
+std::array<Vec2, 3> Triangle::getVertices()
+{
+	return vertices;
 }
 
 
