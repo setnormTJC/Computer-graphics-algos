@@ -62,13 +62,14 @@ void GraphicsDemo::fillPointsOfEquilateralTriangle(const Edge& edgeOfEquilateral
 
 }
 
-void GraphicsDemo::fillPointsOfSierpinski(const Triangle& tri, int depth, const Color& color)
+void GraphicsDemo::fillPointsOfSierpinski(const Triangle& tri, int depth, const Color& color, int& triangleCount)
 {
 	if (depth == 0)
 	{
 		auto pts = tri.getPointsThatFillTriangle();
 		//for (auto& p : pts) p.color = color;
 		pixels.insert(pixels.end(), pts.begin(), pts.end());
+		triangleCount++; 
 		return;
 	}
 
@@ -92,9 +93,9 @@ void GraphicsDemo::fillPointsOfSierpinski(const Triangle& tri, int depth, const 
 	Color c3(255, 223, 0);
 
 	// Recursive calls on the three corner triangles
-	fillPointsOfSierpinski(t1, depth - 1, c1);
-	fillPointsOfSierpinski(t2, depth - 1, c2);
-	fillPointsOfSierpinski(t3, depth - 1, c3);
+	fillPointsOfSierpinski(t1, depth - 1, c1, triangleCount);
+	fillPointsOfSierpinski(t2, depth - 1, c2, triangleCount);
+	fillPointsOfSierpinski(t3, depth - 1, c3, triangleCount);
 }
 
 void GraphicsDemo::draw(const std::string& filename)
@@ -119,6 +120,7 @@ void GraphicsDemo::draw(const std::string& filename)
 	ImageBMP image(imageWidth, imageHeight, Color(0, 0, 0));
 
 	image.drawFilledTriangle(pixels, Color(0, 215, 255));
+	//roughly Triforce gold BGR value: 0, 215, 255
 
 	//image.writeImageFile(filename); 
 	image.saveAsPNG(filename);

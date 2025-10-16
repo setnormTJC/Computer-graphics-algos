@@ -29,12 +29,16 @@ int main()
 		GraphicsDemo graphicsDemo;
 
 		//Edge AB = { Vec2(0, 0), Vec2(0, 50) }; //test case for +60 degree rotation into negative x axis for third vertex
-		Edge AB = { Vec2(0, 0), Vec2(50, 0) };
+		Edge AB = { Vec2(0, 0), Vec2(1000, 0) };
 
 		Triangle rootTriangle(AB);
-		
-		graphicsDemo.fillPointsOfSierpinski(rootTriangle, 1, Color(255, 223, 0));
-		graphicsDemo.draw("Triforce-of-course.png");
+
+		int triangleCount = 0; 
+
+		graphicsDemo.fillPointsOfSierpinski(rootTriangle, 5, Color(255, 223, 0), triangleCount);
+
+		std::cout << "Number of triangles rendered: " << triangleCount << "\n";
+		graphicsDemo.draw("Sierpinski-depth-5-1000pixelWidth.png");
 
 		//Triangle t(AB);
 

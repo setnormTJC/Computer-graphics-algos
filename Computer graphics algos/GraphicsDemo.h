@@ -24,7 +24,7 @@ public:
 
 	//void fillPointsOfSierpinski(const Edge& baseEdge, int depth, const Color& color);
 
-	void fillPointsOfSierpinski(const Triangle& tri, int depth, const Color& color);
+	void fillPointsOfSierpinski(const Triangle& tri, int depth, const Color& color, int& triangleCount);
 	
 	void draw(const std::string& filename);
 };
