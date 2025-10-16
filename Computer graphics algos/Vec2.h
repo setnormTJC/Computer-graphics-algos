@@ -57,7 +57,7 @@ struct Vec2
 
 	Vec2 midpoint(const Vec2& b)
 	{
-		return Vec2{ int((x + b.x) / 2.0), int(( b.y) / 2.0) };
+		return Vec2{ int((x + b.x) / 2.0), int((y + b.y) / 2.0) };
 	}
 };
 

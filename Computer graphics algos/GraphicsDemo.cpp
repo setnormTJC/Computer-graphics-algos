@@ -62,37 +62,39 @@ void GraphicsDemo::fillPointsOfEquilateralTriangle(const Edge& edgeOfEquilateral
 
 }
 
-void GraphicsDemo::fillPointsOfSierpinski(const Edge& baseEdge, int depth, const Color& color)
+void GraphicsDemo::fillPointsOfSierpinski(const Triangle& tri, int depth, const Color& color)
 {
-	if (depth <= 0)
+	if (depth == 0)
 	{
-		Triangle tri(baseEdge); 
-		auto pts = tri.getPointsThatFillTriangle(); 
+		auto pts = tri.getPointsThatFillTriangle();
+		//for (auto& p : pts) p.color = color;
 		pixels.insert(pixels.end(), pts.begin(), pts.end());
-		return; 
+		return;
 	}
 
-	// Construct main triangle
-	Triangle tri(baseEdge);
+	auto edges = tri.getEdges();
 
-	auto edges = tri.getEdges(); 
-	
 	// Compute midpoints
-	//auto midAB = midpoint(edges[0].v1, );
 	auto midAB = edges[0].v1.midpoint(edges[0].v2);
 	auto midBC = edges[1].v1.midpoint(edges[1].v2);
 	auto midCA = edges[2].v1.midpoint(edges[2].v2);
 
+	auto verts = tri.getVertices(); 
+
+	// form the three corner triangles
+	Triangle t1({ verts[0], midAB, midCA});
+	Triangle t2({ midAB, verts[1], midBC});
+	Triangle t3({midCA, midBC, verts[2]});
+
 	// vary color each recursion
 	Color c1(255, 0, 0);
 	Color c2(0, 255, 255);
-	Color c3(0, 0, 255);
-
+	Color c3(255, 223, 0);
 
 	// Recursive calls on the three corner triangles
-	fillPointsOfSierpinski(Edge{ edges[1].v1, midAB}, depth - 1, c1);
-	fillPointsOfSierpinski(Edge{ midAB, midCA }, depth - 1, c2);
-	fillPointsOfSierpinski(Edge{ midCA, edges[1].v1 }, depth - 1, c3);
+	fillPointsOfSierpinski(t1, depth - 1, c1);
+	fillPointsOfSierpinski(t2, depth - 1, c2);
+	fillPointsOfSierpinski(t3, depth - 1, c3);
 }
 
 void GraphicsDemo::draw(const std::string& filename)
@@ -116,7 +118,7 @@ void GraphicsDemo::draw(const std::string& filename)
 
 	ImageBMP image(imageWidth, imageHeight, Color(0, 0, 0));
 
-	image.drawFilledTriangle(pixels, Color(255, 0, 255)); 
+	image.drawFilledTriangle(pixels, Color(0, 215, 255));
 
 	//image.writeImageFile(filename); 
 	image.saveAsPNG(filename);

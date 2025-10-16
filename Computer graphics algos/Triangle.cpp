@@ -1,3 +1,6 @@
+#define _USE_MATH_DEFINES
+#include<cmath> 
+
 #include "Triangle.h"
 #include <algorithm>
 #include<exception>
@@ -67,10 +70,10 @@ Triangle::Triangle(const Edge& equilateralEdge)
 	double dx = B.x - A.x;
 	double dy = B.y - A.y;
 
-	// rotate AB by +60° around A to get vertex C
-	double angle = 3.14 / 3.0; // 60 degrees in radians
-	double cx = A.x + dx * cos(angle) - dy * sin(angle);
-	double cy = A.y + dx * sin(angle) + dy * cos(angle);
+	// rotate AB by +60° around A to get vertex C (be wary of going into -x axis)
+	double angle = M_PI / 3.0; // 60 degrees in radians
+	double cx = abs(A.x + dx * cos(angle) - dy * sin(angle));
+	double cy = abs(A.y + dx * sin(angle) + dy * cos(angle)); //2D rotation matrix here
 
 	// choose the “above-edge” orientation
 	vertices[0] = A;
@@ -113,7 +116,7 @@ void Triangle::sortVertices()
 		});
 }
 
-std::vector<Vec2> Triangle::getPointsThatFillTriangle()
+std::vector<Vec2> Triangle::getPointsThatFillTriangle() const
 {
 	if (isFlatBottom)
 	{
@@ -169,13 +172,13 @@ std::vector<Vec2> Triangle::getPointsThatFillTriangle()
 	}
 }
 
-Box2D Triangle::getBoundingBoxDimensions()
+Box2D Triangle::getBoundingBoxDimensions() const
 {	
 	return { xMax - xMin, yMax - yMin };
 }
 
 
-std::vector<Vec2> Triangle::getPointsThatFillFlatBottomTriangle()
+std::vector<Vec2> Triangle::getPointsThatFillFlatBottomTriangle() const
 {
 	/*Local vars for convenience of visualization:*/
 	auto bottomLeft = vertices[0]; 
@@ -208,7 +211,7 @@ std::vector<Vec2> Triangle::getPointsThatFillFlatBottomTriangle()
 }
 
 
-std::vector<Vec2> Triangle::getPointsThatFillFlatTopTriangle()
+std::vector<Vec2> Triangle::getPointsThatFillFlatTopTriangle() const
 {
 	auto bottom = vertices[0]; 
 	auto topLeft = vertices[1]; 
@@ -276,12 +279,12 @@ float Triangle::getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int in
 	}
 }
 
-std::array<Edge, 3> Triangle::getEdges()
+std::array<Edge, 3> Triangle::getEdges() const
 {
 	return edges;
 }
 
-std::array<Vec2, 3> Triangle::getVertices()
+std::array<Vec2, 3> Triangle::getVertices() const
 {
 	return vertices;
 }

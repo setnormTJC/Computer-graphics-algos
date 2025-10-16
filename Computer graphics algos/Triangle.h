@@ -15,6 +15,10 @@ public:
 
 public: 
 	Edge() = default; 
+	/*Note: this constructor will impose the following ordering on V1 and V2: 
+	* if v1.y > v2.y, swap
+	* else if v1.y == v2.y AND v1.x > v2.x, swap
+	*/
 	Edge(const Vec2& clientV1, const Vec2& clientV2);	
 
 	bool operator < (const Edge& rhs) const;
@@ -55,31 +59,24 @@ public:
 	/*construct an EQUILATERAL triangle given one edge*/
 	Triangle(const Edge& equilateralEdge);
 
-	std::vector<Vec2> getPointsThatFillTriangle();
+	std::vector<Vec2> getPointsThatFillTriangle() const;
 	/*@returns */
-	Box2D getBoundingBoxDimensions(); 
+	Box2D getBoundingBoxDimensions() const; 
 
 	float getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int indexOfSecondEdge) const;
 
-	std::array<Edge, 3> getEdges(); 
+	std::array<Edge, 3> getEdges() const; 
 
-	std::array<Vec2, 3> getVertices(); 
+	std::array<Vec2, 3> getVertices() const; 
 
 
 private: 
 	/*modifies the member variable vertices such that v[0].y <= v[1].y <= v[2].y*/
 	void sortVertices();
-	std::vector<Vec2> getPointsThatFillFlatBottomTriangle(); 
+	std::vector<Vec2> getPointsThatFillFlatBottomTriangle() const; 
 		
-	std::vector<Vec2> getPointsThatFillFlatTopTriangle();
+	std::vector<Vec2> getPointsThatFillFlatTopTriangle() const;
 	
 };
 
 
-/*Anticipated use: playing with algos that break arbitrary polygons into constituent triangles*/
-class Polygon
-{
-private: 
-	std::vector<Triangle> trianglesMakingUpThePolygon;
-
-};

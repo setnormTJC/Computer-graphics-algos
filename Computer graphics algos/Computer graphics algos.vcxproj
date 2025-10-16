@@ -130,12 +130,14 @@
     <ClCompile Include="GraphicsDemo.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ImageBMP.cpp" />
+    <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h" />
     <ClInclude Include="GraphicsDemo.h" />
     <ClInclude Include="ImageBMP.h" />
+    <ClInclude Include="Polygon.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vec2.h" />

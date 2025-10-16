@@ -22,9 +22,10 @@ public:
 
 	void fillPointsOfEquilateralTriangle(const Edge& edgeOfEquilateralTriangle);
 
-	void fillPointsOfSierpinski(const Edge& baseEdge, int depth, const Color& color);
+	//void fillPointsOfSierpinski(const Edge& baseEdge, int depth, const Color& color);
 
-
+	void fillPointsOfSierpinski(const Triangle& tri, int depth, const Color& color);
+	
 	void draw(const std::string& filename);
 };
 

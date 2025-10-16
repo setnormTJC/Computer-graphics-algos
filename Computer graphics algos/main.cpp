@@ -28,19 +28,16 @@ int main()
 	{
 		GraphicsDemo graphicsDemo;
 
-		////graphicsDemo.getPointsOfSquare(100, 200, 50); 
-		////graphicsDemo.fillPointsOfCheckerboard(8, 8, 50); 
+		//Edge AB = { Vec2(0, 0), Vec2(0, 50) }; //test case for +60 degree rotation into negative x axis for third vertex
+		Edge AB = { Vec2(0, 0), Vec2(50, 0) };
 
-		//graphicsDemo.draw(getTimestampForFilename() + ".png"); //PNG now!
-		Edge AB = { Vec2(0, 0), Vec2(0, 50) };
+		Triangle rootTriangle(AB);
+		
+		graphicsDemo.fillPointsOfSierpinski(rootTriangle, 1, Color(255, 223, 0));
+		graphicsDemo.draw("Triforce-of-course.png");
 
-		//graphicsDemo.fillPointsOfEquilateralTriangle(AB); 
+		//Triangle t(AB);
 
-		//graphicsDemo.draw("equilateralTriangle.png");
-		graphicsDemo.fillPointsOfSierpinski(AB, 3, Color(255, 255, 255));
-
-
-		graphicsDemo.draw("sierpinski.png");
 	}
 
 	catch (const std::exception& e)
