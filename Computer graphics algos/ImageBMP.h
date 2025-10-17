@@ -109,75 +109,76 @@ enum class ColorEnum : unsigned int
 
 };
 
-struct Color
+class Color
 {
 	//should be unsigned because 1) no "negative" colors and 2) having alpha = 255 (FF) is desirable
 	unsigned int bgra = 0x00'00'00'00;
+	unsigned int convertToUnsignedInt();
+	/*NOTE that I include 'a' but alpha is not generally supported by BMP
+	* I used alpha mainly to simplify "4 byte padding logic" 
+	*/
+	Color(unsigned int b, unsigned int g, unsigned int r, unsigned int a); //just in case, I suppose...
+	// Individual getters (called by Color::getRGB)
+	unsigned int getB() const; 
+	unsigned int getG() const;
+	unsigned int getR() const;
 
+public: 
 	Color() = default;
-	Color(unsigned int bgra);
-	Color(unsigned int b, unsigned int g, unsigned int r); // New constructor for 24-bit color
-	Color(unsigned int b, unsigned int g, unsigned int r, unsigned int a);
+	Color(unsigned int r, unsigned int g, unsigned int b);
 	Color(ColorEnum colorEnum);
 
-	unsigned int convertToUnsignedInt();
+	std::array<unsigned int, 3> getRGB() const;
+	
+	void setB(unsigned int b);
+	void setG(unsigned int g);
+	void setR(unsigned int r);
 
-
-
+	friend class ImageBMP; 
 };
 
 class PixelData
 {
-public:
+private:
 	/*NOTA BENE! usage is pixelMatrix[ROW][COLUMN]!*/
 	std::vector<vector<Color>> pixelMatrix;
+public:
 
 	PixelData() = default;
+
+	friend class ImageBMP; //ImageBMP is composed of PixelData
 };
 
 class ImageBMP
 {
-	/*made private, I suppose, to prevent overwhelming client with large number of functions*/
 	void readFileHeaderFromFile(ifstream& fin);
 	void readInfoHeaderFromFile(ifstream& fin);
 	void readPixelDataFromFile(ifstream& fin);
-public:
 	FileHeader fileHeader;
 	InfoHeader infoHeader;
 	PixelData pixelData;
 
+public:
 	ImageBMP() = default;
-
-	ImageBMP(unsigned int imageWidth, unsigned int imageHeight, const Color& fillColor, const Color& middleDotColor);
 
 	ImageBMP(unsigned int imageWidth, unsigned int imageHeight, const Color& fillColor);
 
 	ImageBMP(const string& filepath);
 
-	void readImageBMP(string inputFilename);
+	/*BMP is uncompressed - filesize may be LARGE*/
+	void saveAsBMP(std::string filename);
 
-	void doublescaleImageBMP();
-
-	void drawRectangleOutline(unsigned int x0, unsigned int y0,
-		unsigned int rectangleWidth, unsigned int rectangleHeight, const Color& color);
-
-	void fillRectangleWithColor(unsigned int x0, unsigned int y0,
-		unsigned int rectangleWidth, unsigned int rectangleHeight, const Color& color);
-
-	void setPixelToColor_withThickness(unsigned int x, unsigned int y, const Color& color, unsigned int thickness);
-
-	/*NOTE! this function is intentionally left empty*/
-	void drawAndFillAnIrregularShape();
-
-	void writeImageFile(std::string filename);
-
-	void drawFilledTriangle(const std::vector<Vec2>& filledPoints, const Color& color);
+	/*OBSERVE the "switched" x and y coordinates in the update to `pixelMatrix` in this function definition!*/
+	void fillPixelMatrix(const std::unordered_map<Vec2, Color>& pixelsToColors);
 
 	/*requires stb_image_write.h from: https://github.com/nothings/stb
 	* PNG file sizes can potentially be much (100x) smaller than BMP
 	*/
 	void saveAsPNG(const std::string& PNGfilename);
-};
+
+private: 
+	/*Anticipate this only being called by `ImageBMP(const string& filepath)`*/
+	void readImageBMP(string inputFilename); };
 
 
 

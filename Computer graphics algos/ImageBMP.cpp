@@ -2,7 +2,9 @@
 #include "ImageBMP.h"
 
 
-void ImageBMP::writeImageFile(std::string filename)
+
+#pragma region ImageBMP
+void ImageBMP::saveAsBMP(std::string filename)
 {
 	ofstream fout{ filename, std::ios::binary };
 
@@ -72,17 +74,28 @@ void ImageBMP::writeImageFile(std::string filename)
 	fout.close();
 }
 
-/*OBSERVE the "switched" x and y coordinates in the update to `pixelMatrix` in this function definition!*/
-void ImageBMP::drawFilledTriangle(const std::vector<Vec2>& filledPoints, const Color& color)
+
+void ImageBMP::fillPixelMatrix(const std::unordered_map<Vec2, Color>& pixelsToColors)
 {
-	for (const auto& point : filledPoints)
+	for (const auto& [pixel, color] : pixelsToColors)
 	{
-		pixelData.pixelMatrix[point.y][point.x] = color;
+		if (pixel.y < pixelData.pixelMatrix.size() &&
+			pixel.x < pixelData.pixelMatrix[0].size())
+		{
+			pixelData.pixelMatrix[pixel.y][pixel.x] = color;
+		}
 	}
+
+	//for (const auto& pixel : pixelsToColors.)
 }
 
 void ImageBMP::saveAsPNG(const std::string& PNGfilename)
 {
+	if (PNGfilename.find(".png") == std::string::npos)
+	{
+		throw std::runtime_error("filename must contain .png if saving as PNG");
+	}
+
 	int channels = 3; 
 	int height = pixelData.pixelMatrix.size();
 	int width = pixelData.pixelMatrix[0].size();
@@ -104,31 +117,6 @@ void ImageBMP::saveAsPNG(const std::string& PNGfilename)
 		channels, buffer.data(), width*3);
 }
 
-ImageBMP::ImageBMP(unsigned int imageWidth, unsigned int imageHeight, const Color& fillColor, const Color& middleDotColor)
-{
-	infoHeader.imageWidth = imageWidth;
-	infoHeader.imageHeight = imageHeight;
-	infoHeader.sizeOfPixelData = imageWidth * imageHeight * (infoHeader.bitsPerPixel / 8);
-	//NOTE: fileheader size should always be 14 (I think) 
-	fileHeader.fileSize = 14 + infoHeader.getInfoHeaderSize() + infoHeader.sizeOfPixelData;
-
-
-
-	//fill pixelData with given fill color:
-	for (unsigned int row = 0; row < imageHeight; ++row)
-	{
-		std::vector<Color> currentRow;
-		for (unsigned int col = 0; col < imageWidth; ++col)
-		{
-			currentRow.push_back(fillColor);
-		}
-		pixelData.pixelMatrix.push_back(currentRow);
-	}
-
-	//add the middle dot (having different color): 
-	pixelData.pixelMatrix.at(imageWidth / 2).at(imageHeight / 2) = middleDotColor;
-
-}
 
 ImageBMP::ImageBMP(unsigned int imageWidth, unsigned int imageHeight, const Color& fillColor)
 {
@@ -185,62 +173,6 @@ void ImageBMP::readImageBMP(string inputFilename)
 	fin.close();
 }
 
-//only allow integer scaling (no 1.5x) 
-void ImageBMP::doublescaleImageBMP()
-{
-	unsigned int scalingFactor = 2;
-
-	//first, make the needed updates to the headers: 
-	fileHeader.fileSize = fileHeader.fileSize + scalingFactor * scalingFactor * infoHeader.sizeOfPixelData;
-
-	infoHeader.imageWidth = infoHeader.imageWidth * scalingFactor;
-	infoHeader.imageHeight = infoHeader.imageHeight * scalingFactor;
-
-	infoHeader.sizeOfPixelData = scalingFactor * scalingFactor * infoHeader.sizeOfPixelData;
-	//ex: if 3 rows and 3 cols (9) pixels originally, then 36 pixels for scalingFactor = 2
-	//since now 6 rows and 6 cols 
-
-	//now, modify pixel data (the more complicated/interesting part of this function): 
-
-	std::vector<std::vector<Color>> newPixelMatrix(infoHeader.imageHeight, std::vector < Color>(infoHeader.imageWidth));
-	//int a;
-
-	for (int row = 0; row < pixelData.pixelMatrix.size(); ++row)
-	{
-		for (int col = 0; col < pixelData.pixelMatrix.at(0).size(); ++col)
-		{
-			std::vector<std::pair<int, int>> newIndices =
-			{
-				std::pair<int, int> {2 * row,			2 * col }, //newIndexCenter
-				std::pair<int, int> {2 * row + 1,		2 * col}, //newIndexAbove
-				std::pair<int, int> {2 * row + 1,		2 * col + 1}, //newIndexAboveAndRight
-				std::pair<int, int> {2 * row,			2 * col + 1}//newIndexToRight
-			};
-
-			for (auto& newIndex : newIndices)
-			{
-				newPixelMatrix.at(newIndex.first).at(newIndex.second) = pixelData.pixelMatrix.at(row).at(col);
-			}
-			//newPixelMatrix.at(newIndexCenter.first).at(newIndexCenter.second) = 
-			//	pixelData.pixelMatrix.at(row).at(col); 
-
-			//newPixelMatrix.at(newIndexAbove.first).at(newIndexAbove.second) =
-			//	pixelData.pixelMatrix.at(row).at(col);
-
-			//newPixelMatrix.at(newIndexAboveAndRight.first).at(newIndexAboveAndRight.second) =
-			//	pixelData.pixelMatrix.at(row).at(col);
-
-			//newPixelMatrix.at(newIndexCenter.first).at(newIndexCenter.second) =
-			//	pixelData.pixelMatrix.at(row).at(col);
-
-		}
-	}
-	//resize and copy new into old (the member variable that will live beyond this function scope): 
-	pixelData.pixelMatrix.resize(infoHeader.imageHeight, vector<Color>(infoHeader.imageWidth));
-
-	pixelData.pixelMatrix = newPixelMatrix;
-
-}
 
 
 void ImageBMP::readFileHeaderFromFile(ifstream& fin)
@@ -513,100 +445,9 @@ void ImageBMP::readPixelDataFromFile(ifstream& fin)
 	}
 }
 
-/*Modifies pixelData - no change to fileHeader or infoHeader*/
-void ImageBMP::drawRectangleOutline(unsigned int x0, unsigned int y0,
-	unsigned int rectangleWidth, unsigned int rectangleHeight, const Color& color)
-{
+#pragma endregion
 
-	assert(x0 + rectangleWidth <= infoHeader.imageWidth);
-	assert(y0 + rectangleHeight <= infoHeader.imageHeight);
-
-	// Top line
-	for (unsigned int i = x0; i < x0 + rectangleWidth; ++i)
-	{
-		pixelData.pixelMatrix.at(y0).at(i) = color;
-	}
-
-	// Bottom line
-	for (unsigned int i = x0; i < x0 + rectangleWidth; ++i)
-	{
-		pixelData.pixelMatrix.at(y0 + rectangleHeight - 1).at(i) = color;
-	}
-
-	// Left line
-	for (unsigned int i = y0; i < y0 + rectangleHeight; ++i)
-	{
-		pixelData.pixelMatrix.at(i).at(x0) = color;
-	}
-
-	// Right line
-	for (unsigned int i = y0; i < y0 + rectangleHeight; ++i)
-	{
-		pixelData.pixelMatrix.at(i).at(x0 + rectangleWidth - 1) = color;
-	}
-}
-
-void ImageBMP::fillRectangleWithColor(unsigned int x0, unsigned int y0, unsigned int rectangleWidth, unsigned int rectangleHeight, const Color& color)
-{
-	std::swap(x0, y0); //stupid, but ah well -> images use image[row][col], where row is y value and col is x value
-
-	for (unsigned int row = x0; row < x0 + rectangleWidth; ++row)
-	{
-		for (unsigned int col = y0; col < y0 + rectangleHeight; ++col)
-		{
-			pixelData.pixelMatrix.at(row).at(col) = color;
-		}
-	}
-
-}
-
-/*NOTE: this method will be swapping x and y */
-void ImageBMP::setPixelToColor_withThickness(unsigned int x, unsigned int y, const Color& color, unsigned int thickness)
-{
-	std::swap(x, y); //ridiculous thing to do ... maybe not so much - image coordinates "naturally" flip x and y
-
-	// Ensure the center pixel is within bounds
-	if (x >= infoHeader.imageWidth || y >= infoHeader.imageHeight)
-	{
-		std::cout << "Error: Center pixel out of bounds.\n";
-		return;
-	}
-
-	//center pixel 
-	pixelData.pixelMatrix[x][y] = color;
-
-
-	if (thickness > 1)
-	{
-		//neighbors within thickness:
-		for (unsigned int row = -1 * (int)thickness; row <= (int)thickness; ++row)
-		{
-			for (unsigned int col = -1 * (int)thickness; col < (int)thickness; ++col)
-			{
-				int newX = x + col;
-				int newY = y + row;
-
-				// Ensure the new coordinates are within bounds
-				if (newX >= 0
-					&& newX < static_cast<int>(infoHeader.imageWidth)
-					&& newY >= 0
-					&& newY < static_cast<int>(infoHeader.imageHeight))
-				{
-					pixelData.pixelMatrix[newX][newY] = color;
-				}
-
-			}
-		}
-	}
-
-}
-
-/*purpose: to gain experience with "scanline" algorithms*/
-void ImageBMP::drawAndFillAnIrregularShape()
-{
-}
-
-
+#pragma region InfoHeader
 unsigned int InfoHeader::getInfoHeaderSize() const
 {
 	return infoHeaderSize;
@@ -617,15 +458,17 @@ unsigned int InfoHeader::getSizeOfPixelData() const
 	//return sizeOfPixelData;
 	return imageWidth * imageHeight * (bitsPerPixel / 8);
 }
+#pragma endregion
 
-Color::Color(unsigned int bgra)
-	:bgra(bgra)
-{
-}
 
-Color::Color(unsigned int b, unsigned int g, unsigned int r)
+#pragma region Color
+
+
+Color::Color(unsigned int r, unsigned int g, unsigned int b)
 {
-	bgra = (b << 0) | (g << 8) | (r << 16) | (0xFF << 24); // Set alpha to 255
+	//bgra = (b << 0) | (g << 8) | (r << 16) | (0xFF << 24); // Set alpha to 255
+
+	bgra = (b << 0) | (g << 8) | (r << 16) | (0xFF << 24); // alpha = 255
 }
 
 Color::Color(unsigned int b, unsigned int g, unsigned int r, unsigned int a)
@@ -645,11 +488,53 @@ Color::Color(ColorEnum colorEnum)
 
 }
 
+std::array<unsigned int, 3> Color::getRGB() const
+{
+	std::array<unsigned int, 3> rgb =
+	{
+		getR(),
+		getG(),
+		getB()
+	};
+
+	return rgb;
+}
+
 unsigned int Color::convertToUnsignedInt()
 {
 	return bgra;
 }
 
+unsigned int Color::getB() const
+{
+	return (bgra >> 0) & 0xFF;
+}
+
+unsigned int Color::getG() const
+{
+	return (bgra >> 8) & 0xFF;
+}
+
+unsigned int Color::getR() const
+{
+	return (bgra >> 16) & 0xFF;
+}
+
+void Color::setB(unsigned int b)
+{
+	bgra = (bgra & 0xFFFFFF00) | (b & 0xFF);
+}
+
+void Color::setG(unsigned int g)
+{
+	bgra = (bgra & 0xFFFF00FF) | ((g & 0xFF) << 8);
+}
+
+void Color::setR(unsigned int r)
+{
+	bgra = (bgra & 0xFF00FFFF) | ((r & 0xFF) << 16);
+}
+#pragma endregion 
 
 
 

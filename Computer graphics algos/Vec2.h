@@ -1,5 +1,7 @@
 #pragma once
 
+#include<functional>
+
 struct Vec2
 {
 	int x, y;
@@ -59,10 +61,22 @@ struct Vec2
 	{
 		return Vec2{ int((x + b.x) / 2.0), int((y + b.y) / 2.0) };
 	}
+
+
 };
 
-//external helper function:
-
+/*For making maps with Vec2 as keytype*/
+namespace std
+{
+	template<>
+	struct hash<Vec2>
+	{
+		size_t operator ()(const Vec2& v) const noexcept
+		{
+			return std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1);
+		}
+	};
+}
 
 
 /*Anticipated use: adding some clarity to width and height when drawing images*/

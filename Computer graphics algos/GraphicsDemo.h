@@ -7,11 +7,17 @@ class GraphicsDemo
 {
 private: 
 	std::vector<Vec2> pixels;
+	
+	std::unordered_map<Vec2, Color> pixelsToColors; 
+
 	int imageWidth{}, imageHeight{};
 
 public: 
+	GraphicsDemo(); 
+	GraphicsDemo(const std::vector<Vec2>& pixels, const Color& colorOfAllPixels);
 
-	GraphicsDemo(const std::vector<Vec2>& pixels);
+	GraphicsDemo(const std::unordered_map<Vec2, Color>& pixelsToColors);
+
 	/*
 	* @param numberOfRows -> I SUPPOSE a "checkerboard" usually has the same number of rows as columns
 	*/
@@ -27,8 +33,10 @@ public:
 	void fillPointsOfSierpinski(const Triangle& tri, int depth, const Color& color, int& triangleCount);
 
 	void draw(const std::string& filename);
-private: 
 
+
+private: 
+	void fillPixelsToColorsMap(const Color& colorOfAllPixels); 
 
 
 };

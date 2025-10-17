@@ -2,10 +2,17 @@
 
 #include<tuple>
 
-GraphicsDemo::GraphicsDemo(const std::vector<Vec2>& pixels)
+GraphicsDemo::GraphicsDemo() = default;
+
+GraphicsDemo::GraphicsDemo(const std::vector<Vec2>& pixels, const Color& colorOfAllPixels)
 	:pixels(pixels)
 {
+	fillPixelsToColorsMap(colorOfAllPixels); 
+}
 
+GraphicsDemo::GraphicsDemo(const std::unordered_map<Vec2, Color>& pixelsToColors)
+	:pixelsToColors(pixelsToColors)
+{
 }
 
 void GraphicsDemo::fillPointsOfCheckerboard(const int numberOfRows, const int numberOfCols, const int sideLength)
@@ -77,6 +84,12 @@ void GraphicsDemo::fillPointsOfSierpinski(const Triangle& tri, int depth, const 
 		auto pts = tri.getPointsThatFillTriangle();
 		//for (auto& p : pts) p.color = color;
 		pixels.insert(pixels.end(), pts.begin(), pts.end());
+
+		for (const auto& pixel : pixels)
+		{
+			pixelsToColors.insert({ pixel, color });
+		}
+
 		triangleCount++; 
 		return;
 	}
@@ -96,9 +109,9 @@ void GraphicsDemo::fillPointsOfSierpinski(const Triangle& tri, int depth, const 
 	Triangle t3({midCA, midBC, verts[2]});
 
 	// vary color each recursion
-	Color c1(255, 0, 0);
-	Color c2(0, 255, 255);
-	Color c3(255, 223, 0);
+	Color c1(ColorEnum::Cyan);
+	Color c2(ColorEnum::Magenta);
+	Color c3(ColorEnum::White);
 
 	// Recursive calls on the three corner triangles
 	fillPointsOfSierpinski(t1, depth - 1, c1, triangleCount);
@@ -123,17 +136,26 @@ void GraphicsDemo::draw(const std::string& filename)
 	Box2D dims(xMax, yMax);
 
 
-	constexpr int PADDING = 50; //for no particular reason ... 
+	constexpr int PADDING = 0; //for no particular reason ... 
 	imageWidth += dims.width + PADDING;
 	imageHeight += dims.height + PADDING;
 
+	Color bgrdColor(0, 0, 0);
+
 	ImageBMP image(imageWidth, imageHeight, Color(0, 0, 0));
 
-	image.drawFilledTriangle(pixels, Color(0, 215, 255));
-	//roughly Triforce gold BGR value: 0, 215, 255
+	//image.drawFilledTriangle(pixels, Color(0, 215, 255));
+	image.fillPixelMatrix(pixelsToColors);
 
-	//image.writeImageFile(filename); 
 	image.saveAsPNG(filename);
 
 	std::system(filename.c_str());
+}
+
+void GraphicsDemo::fillPixelsToColorsMap(const Color& colorOfAllPixels)
+{
+	for (const auto& pixel : pixels)
+	{
+		pixelsToColors.insert({ pixel, colorOfAllPixels });
+	}
 }

@@ -1,14 +1,14 @@
 #pragma once
 
-#include <iostream>
 #include<array> 
+#include <iostream>
 #include <vector>
 
+#include"GraphicsDemo.h"
 #include"ImageBMP.h"
-
+#include"Polygon.h"
 #include"Triangle.h"
 
-#include"Demos.h"
 
 void demoFlatBottomAndFlatTopTriangles()
 {
@@ -35,78 +35,103 @@ void demoFlatBottomAndFlatTopTriangles()
 
 	ImageBMP image(width, height, bgrdColor);
 
-	Color triangleColor = { 255, 255, 255 };
-	image.drawFilledTriangle(filledPoints, triangleColor);
+
+	std::unordered_map<Vec2, Color> pixelsToColors; 
+	int pixelCounter = 0; 
+	for (const auto& filledPoint : filledPoints)
+	{
+		Color currentColor;
+		if (pixelCounter % 3 == 0)
+		{
+			currentColor = ColorEnum::Red;
+		}
+
+		else if (pixelCounter % 3 == 1)
+		{
+			currentColor = ColorEnum::Green; //
+		}
+
+		else
+		{
+			currentColor = ColorEnum::Blue;
+		}
+
+		pixelsToColors.insert({ {filledPoint.x, filledPoint.y}, currentColor });
+		pixelCounter++; //
+	}
+
+	image.fillPixelMatrix(pixelsToColors);
 
 	std::string filename = "image.bmp";
 
-	image.writeImageFile(filename);
+	image.saveAsBMP(filename);
 
 	std::system(filename.c_str());
 }
 
-void drawMultipleTriangles()
+void giveMeAPentagon(const Color& pentagonColor)
 {
-	std::array<Vec2, 3> t1Verts = { Vec2{50, 400}, Vec2{150, 400}, Vec2{100, 300} };
-	std::array<Vec2, 3> t2Verts = { Vec2{200, 450}, Vec2{300, 450}, Vec2{250, 350} };
-	std::array<Vec2, 3> t3Verts = { Vec2{350, 400}, Vec2{450, 400}, Vec2{400, 300} };
-	std::array<Vec2, 3> t4Verts = { Vec2{150, 200}, Vec2{250, 200}, Vec2{200, 100} };
-
-	Color c1 = { 255, 0, 0 };     // red
-	Color c2 = { 0, 255, 0 };     // green
-	Color c3 = { 0, 0, 255 };     // blue
-	Color c4 = { 255, 255, 0 };   // yellow
-
-	Triangle t1(t1Verts);
-	Triangle t2(t2Verts);
-	Triangle t3(t3Verts);
-	Triangle t4(t4Verts);
-
-	ImageBMP image(500, 500, Color(0, 0, 0));
-
-	image.drawFilledTriangle(t1.getPointsThatFillTriangle(), c1);
-	image.drawFilledTriangle(t2.getPointsThatFillTriangle(), c2);
-	image.drawFilledTriangle(t3.getPointsThatFillTriangle(), c3);
-	image.drawFilledTriangle(t4.getPointsThatFillTriangle(), c4);
-
-	std::string filename = "maybePrettyImage.bmp";
-
-	image.writeImageFile(filename);
-
-	std::system(filename.c_str());
-
-}
-
-void drawTrianglesGalore()
-{
-	ImageBMP image(500, 500, Color(0, 0, 0));
-
-	std::vector<std::pair<Triangle, Color>> triangles = {
-		{ Triangle({ Vec2{50, 400}, Vec2{150, 400}, Vec2{100, 300} }), Color(255, 0, 0) },
-		{ Triangle({ Vec2{200, 100}, Vec2{250, 200}, Vec2{300, 100} }), Color(0, 255, 0) },
-		{ Triangle({ Vec2{350, 400}, Vec2{450, 300}, Vec2{400, 200} }), Color(0, 0, 255) },
-		{ Triangle({ Vec2{50, 250}, Vec2{100, 150}, Vec2{150, 250} }), Color(255, 255, 0) },
-		{ Triangle({ Vec2{200, 350}, Vec2{300, 350}, Vec2{250, 450} }), Color(255, 0, 255) },
-		{ Triangle({ Vec2{350, 100}, Vec2{400, 200}, Vec2{450, 100} }), Color(0, 255, 255) },
-		{ Triangle({ Vec2{100, 50}, Vec2{50, 150}, Vec2{150, 200} }), Color(255, 128, 0) },
-		{ Triangle({ Vec2{250, 250}, Vec2{350, 250}, Vec2{300, 150} }), Color(128, 0, 255) },
-		{ Triangle({ Vec2{400, 450}, Vec2{450, 350}, Vec2{350, 350} }), Color(0, 128, 255) },
-		{ Triangle({ Vec2{200, 250}, Vec2{150, 200}, Vec2{250, 150} }), Color(128, 128, 128)
-	}
+	std::vector<Vec2> regularPentagonVerts =
+	{
+		Vec2(90, 30), //deliberately NOT in CW or CCW order
+		Vec2(60, 50),
+		Vec2(80, 00),
+		Vec2(50, 00),
+		Vec2(40, 30)
 	};
 
-	for (auto& [triangle, color] : triangles)
+	Polygon polygon(regularPentagonVerts);
+
+	//auto approxCentroid = polygon.getApproximateCentroid(); 
+	auto triangles = polygon.triangulate();
+
+	std::vector<Vec2> fillpoints;
+
+	for (const auto& triangle : triangles)
 	{
-		std::vector<Vec2> points = triangle.getPointsThatFillTriangle();
-		for (const auto& p : points)
-		{
-			image.drawFilledTriangle(points, color);
-		}
+		auto currentFillpoints = triangle.getPointsThatFillTriangle();
+
+		fillpoints.insert(
+			fillpoints.end(), currentFillpoints.begin(), currentFillpoints.end());
+
+
 	}
 
-	std::string filename = "trianglesGalore.bmp";
-	image.writeImageFile(filename);
+	GraphicsDemo graphicsDemo(fillpoints, pentagonColor);
+	graphicsDemo.draw("possiblyAPentagon.png");
+}
 
-	std::system(filename.c_str());
+void giveMeAPentagram(const Color& pentagramColor)
+{
+	std::vector<Vec2> pentagramVerts =
+	{
+		Vec2(50, 100),   // top outer
+		Vec2(65, 65),    // inner right
+		Vec2(100, 65),   // outer right
+		Vec2(70, 45),    // inner bottom-right
+		Vec2(80, 0),     // outer bottom-right
+		Vec2(50, 25),    // inner bottom
+		Vec2(20, 0),     // outer bottom-left
+		Vec2(30, 45),    // inner bottom-left
+		Vec2(0, 65),     // outer left
+		Vec2(35, 65)     // inner left
+	};
 
+	Polygon polygon(pentagramVerts);
+
+	//auto approxCentroid = polygon.getApproximateCentroid(); 
+	auto triangles = polygon.triangulate();
+
+	std::vector<Vec2> fillpoints;
+
+	for (const auto& triangle : triangles)
+	{
+		auto currentFillpoints = triangle.getPointsThatFillTriangle();
+
+		fillpoints.insert(
+			fillpoints.end(), currentFillpoints.begin(), currentFillpoints.end());
+	}
+
+	GraphicsDemo graphicsDemo(fillpoints, pentagramColor);
+	graphicsDemo.draw("possiblyAPentagram.png");
 }
