@@ -11,15 +11,51 @@
 #include"Triangle.h"
 
 
-std::string getTimestampForFilename()
+/*Component triangles are rendered in shades of gray*/
+void demoPentagramTriangulation()
 {
-	std::string time = __TIME__;
+	std::vector<Vec2> randomVerts =
+	{
+		Vec2(00, 00),
+		Vec2(40, 10),
+		Vec2(50, 40),
+		Vec2(100, 20),
+		Vec2(100, 70),
+	};
 
-	std::replace(time.begin(), time.end(), ':', '_');
+	Polygon polygon(randomVerts);
 
-	return time;
+	auto trianglesMakingUpPentagon = polygon.triangulate();
+
+	int triangleCount = 0;
+	auto palette = Color::getGrayColorPalette();
+
+	if (randomVerts.size() - 2 > palette.size()) //N - 2 triangles for N vertices (think rectangle)
+	{
+		std::cout << "More triangles in polygon than colors in palette\n";
+	}
+
+
+	std::vector<Vec2> points;
+	std::unordered_map<Vec2, Color> pointsToColors;
+
+	for (const auto& triangle : trianglesMakingUpPentagon)
+	{
+		//auto currentTrianglePoints = triangle.getPointsThatOutlineTriangle(); 
+		auto currentTrianglePoints = triangle.getPointsThatFillTriangle();
+
+		points.insert(points.begin(), currentTrianglePoints.begin(), currentTrianglePoints.end());
+
+		for (const auto& point : currentTrianglePoints)
+		{
+			pointsToColors.insert({ point, Color(palette[triangleCount % palette.size()]) }); //note the mod operator
+		}
+		triangleCount++;
+	}
+
+	GraphicsDemo gd(pointsToColors);
+	gd.draw("filledInTrianglesOfPentagram-grayPalette.png");
 }
-
 
 void demoLineDrawing()
 {
@@ -51,18 +87,18 @@ void demoLineDrawing()
 	system(filename.c_str());
 }
 
-void demoLinedSierpinski()
-{
-	GraphicsDemo gd;
-	Edge AB = { Vec2(0, 0), Vec2(1000, 0) };
-
-	Triangle t(AB);
-
-	gd.fillPointsOfSierpinski(t, 5, Color(0, 0, 0));
-
-	std::string filename = "linedSierpinski.png";
-	gd.draw(filename);
-}
+//void demoLinedSierpinski()
+//{
+//	GraphicsDemo gd;
+//	Edge AB = { Vec2(0, 0), Vec2(1000, 0) };
+//
+//	Triangle t(AB);
+//
+//	gd.fillPointsOfSierpinski(t, 5, Color(0, 0, 0));
+//
+//	std::string filename = "linedSierpinski.png";
+//	gd.draw(filename);
+//}
 
 void demoFlatBottomAndFlatTopTriangles()
 {
@@ -155,6 +191,7 @@ void giveMeAPentagon(const Color& pentagonColor)
 	graphicsDemo.draw("possiblyAPentagon.png");
 }
 
+/*NOTE that a pentagram is NOT convex*/
 void giveMeAPentagram(const Color& pentagramColor)
 {
 	std::vector<Vec2> pentagramVerts =

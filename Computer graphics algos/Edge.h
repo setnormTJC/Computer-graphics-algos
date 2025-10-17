@@ -26,10 +26,15 @@ public:
 
 	std::vector<Vec2> getPointsOfLineSegment() const;
 
-	friend std::ostream& operator << (std::ostream& os, const Edge& e);
-private:
 	//"adjacent" edges share a vertex 
 	bool isAdjacentEdge(const Edge& rhs) const;
+
+	bool intersects(const Edge& rhs) const;
+
+	friend std::ostream& operator << (std::ostream& os, const Edge& e);
+
+
+private:
 
 	float getSlopeOfLineSegment() const;
 

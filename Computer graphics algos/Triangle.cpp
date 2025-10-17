@@ -9,6 +9,7 @@
 
 #include<tuple> //for std::tie
 #include <map>
+#include "MyException.h"
 
 
 Triangle::Triangle(const std::array<Vec2, 3>& vertices)
@@ -20,21 +21,21 @@ Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 		}) 
 		!= vertices.end()) 
 	{
-		throw std::runtime_error("triangle vertices cannot contain negative values\n");
+		throw MyException("triangle vertices cannot contain negative values", __LINE__, __FILE__);
 	}
 
 	if (vertices[0] == vertices[1] ||
 		vertices[1] == vertices[2] ||
 		vertices[2] == vertices[0]) 
 	{
-		throw std::runtime_error("triangle has duplicate vertices");
+		throw MyException("triangle has duplicate vertices", __LINE__, __FILE__);
 	}
 
 	if (vertices[0].x == vertices[1].x && vertices[1].x == vertices[2].x
 		||
 		vertices[0].y == vertices[1].y && vertices[1].y == vertices[2].y)
 	{
-		throw std::runtime_error("triangle is ... in fact a line segment\n");
+		throw MyException("triangle is ... in fact a line segment", __LINE__, __FILE__);
 	}
 
 	this->vertices = vertices; 

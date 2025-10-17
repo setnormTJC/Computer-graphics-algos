@@ -1,5 +1,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "ImageBMP.h"
+#include "MyException.h"
 
 
 
@@ -98,7 +99,7 @@ void ImageBMP::saveAsPNG(const std::string& PNGfilename)
 {
 	if (PNGfilename.find(".png") == std::string::npos)
 	{
-		throw std::runtime_error("filename must contain .png if saving as PNG");
+		throw MyException("filename must contain .png if saving as PNG", __LINE__, __FILE__);
 	}
 
 	int channels = 3; 

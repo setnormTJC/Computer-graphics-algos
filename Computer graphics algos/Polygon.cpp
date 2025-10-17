@@ -1,14 +1,69 @@
 #include "Polygon.h"
 #include <algorithm>
 #include<tuple>
+#include "MyException.h"
+
+Polygon::Polygon(const std::vector<Vec2>& vertices)
+	:vertices(vertices)
+{
+	if (vertices.size() < 3)
+	{
+		throw MyException("Polygon must have at least 3 verts", __LINE__, __FILE__);
+	}
+
+	sortClockwiseOrCCW();
+}
 
 bool Polygon::isConvex() const
 {
-	return true; //for now!
+	auto n = vertices.size(); 
+
+	for (size_t i = 0; i < n; ++i)
+	{
+		const Vec2& a = vertices[i]; 
+		const Vec2& b = vertices[(i + 1) % n];
+		const Vec2& c = vertices[(i + 2) % n];
+
+
+	}
+
+	return true; //for now
+}
+
+bool Polygon::isSimple() const
+{
+	//auto edges = getPolygonEdges(); 
+
+
+	//for (int left = 0; left < edges.size(); ++left)
+	//{
+	//	Edge leftEdge = edges[left]; 
+
+	//	for (int right = left + 1; right < edges.size(); ++right)
+	//	{
+	//		Edge rightEdge = edges[right]; 
+
+	//		if (!leftEdge.isAdjacentEdge(rightEdge))
+	//		{
+	//			if (leftEdge.intersects(rightEdge))
+	//			{
+	//				std::cout << leftEdge << " intersects " << rightEdge << "\n";
+	//				return false; 
+	//			}
+	//		}
+	//	}
+	//}
+
+	return true; 
 }
 
 std::vector<Triangle> Polygon::triangulate() const
 {
+	if (!isSimple())
+	{
+		return convexHullify(); //NOTE: at least one (maybe more?) vertex will get ignored
+	}
+
 	if (isConvex())
 	{
 		return triangulateConvex();
@@ -20,14 +75,6 @@ std::vector<Triangle> Polygon::triangulate() const
 	}
 }
 
-Polygon::Polygon(const std::vector<Vec2>& vertices)
-	:vertices(vertices)
-{
-	if (vertices.size() < 3) throw std::runtime_error("Polygon must have at least 3 verts");
-
-
-	sortClockwiseOrCCW();
-}
 
 std::vector<Triangle> Polygon::triangulateConvex() const
 {
@@ -50,16 +97,11 @@ std::vector<Triangle> Polygon::triangulateConcave() const
 	return std::vector<Triangle>();
 }
 
-int Polygon::determineCentroidX()
+std::vector<Triangle> Polygon::convexHullify() const
 {
-
-	return 0;
+	return std::vector<Triangle>();
 }
 
-int Polygon::determineCentroidY()
-{
-	return 0;
-}
 
 void Polygon::sortClockwiseOrCCW()
 {
@@ -76,7 +118,7 @@ void Polygon::sortClockwiseOrCCW()
 
 }
 
-Vec2 Polygon::getApproximateCentroid()
+Vec2 Polygon::getApproximateCentroid() const
 {
 	Vec2 approximateCentroid = {0, 0};
 
@@ -92,24 +134,7 @@ Vec2 Polygon::getApproximateCentroid()
 	return approximateCentroid;
 }
 
-Vec2 Polygon::determineCentroid()
-{
-	int Cx = determineCentroidX(); 
-	int Cy = determineCentroidY(); 
 
-	return Vec2(Cx, Cy);
-}
-
-
-
-void Polygon::validatePolygon()
-{
-	if (vertices.size() < 3) throw std::runtime_error("polygon must contain at least 3 verts");
-
-	sortVertices(); 
-
-
-}
 
 void Polygon::sortVertices()
 {
@@ -119,4 +144,18 @@ void Polygon::sortVertices()
 			//if a.y == b.y, sort by x values  
 			return std::tie(v1.y, v1.x) < std::tie(v2.y, v2.x);
 		});
+}
+
+std::vector<Edge> Polygon::getPolygonEdges() const
+{
+	std::vector<Edge> edges; 
+	
+	for (int i = 0; i < vertices.size() - 1; ++i)
+	{
+		edges.push_back({ vertices[i], vertices[i + 1] });
+	}
+	//close the "chain": 
+	edges.push_back({ vertices[vertices.size() - 1], vertices[0] });
+
+	return edges;
 }

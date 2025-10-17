@@ -131,18 +131,25 @@
     <ClCompile Include="GraphicsDemo.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ImageBMP.cpp" />
+    <ClCompile Include="MyException.cpp" />
     <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Edge.h" />
+    <ClInclude Include="MyException.h" />
     <ClInclude Include="UnorganizedDemos.h" />
     <ClInclude Include="GraphicsDemo.h" />
     <ClInclude Include="ImageBMP.h" />
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="Vec2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

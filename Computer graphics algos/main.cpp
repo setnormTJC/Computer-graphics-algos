@@ -8,9 +8,11 @@
 #include"Edge.h"
 #include"GraphicsDemo.h"
 #include"ImageBMP.h"
+#include "MyException.h"
 #include"Polygon.h"
 #include"Triangle.h"
 #include"UnorganizedDemos.h"
+#include"Utils.h"
 
 
 
@@ -18,52 +20,37 @@ int main()
 {
 	try
 	{
+		Vec2 A(20, 20);
+		Vec2 B(80, 20);
+		Vec2 C(20, 80);
+		Vec2 D(80, 80);
+		Vec2 E(100, 50); 
+		//Vec2 E(50, 50); //results in a non-simple polygon 
 
-		std::vector<Vec2> pentagramVerts =
+		std::vector<Vec2> verts =
 		{
-			Vec2(50, 100),   // top outer
-			Vec2(65, 65),    // inner right
-			Vec2(100, 65),   // outer right
-			Vec2(70, 45),    // inner bottom-right
-			Vec2(80, 0),     // outer bottom-right
-			Vec2(50, 25),    // inner bottom
-			Vec2(20, 0),     // outer bottom-left
-			Vec2(30, 45),    // inner bottom-left
-			Vec2(0, 65),     // outer left
-			Vec2(35, 65)     // inner left
+			A,
+			B,
+			C,
+			D,
+			E  //HERE!
 		};
 
-		Polygon polygon(pentagramVerts);
+		Polygon bowtie(verts);
 
-		auto trianglesMakingUpPentagon = polygon.triangulate(); 
+		auto triangles = bowtie.triangulate();
+		auto colors = Color::getGrayColorPalette(); 
 
-		int triangleCount = 0;
-		auto palette = Color::getGrayColorPalette(); 
+		GraphicsDemo gd(triangles, colors); 
 
-		std::vector<Vec2> points;
-		std::unordered_map<Vec2, Color> pointsToColors; 
+		std::string filename = getTimestampForFilename() + ".png";
+		gd.draw(filename);
 
-		for (const auto& triangle : trianglesMakingUpPentagon)
-		{
-			//auto currentTrianglePoints = triangle.getPointsThatOutlineTriangle(); 
-			auto currentTrianglePoints = triangle.getPointsThatFillTriangle(); 
-
-			points.insert(points.begin(), currentTrianglePoints.begin(), currentTrianglePoints.end()); 
-
-			for (const auto& point : currentTrianglePoints)
-			{
-				pointsToColors.insert({ point, Color(palette[triangleCount])});
-			}
-			triangleCount++; 
-		}
-
-		GraphicsDemo gd(pointsToColors); 
-		gd.draw("filledInTrianglesOfPentagram-grayPalette.png");
 	}
 
-	catch (const std::exception& e)
+	catch (const MyException& e)
 	{
-		std::cout << e.what() << "\n";
+		std::cout << e.whatWentWrong() << "\n";
 	}
 }
 

@@ -1,7 +1,9 @@
 #include"Edge.h"
 
 #include <stdexcept>
+#include "MyException.h"
 
+#include"Utils.h"
 
 #pragma region Edge
 Edge::Edge(const Vec2& clientV1, const Vec2& clientV2)
@@ -9,7 +11,7 @@ Edge::Edge(const Vec2& clientV1, const Vec2& clientV2)
 {
 	if (v1 == v2)
 	{
-		throw std::runtime_error("An edge cannot be made of 2 identical vertices");
+		throw MyException("An edge cannot be made of 2 identical vertices", __LINE__, __FILE__);
 	}
 
 	//sort edges by y (make v1 have the lowest y-value)
@@ -89,13 +91,31 @@ std::vector<Vec2> Edge::getPointsOfLineSegment() const
 
 bool Edge::isAdjacentEdge(const Edge& rhs) const
 {
-	//if (v1 == rhs.v1 && v2 == rhs.v2)
-	//{
-	//	throw std::runtime_error("Don't ask if an edge is adjacent to itself");
-	//}
-	return (v1 == rhs.v1 || v2 == rhs.v2
-		||
-		v2 == rhs.v1 || v1 == rhs.v2);
+	//return (v1 == rhs.v1 || v2 == rhs.v2
+	//	||
+	//	v2 == rhs.v1 || v1 == rhs.v2);
+
+	return (v2 == rhs.v1 || v1 == rhs.v2);
+}
+
+bool Edge::intersects(const Edge& rhs) const
+{
+	auto o1 = orientation(v1, v2, rhs.v1);
+	auto o2 = orientation(v1, v2, rhs.v2);
+	auto o3 = orientation(rhs.v1, rhs.v2, v1);
+	auto o4 = orientation(rhs.v1, rhs.v2, v2);
+
+	if (o1 != o2 && o3 != o4)
+	{
+		return true;
+	}
+	
+	if (o1 == 0 && onSegment(v1, rhs.v1, v2)) return true;
+	if (o2 == 0 && onSegment(v1, rhs.v2, v2)) return true;
+	if (o3 == 0 && onSegment(rhs.v1, v1, rhs.v2)) return true;
+	if (o4 == 0 && onSegment(rhs.v1, v2, rhs.v2)) return true;
+
+	return false; 
 }
 float Edge::getSlopeOfLineSegment() const
 {
@@ -109,7 +129,11 @@ std::vector<Vec2> Edge::getVerticalLineSegmentPoints() const
 	std::vector<Vec2> points;
 
 	//parameterized Edge constructor DOES sort its v1 and v2 args, but just to be safe ...
-	if (v1.y >= v2.y) throw std::runtime_error("Cannot get vertical line segment points - v1.y >= v2.y");
+
+	if (v1.y >= v2.y)
+	{
+		throw MyException("Cannot get vertical line segment points - v1.y >= v2.y", __LINE__, __FILE__);
+	}
 
 	for (int y = v1.y; y <= v2.y; ++y)
 		points.push_back({ v1.x, y });
