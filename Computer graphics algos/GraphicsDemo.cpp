@@ -1,5 +1,13 @@
 #include "GraphicsDemo.h"
 
+#include<tuple>
+
+GraphicsDemo::GraphicsDemo(const std::vector<Vec2>& pixels)
+	:pixels(pixels)
+{
+
+}
+
 void GraphicsDemo::fillPointsOfCheckerboard(const int numberOfRows, const int numberOfCols, const int sideLength)
 {
 	int y = sideLength; 
@@ -98,10 +106,12 @@ void GraphicsDemo::fillPointsOfSierpinski(const Triangle& tri, int depth, const 
 	fillPointsOfSierpinski(t3, depth - 1, c3, triangleCount);
 }
 
+
+
 void GraphicsDemo::draw(const std::string& filename)
 {
 	//get dimensions of bounding box
-	auto xMax = pixels.at(0).x; 
+	auto xMax = pixels.at(0).x;  
 	auto yMax = pixels.at(0).y; 
 
 	for (const auto& v : pixels)

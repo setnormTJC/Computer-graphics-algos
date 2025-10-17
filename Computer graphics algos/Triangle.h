@@ -31,9 +31,6 @@ private:
 	//"adjacent" edges share a vertex 
 	bool isAdjacentEdge(const Edge& rhs) const;
 
-
-
-	friend class Triangle; //give Triangle access to v1 and v2 
 };
 
 

@@ -10,6 +10,8 @@ private:
 	int imageWidth{}, imageHeight{};
 
 public: 
+
+	GraphicsDemo(const std::vector<Vec2>& pixels);
 	/*
 	* @param numberOfRows -> I SUPPOSE a "checkerboard" usually has the same number of rows as columns
 	*/
@@ -22,10 +24,12 @@ public:
 
 	void fillPointsOfEquilateralTriangle(const Edge& edgeOfEquilateralTriangle);
 
-	//void fillPointsOfSierpinski(const Edge& baseEdge, int depth, const Color& color);
-
 	void fillPointsOfSierpinski(const Triangle& tri, int depth, const Color& color, int& triangleCount);
-	
+
 	void draw(const std::string& filename);
+private: 
+
+
+
 };
 

@@ -50,7 +50,7 @@ struct Vec2
 		return *this;
 	}
 
-	Vec2	operator-(const Vec2& rhs) const
+	Vec2 operator-(const Vec2& rhs) const
 	{
 		return Vec2(*this) -= rhs;
 	}
