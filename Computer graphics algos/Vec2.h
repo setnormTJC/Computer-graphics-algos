@@ -2,6 +2,8 @@
 
 #include<functional>
 
+#include<iostream> 
+
 struct Vec2
 {
 	int x, y;
@@ -12,6 +14,12 @@ struct Vec2
 		:x(x), y(y)
 	{
 
+	}
+
+	friend std::ostream& operator << (std::ostream& os, const Vec2& v)
+	{
+		os << "(" << v.x << ", " << v.y << ")";
+		return os;
 	}
 
 	bool operator == (const Vec2& rhs) const
@@ -64,6 +72,9 @@ struct Vec2
 
 
 };
+
+
+
 
 /*For making maps with Vec2 as keytype*/
 namespace std

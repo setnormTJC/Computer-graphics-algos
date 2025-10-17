@@ -75,14 +75,19 @@ void ImageBMP::saveAsBMP(std::string filename)
 }
 
 
-void ImageBMP::fillPixelMatrix(const std::unordered_map<Vec2, Color>& pixelsToColors)
+void ImageBMP::fillPixelMatrix(const std::unordered_map<Vec2, Color>& pointsToColors)
 {
-	for (const auto& [pixel, color] : pixelsToColors)
+	for (const auto& [point, color] : pointsToColors)
 	{
-		if (pixel.y < pixelData.pixelMatrix.size() &&
-			pixel.x < pixelData.pixelMatrix[0].size())
+		if (point.y < pixelData.pixelMatrix.size() &&
+			point.x < pixelData.pixelMatrix[0].size())
 		{
-			pixelData.pixelMatrix[pixel.y][pixel.x] = color;
+			pixelData.pixelMatrix[point.y][point.x] = color;
+		}
+
+		else
+		{
+			std::cout << point << " was out of the image's drawing box?\n";
 		}
 	}
 
@@ -534,6 +539,63 @@ void Color::setR(unsigned int r)
 {
 	bgra = (bgra & 0xFF00FFFF) | ((r & 0xFF) << 16);
 }
+
+std::vector<ColorEnum> Color::getBroadColorPalette()
+{
+	std::vector<ColorEnum> palette = {
+		ColorEnum::Red,
+		ColorEnum::Green,
+		ColorEnum::Blue,
+		ColorEnum::Cyan,
+		ColorEnum::Magenta,
+		ColorEnum::Yellow,
+		ColorEnum::Orange,
+		ColorEnum::Purple,
+		ColorEnum::Lime,
+		ColorEnum::Teal
+	};
+
+	return palette;
+}
+std::vector<ColorEnum> Color::getGreenColorPalette()
+{
+	std::vector<ColorEnum> greenPalette = 
+	{
+		ColorEnum::Green,
+		ColorEnum::MediumGreen,
+		ColorEnum::DarkerGreen,
+		ColorEnum::LightGreen,
+		ColorEnum::Pastel,
+		ColorEnum::Forest,
+		ColorEnum::Midtone,
+		ColorEnum::Spring,
+		ColorEnum::TealGreen,
+		ColorEnum::PaleGreen
+	};
+
+	return greenPalette;
+}
+
+std::vector<ColorEnum> Color::getGrayColorPalette()
+{
+	std::vector<ColorEnum> grayPalette =
+	{
+		ColorEnum::G1,
+		ColorEnum::G2,
+		ColorEnum::G3,
+		ColorEnum::G4,
+		ColorEnum::G5,
+		ColorEnum::G6,
+		ColorEnum::G7,
+		ColorEnum::G8,
+		ColorEnum::G9,
+		ColorEnum::G10,
+	};
+
+	return grayPalette;
+}
+
+
 #pragma endregion 
 
 

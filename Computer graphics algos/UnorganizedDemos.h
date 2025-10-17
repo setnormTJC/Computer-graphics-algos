@@ -2,6 +2,7 @@
 
 #include<array> 
 #include <iostream>
+#include<string> 
 #include <vector>
 
 #include"GraphicsDemo.h"
@@ -9,6 +10,59 @@
 #include"Polygon.h"
 #include"Triangle.h"
 
+
+std::string getTimestampForFilename()
+{
+	std::string time = __TIME__;
+
+	std::replace(time.begin(), time.end(), ':', '_');
+
+	return time;
+}
+
+
+void demoLineDrawing()
+{
+	int squareBoxSize = 200;
+
+	int x0 = 20;
+	int y0 = 60;
+	int x1 = 50;
+	int y1 = 50;
+
+	Edge e(Vec2(x0, y0), Vec2(x1, y1));
+
+	auto points = e.getPointsOfLineSegment();
+
+	ImageBMP image(squareBoxSize, squareBoxSize, Color(0, 0, 0));
+
+	std::unordered_map<Vec2, Color> pixelsToColors;
+
+	for (const auto& point : points)
+	{
+		pixelsToColors.insert({ point, ColorEnum::Magenta });
+	}
+
+	image.fillPixelMatrix(pixelsToColors);
+
+	std::string filename = "aLine.png";
+	image.saveAsPNG(filename);
+
+	system(filename.c_str());
+}
+
+void demoLinedSierpinski()
+{
+	GraphicsDemo gd;
+	Edge AB = { Vec2(0, 0), Vec2(1000, 0) };
+
+	Triangle t(AB);
+
+	gd.fillPointsOfSierpinski(t, 5, Color(0, 0, 0));
+
+	std::string filename = "linedSierpinski.png";
+	gd.draw(filename);
+}
 
 void demoFlatBottomAndFlatTopTriangles()
 {
@@ -37,7 +91,7 @@ void demoFlatBottomAndFlatTopTriangles()
 
 
 	std::unordered_map<Vec2, Color> pixelsToColors; 
-	int pixelCounter = 0; 
+	int pixelCounter = 0; //using just to alternate pixel colors
 	for (const auto& filledPoint : filledPoints)
 	{
 		Color currentColor;

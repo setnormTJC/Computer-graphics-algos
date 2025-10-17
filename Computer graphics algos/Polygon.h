@@ -15,6 +15,7 @@ private:
 
 public: 
 	bool isConvex() const; 
+	/*The number of triangles returned SHOULD be the number of vertices - 2 (ex: square is 2 triangles0*/
 	std::vector<Triangle> triangulate() const;
 
 	/*NO sort! Use "winding formula" and pass vertices in CW or CCW order*/
@@ -36,7 +37,6 @@ private:
 
 	void sortClockwiseOrCCW(); 
 
-	/*Verifies "closed chain" of vertices - called by Polygon constructor, possibly throws*/
 	void validatePolygon();
 
 	void sortVertices(); 

@@ -81,7 +81,7 @@ public:
 	friend class ImageBMP;
 };
 
-/*NOTE: little-endian BGRA order is used here*/
+/*NOTE: little-endian ARGB order is used here*/
 enum class ColorEnum : unsigned int
 {
 	//A, R, G, B
@@ -96,18 +96,45 @@ enum class ColorEnum : unsigned int
 	Cyan = 0xFF'00'FF'FF,
 	Magenta = 0xFF'FF'00'FF,
 
-	//chessboard-specific colors: 
-	DarkSquareColor = 0xFF'BA'61'34,
-	LightSquareColor = 0xFF'EF'D7'B5,
-	BoardBorder = 0xFF'6C'1E'1C,
+	Orange = 0xFF'FF'80'00,
+	Purple = 0xFF'80'00'80,
 
-	//using some images from this page: https://commons.wikimedia.org/wiki/Category:Chess_bitmap_pieces
-	WKnightBgrdColor = 0xFF'FF'FF'CB,
+	Lime = 0xFF'BFFF'00,
+	Teal = 0xFF'00'80'80,
 
-	RedBgrd = 0xFF'ED'1C'24
-	//CopyWKnightBgrdColor = 0x00'00'00'00
+	Pink = 0xFF'FF'66'CC,
+	Brown = 0xFF'80'40'00,
+	
+	Gray = 0xFF'80'80'80,
+	Olive = 0xFF'80'80'00,
+	
+	Indigo = 0xFF'4B'00'82,
+	Gold = 0xFF'FF'D7'00,
 
+	MediumGreen =	0xFF'00'CC'00,               
+	DarkerGreen =	0xFF'00'99'00,                
+	LightGreen =	0xFF'33'FF'33,                
+	Pastel =		0xFF'66'FF'66,                
+	Forest =		0xFF'00'66'33,                
+	Midtone =		0xFF'00'AA'55,                
+	Spring =		0xFF'11'FF'77,                
+	TealGreen =		0xFF'44'CC'88,               
+	PaleGreen =		0xFF'88'FF'AA,
+
+	//(not 50, but 10) shades of gray:
+	G1 = 0xFF111111, // dark
+	G2 = 0xFF222222,
+	G3 = 0xFF333333,
+	G4 = 0xFF444444,
+	G5 = 0xFF555555,
+	G6 = 0xFF666666,
+	G7 = 0xFF777777,
+	G8 = 0xFF888888,
+	G9 = 0xFF999999,
+	G10 = 0xFFAAAAAA  // light
 };
+
+
 
 class Color
 {
@@ -133,6 +160,10 @@ public:
 	void setB(unsigned int b);
 	void setG(unsigned int g);
 	void setR(unsigned int r);
+
+	static std::vector<ColorEnum> getBroadColorPalette(); 
+	static std::vector<ColorEnum> getGreenColorPalette(); 
+	static std::vector<ColorEnum> getGrayColorPalette();
 
 	friend class ImageBMP; 
 };
@@ -169,10 +200,11 @@ public:
 	void saveAsBMP(std::string filename);
 
 	/*OBSERVE the "switched" x and y coordinates in the update to `pixelMatrix` in this function definition!*/
-	void fillPixelMatrix(const std::unordered_map<Vec2, Color>& pixelsToColors);
+	void fillPixelMatrix(const std::unordered_map<Vec2, Color>& pointsToColors);
 
 	/*requires stb_image_write.h from: https://github.com/nothings/stb
 	* PNG file sizes can potentially be much (100x) smaller than BMP
+	* INTERESTINGLY, PNG compression is LOSSLESS
 	*/
 	void saveAsPNG(const std::string& PNGfilename);
 

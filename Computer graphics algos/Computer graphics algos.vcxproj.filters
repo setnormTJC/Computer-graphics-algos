@@ -30,6 +30,9 @@
     <ClCompile Include="Polygon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Edge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImageBMP.h">
@@ -41,7 +44,7 @@
     <ClInclude Include="Vec2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="demos.h">
+    <ClInclude Include="UnorganizedDemos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsDemo.h">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Polygon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Edge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -41,13 +41,6 @@ Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 
 	sortVertices(); 
 
-	edges =
-	{
-		Edge(vertices[0], vertices[1]),
-		Edge(vertices[1], vertices[2]),
-		Edge(vertices[2], vertices[0])
-	};
-
 	/*Determine extrema (for bounding box and scanline algorithm)*/
 	for (const auto& v : vertices)
 	{
@@ -82,13 +75,6 @@ Triangle::Triangle(const Edge& equilateralEdge)
 
 	sortVertices(); 
 
-	edges =
-	{
-		Edge(vertices[0], vertices[1]),
-		Edge(vertices[1], vertices[2]),
-		Edge(vertices[2], vertices[0])
-	};
-
 	/*Determine extrema (for bounding box and scanline algorithm)*/
 	for (const auto& v : vertices)
 	{
@@ -120,21 +106,22 @@ std::vector<Vec2> Triangle::getPointsThatFillTriangle() const
 {
 	if (isFlatBottom)
 	{
-		std::cout << "Constructing a flat bottom triangle\n";
+		//std::cout << "Constructing a flat bottom triangle\n";
 		return getPointsThatFillFlatBottomTriangle(); 
 	}
 
 	else if (isFlatTop)
 	{
-		std::cout << "Constructing flat TOP triangle\n";
+		//std::cout << "Constructing flat TOP triangle\n";
 		return getPointsThatFillFlatTopTriangle(); 
 	}
 
 	else //it must be a "general" triangle
 	{
+		//etc.
 		std::vector<Vec2> pointsThatFillGeneralTriangle; 
 
-		std::cout << "Constructing a general triangle (by making a flat top, then a flat bottom):\n";
+		//std::cout << "Constructing a general triangle (by making a flat top, then a flat bottom):\n";
 		
 		int y = vertices[1].y;
 		//a bit on the logic here: 
@@ -170,6 +157,25 @@ std::vector<Vec2> Triangle::getPointsThatFillTriangle() const
 
 		return filledPoints;
 	}
+}
+
+std::vector<Vec2> Triangle::getPointsThatOutlineTriangle() const
+{
+	std::vector<Vec2> points; 
+
+	Edge ab = { vertices[0], vertices[1] }; 
+	Edge bc = { vertices[1], vertices[2] };
+	Edge ca = { vertices[2], vertices[0] };
+
+	auto abPoints = ab.getPointsOfLineSegment(); 
+	auto bcPoints = bc.getPointsOfLineSegment();
+	auto caPoints = ca.getPointsOfLineSegment();
+
+	points.insert(points.end(), abPoints.begin(), abPoints.end()); 
+	points.insert(points.end(), bcPoints.begin(), bcPoints.end());
+	points.insert(points.end(), caPoints.begin(), caPoints.end());
+
+	return points;
 }
 
 Box2D Triangle::getBoundingBoxDimensions() const
@@ -241,6 +247,8 @@ std::vector<Vec2> Triangle::getPointsThatFillFlatTopTriangle() const
 
 float Triangle::getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int indexOfSecondEdge) const
 {	
+	auto edges = getEdges(); 
+
 	if (indexOfFirstEdge < 0 || indexOfFirstEdge > edges.size() - 1
 		||
 		indexOfSecondEdge < 0 || indexOfSecondEdge > edges.size() - 1)
@@ -281,7 +289,13 @@ float Triangle::getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int in
 
 std::array<Edge, 3> Triangle::getEdges() const
 {
-	return edges;
+	return 	
+	{
+		Edge(vertices[0], vertices[1]),
+		Edge(vertices[1], vertices[2]),
+		Edge(vertices[2], vertices[0])
+	};
+
 }
 
 std::array<Vec2, 3> Triangle::getVertices() const
@@ -290,72 +304,4 @@ std::array<Vec2, 3> Triangle::getVertices() const
 }
 
 
-#pragma region Edge
-Edge::Edge(const Vec2& clientV1, const Vec2& clientV2)
-	:v1(clientV1), v2(clientV2)
-{
-	if (v1 == v2)
-	{
-		throw std::runtime_error("An edge cannot be made of 2 identical vertices");
-	}
 
-	//sort edges by y (make v1 have the lowest y-value)
-	if (v1.y > v2.y)
-	{
-		std::swap(v1, v2);
-	}
-
-	//sort by x if y values are equal:
-	else if (v1.y == v2.y)
-	{
-		if (v1.x > v2.x)
-		{
-			std::swap(v1, v2);
-		}
-	}
-}
-
-bool Edge::operator<(const Edge& rhs) const
-{
-	return std::tie(v1.x, v1.y, v2.x, v2.y) < std::tie(rhs.v1.x, rhs.v1.y, rhs.v2.x, rhs.v2.y);
-	//I THINK this orders by x first. And if x values are equal for v1 and v2, compare y values
-}
-
-bool Edge::operator==(const Edge& rhs) const
-{
-	return (v1 == rhs.v1 && v2 == rhs.v2); 
-}
-
-float Edge::getEdgeLength() const
-{
-	return sqrt(
-		pow(v2.x - v1.x, 2) + pow(v2.y - v1.y, 2)
-	);
-}
-
-
-bool Edge::isAdjacentEdge(const Edge& rhs) const
-{
-	//if (v1 == rhs.v1 && v2 == rhs.v2)
-	//{
-	//	throw std::runtime_error("Don't ask if an edge is adjacent to itself");
-	//}
-	return (v1 == rhs.v1 || v2 == rhs.v2 
-		||
-		v2 == rhs.v1 || v1 == rhs.v2);
-}
-	//this SHOULD work without testing, for example, v1 == rhs.v2
-	//-because the Edge constructor sorts the vertices 
-
-
-
-#pragma endregion
-
-std::ostream& operator<<(std::ostream& os, const Edge& e)
-{
-	os << "(" << e.v1.x << "," << e.v1.y << ")"
-		<< " -> "
-		<< "(" << e.v2.x << "," << e.v2.y << ")";
-
-	return os; 
-}

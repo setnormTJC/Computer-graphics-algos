@@ -4,7 +4,7 @@
 
 bool Polygon::isConvex() const
 {
-	return true;
+	return true; //for now!
 }
 
 std::vector<Triangle> Polygon::triangulate() const

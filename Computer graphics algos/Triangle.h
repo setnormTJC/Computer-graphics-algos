@@ -5,33 +5,9 @@
 #include<tuple> //for std::tie
 #include <vector>
 
+#include"Edge.h"
 #include"Vec2.h"
 
-class Edge
-{
-public: 
-	Vec2 v1; 
-	Vec2 v2; 
-
-public: 
-	Edge() = default; 
-	/*Note: this constructor will impose the following ordering on V1 and V2: 
-	* if v1.y > v2.y, swap
-	* else if v1.y == v2.y AND v1.x > v2.x, swap
-	*/
-	Edge(const Vec2& clientV1, const Vec2& clientV2);	
-
-	bool operator < (const Edge& rhs) const;
-	bool operator == (const Edge& rhs) const; 
-
-	float getEdgeLength() const;
-
-	friend std::ostream& operator << (std::ostream& os, const Edge& e);
-private: 
-	//"adjacent" edges share a vertex 
-	bool isAdjacentEdge(const Edge& rhs) const;
-
-};
 
 
 class Triangle
@@ -41,8 +17,6 @@ private:
 	bool isFlatBottom{};
 	bool isFlatTop{}; 
 
-	/*Gets filled based on supplied vertices in the constructor*/
-	std::array<Edge, 3> edges{}; //bit misleading perhaps?
 
 	/*extrema for scanline algo (and drawing box)*/
 	int xMin = INT_MAX; 
@@ -56,22 +30,23 @@ public:
 	/*construct an EQUILATERAL triangle given one edge*/
 	Triangle(const Edge& equilateralEdge);
 
+	/*Scanline algo! Hooray!*/
 	std::vector<Vec2> getPointsThatFillTriangle() const;
-	/*@returns */
+
+	std::vector<Vec2> getPointsThatOutlineTriangle() const; 
+
 	Box2D getBoundingBoxDimensions() const; 
-
-	float getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int indexOfSecondEdge) const;
-
 	std::array<Edge, 3> getEdges() const; 
-
 	std::array<Vec2, 3> getVertices() const; 
 
 
 private: 
+	/*For geometric funsies (nerd)*/
+	float getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int indexOfSecondEdge) const;
 	/*modifies the member variable vertices such that v[0].y <= v[1].y <= v[2].y*/
 	void sortVertices();
-	std::vector<Vec2> getPointsThatFillFlatBottomTriangle() const; 
-		
+
+	std::vector<Vec2> getPointsThatFillFlatBottomTriangle() const; 		
 	std::vector<Vec2> getPointsThatFillFlatTopTriangle() const;
 	
 };
