@@ -24,7 +24,6 @@ public:
 
 	float getEdgeLength() const;
 
-	std::vector<Vec2> getPointsOfLineSegment() const;
 
 	//"adjacent" edges share a vertex 
 	bool isAdjacentEdge(const Edge& rhs) const;
@@ -33,9 +32,11 @@ public:
 
 	friend std::ostream& operator << (std::ostream& os, const Edge& e);
 
+	std::vector<Vec2> getPointsOfLineSegment() const;
 
 private:
-
+	//Naive ... and bugged, I think
+	std::vector<Vec2> getPointsOfLineSegmentNaive() const;
 	float getSlopeOfLineSegment() const;
 
 

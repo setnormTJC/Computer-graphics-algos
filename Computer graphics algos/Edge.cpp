@@ -48,7 +48,7 @@ float Edge::getEdgeLength() const
 	);
 }
 
-std::vector<Vec2> Edge::getPointsOfLineSegment() const
+std::vector<Vec2> Edge::getPointsOfLineSegmentNaive() const
 {
 	std::vector<Vec2> points;
 
@@ -117,6 +117,30 @@ bool Edge::intersects(const Edge& rhs) const
 
 	return false; 
 }
+std::vector<Vec2> Edge::getPointsOfLineSegment() const
+{
+	std::vector<Vec2> pts;
+	int x0 = static_cast<int>(std::round(v1.x));
+	int y0 = static_cast<int>(std::round(v1.y));
+	int x1 = static_cast<int>(std::round(v2.x));
+	int y1 = static_cast<int>(std::round(v2.y));
+
+	int dx = std::abs(x1 - x0);
+	int dy = std::abs(y1 - y0);
+	int sx = (x0 < x1) ? 1 : -1;
+	int sy = (y0 < y1) ? 1 : -1;
+	int err = dx - dy;
+
+	while (true) {
+		pts.push_back({ x0, y0 });
+		if (x0 == x1 && y0 == y1) break;
+		int e2 = 2 * err;
+		if (e2 > -dy) { err -= dy; x0 += sx; }
+		if (e2 < dx) { err += dx; y0 += sy; }
+	}
+	return pts;
+}
+
 float Edge::getSlopeOfLineSegment() const
 {
 	float slope = static_cast<float>(v2.y - v1.y) / (v2.x - v1.x);
