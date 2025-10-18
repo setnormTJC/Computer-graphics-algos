@@ -127,18 +127,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CoordinateTransformer.cpp" />
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="GraphicsDemo.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ImageBMP.cpp" />
+    <ClCompile Include="Mat4.cpp" />
     <ClCompile Include="MyException.cpp" />
     <ClCompile Include="Polygon.cpp" />
+    <ClCompile Include="Tetrahedron.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Vec4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CoordinateTransformer.h" />
     <ClInclude Include="Edge.h" />
+    <ClInclude Include="Mat4.h" />
     <ClInclude Include="MyException.h" />
+    <ClInclude Include="Tetrahedron.h" />
     <ClInclude Include="UnorganizedDemos.h" />
     <ClInclude Include="GraphicsDemo.h" />
     <ClInclude Include="ImageBMP.h" />
@@ -147,6 +154,7 @@
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vec2.h" />
+    <ClInclude Include="Vec4.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

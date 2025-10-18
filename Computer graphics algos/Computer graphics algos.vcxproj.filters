@@ -39,6 +39,18 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Vec4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mat4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tetrahedron.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CoordinateTransformer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImageBMP.h">
@@ -69,6 +81,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mat4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tetrahedron.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CoordinateTransformer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

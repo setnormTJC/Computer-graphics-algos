@@ -100,20 +100,20 @@ bool Edge::isAdjacentEdge(const Edge& rhs) const
 
 bool Edge::intersects(const Edge& rhs) const
 {
-	auto o1 = orientation(v1, v2, rhs.v1);
-	auto o2 = orientation(v1, v2, rhs.v2);
-	auto o3 = orientation(rhs.v1, rhs.v2, v1);
-	auto o4 = orientation(rhs.v1, rhs.v2, v2);
+	auto o1 = Utils::orientation(v1, v2, rhs.v1);
+	auto o2 = Utils::orientation(v1, v2, rhs.v2);
+	auto o3 = Utils::orientation(rhs.v1, rhs.v2, v1);
+	auto o4 = Utils::orientation(rhs.v1, rhs.v2, v2);
 
 	if (o1 != o2 && o3 != o4)
 	{
 		return true;
 	}
 	
-	if (o1 == 0 && onSegment(v1, rhs.v1, v2)) return true;
-	if (o2 == 0 && onSegment(v1, rhs.v2, v2)) return true;
-	if (o3 == 0 && onSegment(rhs.v1, v1, rhs.v2)) return true;
-	if (o4 == 0 && onSegment(rhs.v1, v2, rhs.v2)) return true;
+	if (o1 == 0 && Utils::onSegment(v1, rhs.v1, v2)) return true;
+	if (o2 == 0 && Utils::onSegment(v1, rhs.v2, v2)) return true;
+	if (o3 == 0 && Utils::onSegment(rhs.v1, v1, rhs.v2)) return true;
+	if (o4 == 0 && Utils::onSegment(rhs.v1, v2, rhs.v2)) return true;
 
 	return false; 
 }

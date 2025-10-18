@@ -121,6 +121,9 @@ void ImageBMP::saveAsPNG(const std::string& PNGfilename)
 
 	stbi_write_png(PNGfilename.c_str(), infoHeader.imageWidth, infoHeader.imageHeight,
 		channels, buffer.data(), width*3);
+
+
+	std::system(PNGfilename.c_str());
 }
 
 
