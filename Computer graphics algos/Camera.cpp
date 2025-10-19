@@ -23,7 +23,7 @@ std::vector<Vec2> Camera::projectToScreen(const std::vector<Vec4>& worldSpaceCoo
 	auto viewMatrix = Mat4::getViewMatrix(eye, target, up);
 	//auto view(orCamera)SpaceCoords = viewMatrix * worldSpaceCoords; //just for my understanding of terminology
 
-	auto projectionMatrix = Mat4::getProjectionMatrix(zFar, zNear); 
+	auto projectionMatrix = Mat4::getProjectionMatrix(zFar, zNear, fovY, aspectRatio);
 
 	Mat4 viewProjectionProduct = projectionMatrix * viewMatrix; //recall: order must be PVM (not MVP)
 
@@ -37,13 +37,26 @@ std::vector<Vec2> Camera::projectToScreen(const std::vector<Vec4>& worldSpaceCoo
 		vpVerts.push_back(temp); 
 	}
 	
+	//perspective divide
+	for (auto& vert : vpVerts) //not const 
+	{
+		if (abs(vert.z) < zNear)
+		{
+			std::cout << vert << " will be clipped\n";
+		}
+		vert = projectionMatrix * vert;
+		//"perspective divide" -> THIS is where points further away get "pushed back"
+		vert.x /= vert.w; 
+		vert.y /= vert.w;
+		vert.z /= vert.w;
+	}
+
 	std::vector<Vec2> screenSpaceVerts;
 	screenSpaceVerts.reserve(worldSpaceCoords.size()); 
 	
 	for (const auto& vert : vpVerts)
 	{
 		Vec2 v = ndcToScreen(vert, screenWidth, screenHeight);
-		//add if !v.empty()?
 		//if (v.x >= 0 && v.x < screenWidth && v.y >= 0 && v.y < screenHeight)
 		//{
 			screenSpaceVerts.push_back(v);

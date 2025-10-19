@@ -32,41 +32,22 @@ int main()
 		constexpr int screenWidth = 500;
 		constexpr int screenHeight = 500;
 		
-
 		Cube cube{}; 
 
 		auto cubeVerts = cube.getCubeVerts();
 
-		float fovY = (M_PI / 2);
-		Camera camera(fovY);
+		Camera camera;
 
-		int loopCount = 0; 
-		while (true)
-		{
-			auto currentEyePos = camera.getEyePosition(); 
+		auto screenSpaceCubeVerts = camera.projectToScreen(cubeVerts, screenWidth, screenHeight);
 
-			float delta = 1.0f; 
-
-			Vec4 newEyePos(currentEyePos.x + delta, currentEyePos.y, currentEyePos.z, 1.0f);
-			//moves camera along positive X axis delta units every 5 seconds (see sleep below)
-
-			camera.setEyePosition(newEyePos);
-			auto screenSpaceCubeVerts = camera.projectToScreen(cubeVerts, screenWidth, screenHeight);
-
-			auto rasterPoints = cube.rasterize(screenSpaceCubeVerts);
+		auto rasterPoints = cube.rasterize(screenSpaceCubeVerts);
 			
-			
-			ImageBMP image(screenWidth, screenHeight, ColorEnum::Black);
+		ImageBMP image(screenWidth, screenHeight, ColorEnum::Black);
 
-			image.fillPixelMatrix(rasterPoints, ColorEnum::Purple);
+		image.fillPixelMatrix(rasterPoints, ColorEnum::Purple);
 
-			image.saveAsPNG("Camera_based_cube" + Utils::getTimestampForFilename() + ".png");
-			camera.logCameraInfo("CameraLog" + Utils::getTimestampForFilename() + ".log");
+		image.saveAsPNG("Camera_based_cube" + Utils::getTimestampForFilename() + ".png");
 
-			loopCount++; 
-
-			std::this_thread::sleep_for(std::chrono::seconds(5));
-		}
 	}
 
 	catch (const MyException& e)

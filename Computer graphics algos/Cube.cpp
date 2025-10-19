@@ -3,11 +3,11 @@
 
 Cube::Cube()
 {
-	float xLeft = -1.0f; 
-	float xRight = +1.0f; 
+	float xLeft = -0.25f; 
+	float xRight = +0.25f; 
 
-	float yBottom = -1.0f; 
-	float yTop = 1.0f; 
+	float yBottom = -0.25f; 
+	float yTop = 0.25f; 
 
 	float zBack = -2.0f; 
 	float zFront = zBack + 1.0f; 
