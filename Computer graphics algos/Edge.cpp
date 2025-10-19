@@ -11,7 +11,7 @@ Edge::Edge(const Vec2& clientV1, const Vec2& clientV2)
 {
 	if (v1 == v2)
 	{
-		__debugbreak(); 
+		//__debugbreak(); 
 		std::cout << v1 << "->" << v2 << "\n";
 		//throw MyException("An edge cannot be made of 2 identical vertices", __LINE__, __FILE__);
 	}

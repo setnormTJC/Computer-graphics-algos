@@ -25,25 +25,38 @@ int main()
 {
 	try
 	{
-
-		Cube c;
-		auto normalizedCubeVerts = c.getCubeVerts(); 
-
 		constexpr int screenWidth = 500;
 		constexpr int screenHeight = 500;
+		ImageBMP image(screenWidth, screenHeight, ColorEnum::Black);
 
-		CoordinateTransformer ct(normalizedCubeVerts);
-		
-		float zFar = 2.0f; 
+		float zFar = 3.0f; 
 		float zNear = 1.0f; 
 		float fovY = M_PI / 2; 
 
-		auto screenSpaceCubeVerts = ct.getScreenSpaceVerts(zFar, zNear, screenWidth, screenHeight, fovY);
+		auto colors = Color::getBroadColorPalette(); 
+		/*Loopy*/
+		for (int i = 0; i < 5; ++i)
+		{
+			float xPos = -1.2f + 0.9f * i;  // spread along x-axis
+			float yPos = 0.0f;              // all centered vertically
+			float zOffset = -1.5f - i * 1.0f; // step farther back each time
+			float scale = 0.3f;             // uniform scale for clarity
 
-		auto rasterPoints = c.rasterize(screenSpaceCubeVerts);
-		ImageBMP image(screenSpaceCubeVerts, ColorEnum::DarkerGreen);
-		image.fillPixelMatrix(rasterPoints);
-		image.saveAsPNG("cube" + Utils::getTimestampForFilename() + ".png");
+			Cube c(xPos, yPos, scale, zOffset); // (we'll tweak constructor below)
+
+			auto normalizedCubeVerts = c.getCubeVerts();
+
+			CoordinateTransformer ct(normalizedCubeVerts);
+
+			auto screenSpaceCubeVerts = ct.getScreenSpaceVerts(zFar, zNear, screenWidth, screenHeight, fovY);
+
+			auto rasterPoints = c.rasterize(screenSpaceCubeVerts);
+
+			image.fillPixelMatrix(rasterPoints, colors[i]);
+		}
+		/*end loopy*/
+
+		image.saveAsPNG("ROW_of_cubes_" + Utils::getTimestampForFilename() + ".png");
 	}
 
 	catch (const MyException& e)

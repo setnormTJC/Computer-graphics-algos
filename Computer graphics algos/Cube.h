@@ -10,7 +10,7 @@ private:
 	std::vector<std::pair<int, int>> cubeEdgeIndices;
 
 public: 
-	Cube(); 
+	Cube(float xPos, float yPos, float scale, float zOffset);
 
 	std::vector<Vec4> getCubeVerts();
 	/*A la "index buffer"*/

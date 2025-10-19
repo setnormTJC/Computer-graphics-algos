@@ -1,18 +1,19 @@
 #include "Cube.h"
 
 
-Cube::Cube()
+Cube::Cube(float xPos, float yPos, float scale, float zOffset)
 {
-	float xMin = -1.0f;
-	float yMin = -1.0f;
-	float zMin = -2.0f;  //all vertices in front of camera MUST have z < 0
+	float xMin = -1.0f * scale + xPos;
+	float xMax = 1.0f * scale + xPos;
 
-	float xMax = 1.0f;
-	float yMax = 1.0f;
-	float zMax = -1.0f; 
+	float yMin = -1.0f * scale + yPos;
+	float yMax = 1.0f * scale + yPos;
 
-	float w = 1.0f; //misleading ... change this to just "w" -> w changes based on z
+	float zMin = -2.0f * scale + zOffset;  // behind front face
+	float zMax = -1.0f * scale + zOffset;  // closer face
 
+	float w = 1.0f; 
+	//etc.
 	//NORMALIZED
 	normalizedCubeVerts =
 	{
