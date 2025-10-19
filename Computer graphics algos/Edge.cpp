@@ -11,7 +11,9 @@ Edge::Edge(const Vec2& clientV1, const Vec2& clientV2)
 {
 	if (v1 == v2)
 	{
-		throw MyException("An edge cannot be made of 2 identical vertices", __LINE__, __FILE__);
+		__debugbreak(); 
+		std::cout << v1 << "->" << v2 << "\n";
+		//throw MyException("An edge cannot be made of 2 identical vertices", __LINE__, __FILE__);
 	}
 
 	//sort edges by y (make v1 have the lowest y-value)

@@ -1,5 +1,6 @@
 #include "Utils.h"
 #include <algorithm>
+#include "Cube.h"
 
 std::string Utils::getTimestampForFilename()
 {
@@ -58,3 +59,6 @@ std::array<Vec2, 2> Utils::getExtrema(const std::vector<Vec2>& verts)
 		return { { {xMin, yMin}, {xMax, yMax} } }; //again, silly double braces
 	}
 }
+
+
+

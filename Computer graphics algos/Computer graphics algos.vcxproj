@@ -127,7 +127,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CoordinateTransformer.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="GraphicsDemo.cpp" />
     <ClCompile Include="main.cpp" />
@@ -141,7 +143,9 @@
     <ClCompile Include="Vec4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="CoordinateTransformer.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="Edge.h" />
     <ClInclude Include="Mat4.h" />
     <ClInclude Include="MyException.h" />

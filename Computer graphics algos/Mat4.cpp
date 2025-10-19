@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "Mat4.h"
 
 #include<iomanip> 
@@ -84,6 +85,50 @@ Vec4 Mat4::operator*(const Vec4& rhs) const
     return newVec;
 }
 
+Mat4 Mat4::getProjectionMatrix(const float zFar, const float zNear, float fovY, float aspectRatio)
+{
+
+    if (zNear <= 0.0f || zFar <= 0.0f || zNear >= zFar)
+    {
+        throw MyException("Invalid zNear/zFar values. Must satisfy 0 < zNear < zFar.", __LINE__, __FILE__);
+    }
+
+    if (fovY <= 0.0f || fovY >= M_PI) //tan goes to infinity at multiples of pi/2
+    {
+        throw MyException("Invalid field of view. fovY must be in the range (0, ?) radians.", __LINE__, __FILE__);
+    }
+
+    if (aspectRatio <= 0.0f)
+    {
+        throw MyException("Aspect ratio must be positive.", __LINE__, __FILE__);
+    }
+
+    Mat4 projectionMatrix;
+
+    // Scale factors for x and y
+
+    float denom = std::tan(fovY * 0.5f); //multiply by 0.5 because tan(pi/4) = 1 (pi/2) -> 90 degree vertical FOV
+    float f = 1.0f / denom; // cotangent of half vertical FOV
+    
+    float a = f / aspectRatio;               // horizontal scaling
+    float b = f;                             // vertical scaling
+
+    // z-mapping to NDC [-1,1]
+    float c = -(zFar + zNear) / (zFar - zNear); //NO change to c and d compared to the other overload of this function 
+    float d = -(2.0f * zFar * zNear) / (zFar - zNear); //again, magic number 2 gives NDC -> [-1, 1] 
+
+    float e = -1.0f;
+
+    projectionMatrix = { {
+        {a,     0.0f,   0.0f,   0.0f},
+        {0.0f,  b,      0.0f,   0.0f},
+        {0.0f,  0.0f,   c,       d},
+        {0.0f,  0.0f,   e,       0.0f}
+    } };
+
+    return projectionMatrix;
+}
+
 Mat4 Mat4::getProjectionMatrix(const float zFar, const float zNear)
 {
     Mat4 projectionMatrix;
@@ -92,14 +137,18 @@ Mat4 Mat4::getProjectionMatrix(const float zFar, const float zNear)
     float b = 1.0f;
 
     float c = -(zFar + zNear) / (zFar - zNear);
-    float d = -(2.0f * zFar * zNear) / (zFar - zNear);
+    //float c = -(zFar) / (zFar - zNear);
+    float d = -(2.0f * zFar * zNear) / (zFar - zNear); //magic 2 has to do with NDC: [-1 to 1]
+    //float d = -(zFar * zNear) / (zFar - zNear);
+
+    float e = -1.0f;
 
     projectionMatrix =    
     { {
         {a,         0.0f,       0.0f,       0.0f},
         {0.0f,      b,          0.0f,       0.0f},
         {0.0f,      0.0f,       c,          d},
-        {0.0f,      0.0f,       -1.0f,      0.0f}
+        {0.0f,      0.0f,       e,          0.0f}
     } };
 
     return projectionMatrix;

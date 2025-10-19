@@ -91,9 +91,25 @@ void ImageBMP::fillPixelMatrix(const std::unordered_map<Vec2, Color>& pointsToCo
 			std::cout << point << " was out of the image's drawing box?\n";
 		}
 	}
-
-	//for (const auto& pixel : pixelsToColors.)
 }
+
+void ImageBMP::fillPixelMatrix(const std::vector<Vec2>& points, Color defaultColor)
+{
+	for (const auto& point : points)
+	{
+		if (point.y < pixelData.pixelMatrix.size() &&
+			point.x < pixelData.pixelMatrix[0].size())
+		{
+			pixelData.pixelMatrix[point.y][point.x] = defaultColor;
+		}
+
+		else
+		{
+			std::cout << point << " was out of the image's drawing box?\n";
+		}
+	}
+}
+
 
 void ImageBMP::saveAsPNG(const std::string& PNGfilename)
 {
@@ -135,8 +151,6 @@ ImageBMP::ImageBMP(unsigned int imageWidth, unsigned int imageHeight, const Colo
 	//NOTE: fileheader size should always be 14 (I think) 
 	fileHeader.fileSize = 14 + infoHeader.getInfoHeaderSize() + infoHeader.sizeOfPixelData;
 
-
-
 	//fill pixelData with given fill color:
 	for (unsigned int row = 0; row < imageHeight; ++row)
 	{
@@ -152,6 +166,31 @@ ImageBMP::ImageBMP(unsigned int imageWidth, unsigned int imageHeight, const Colo
 ImageBMP::ImageBMP(const string& filepath)
 {
 	readImageBMP(filepath);
+}
+
+ImageBMP::ImageBMP(const std::vector<Vec2>& points, Color bgrdColor)
+{
+	auto boundingBox = Utils::getExtrema(points);
+	const int PADDING = 2;
+
+	int imageWidth = boundingBox[1].x - boundingBox[0].x + PADDING;
+	int imageHeight = boundingBox[1].y - boundingBox[0].y + PADDING;
+
+	infoHeader.imageWidth = imageWidth;
+	infoHeader.imageHeight = imageHeight;
+	infoHeader.sizeOfPixelData = imageWidth * imageHeight * (infoHeader.bitsPerPixel / 8);
+
+	fileHeader.fileSize = 14 + infoHeader.getInfoHeaderSize() + infoHeader.sizeOfPixelData;
+
+	for (unsigned int row = 0; row < imageHeight; ++row)
+	{
+		vector<Color> currentRow;
+		for (unsigned int col = 0; col < imageWidth; ++col)
+		{
+			currentRow.push_back(bgrdColor);
+		}
+		pixelData.pixelMatrix.push_back(currentRow);
+	}
 }
 
 void ImageBMP::readImageBMP(string inputFilename)

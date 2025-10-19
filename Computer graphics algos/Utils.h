@@ -2,8 +2,10 @@
 
 #include<array>
 #include<string> 
+#include<vector> 
 
 #include"Vec2.h"
+#include"Vec4.h"
 
 
 namespace Utils

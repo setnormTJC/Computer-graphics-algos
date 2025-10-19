@@ -1,34 +1,73 @@
 #include "CoordinateTransformer.h"
+#include "MyException.h"
 
 CoordinateTransformer::CoordinateTransformer(const std::vector<Vec4>& normalizedVerts)
-	:normalizedVerts(normalizedVerts)
+	:verts(normalizedVerts)
 {
 }
 
-std::vector<Vec2> CoordinateTransformer::getScreenSpaceVerts(const float zFar, float zNear, const int screenWidth, const int screenHeight)
+void CoordinateTransformer::projectVerts(const float zFar, const float zNear, const float fovY)
 {
-	auto projectionMatrix = Mat4::getProjectionMatrix(zFar, zNear);
+	//auto projectionMatrix = Mat4::getProjectionMatrix(zFar, zNear);
 
-	for (auto& vert : normalizedVerts) //not const 
+	auto projectionMatrix = Mat4::getProjectionMatrix(zFar, zNear, fovY);
+
+
+	constexpr float epsilon = 1e-4; //tolerance for floating point comparison
+
+	if (std::fabs(zNear - 0.0f) < epsilon)
 	{
+		throw MyException("zNear was within 0.0001 of 0.0", __LINE__, __FILE__);
+	}
+
+	if (zNear < 0.0f)
+	{
+		throw MyException("zNear cannot be < 0", __LINE__, __FILE__); 
+	}
+
+	for (auto& vert : verts) //not const 
+	{
+		if (abs(vert.z) < zNear)
+		{
+			std::cout << vert << " will be clipped\n";
+		}
 		vert = projectionMatrix * vert;
-		vert.x /= vert.w;
+		//"perspective divide" -> THIS is where points further away get "pushed back"
+		vert.x /= vert.w; 
 		vert.y /= vert.w;
 		vert.z /= vert.w;
 	}
+}
 
-	/*What gets passed to ImageBMP constructor:*/
-	std::vector<Vec2> screenSpaceCubeVerts;
+Vec2 CoordinateTransformer::ndcToScreen(const Vec4& v, int screenWidth, int screenHeight)
+{
+	//(vert.x + 1) maps[-1, 1] to [0, 2]
+	//multiplying by 0.5f maps[0, 2] tp [0, 1]  "normalized screen coordinates"
+	//multiplying by screenWidth maps[0, 1]  to [0, screenWidth]  "pixel coordinates"
+	
+	int x = static_cast<int>(std::round((v.x + 1.0f)*0.5f * screenWidth)); 
+	int y = static_cast<int>(std::round((1.0f - (v.y + 1.0f) * 0.5f) * screenHeight));
+
+	//the 1.0f - ... is used because y = 0 is typically at the TOP of the screen from image formats
+	//but y = -1 is the BOTTOM in NDC coordinates 
+
+	return Vec2(x, y);
+}
 
 
-	for (const auto& vert : normalizedVerts)
+std::vector<Vec2> CoordinateTransformer::getScreenSpaceVerts(const float zFar, const float zNear, const int screenWidth,
+	const int screenHeight, const float fovY)
+{
+	projectVerts(zFar, zNear, fovY);
+
+	std::vector<Vec2> screenSpaceVerts;
+	screenSpaceVerts.reserve(verts.size()); 
+
+	for (const auto& vert : verts)
 	{
-		Vec2 v;
-		v.x = (int)((vert.x + 1.0f) * 0.5f * screenWidth);
-		v.y = (int)((1.0f - (vert.y + 1.0f) * 0.5f) * screenHeight); // flip Y
-
-		screenSpaceCubeVerts.push_back(v);
+		Vec2 v = ndcToScreen(vert, screenWidth, screenHeight);
+		screenSpaceVerts.push_back(v);
 	}
 
-	return screenSpaceCubeVerts;
+	return screenSpaceVerts;
 }

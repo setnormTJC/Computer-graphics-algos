@@ -14,6 +14,7 @@
 #include<unordered_map>
 #include <vector>
 
+#include"Utils.h"
 #include"Vec2.h"
 
 
@@ -196,11 +197,16 @@ public:
 
 	ImageBMP(const string& filepath);
 
-	/*BMP is uncompressed - filesize may be LARGE*/
-	void saveAsBMP(std::string filename);
+	ImageBMP(const std::vector<Vec2>& points, Color bgrdColor = ColorEnum::Black);
 
 	/*OBSERVE the "switched" x and y coordinates in the update to `pixelMatrix` in this function definition!*/
 	void fillPixelMatrix(const std::unordered_map<Vec2, Color>& pointsToColors);
+	
+	/*An overload that sets default color of all pixels (which can be changed, if desired)*/
+	void fillPixelMatrix(const std::vector<Vec2>& points, Color defaultColor = ColorEnum::Magenta);
+
+	/*BMP is uncompressed - filesize may be LARGE*/
+	void saveAsBMP(std::string filename);
 
 	/*requires stb_image_write.h from: https://github.com/nothings/stb
 	* PNG file sizes can potentially be much (100x) smaller than BMP
