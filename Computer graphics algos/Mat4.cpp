@@ -129,6 +129,29 @@ Mat4 Mat4::getProjectionMatrix(const float zFar, const float zNear, float fovY, 
     return projectionMatrix;
 }
 
+Mat4 Mat4::getViewMatrix(const Vec4& eye, const Vec4& target, const Vec4& up)
+{
+    auto temp1 = (target - eye); 
+    auto forward = temp1.normalize(); 
+    
+    auto temp2 = forward.cross(up); 
+    auto right = temp2.normalize(); 
+
+    auto trueUp = right.cross(forward); 
+
+    Mat4 viewMatrix; //Mat4 is std::array<std::array<float, 4>, 4>>
+    
+    viewMatrix.elements =
+    { {
+        {right.x,       right.y,    right.z,        -right.dot(eye)},
+        {trueUp.x,      trueUp.y,   trueUp.z,       -trueUp.dot(eye)},
+        {-forward.x,    -forward.y, -forward.z,     forward.dot(eye)},
+        {0.0f,          0.0f,       0.0f,           1.0f},
+    } };
+
+    return viewMatrix;
+}
+
 Mat4 Mat4::getProjectionMatrix(const float zFar, const float zNear)
 {
     Mat4 projectionMatrix;

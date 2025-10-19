@@ -3,8 +3,11 @@
 #define _USE_MATH_DEFINES
 
 #include<array> 
-#include <iostream>
-#include <vector>
+#include<chrono>
+#include<fstream> 
+#include<iostream>
+#include<thread> 
+#include<vector>
 
 #include"Edge.h"
 #include"GraphicsDemo.h"
@@ -16,8 +19,9 @@
 #include"Utils.h"
 #include "Vec4.h"
 #include "Mat4.h"
-#include "CoordinateTransformer.h"
+//#include "CoordinateTransformer.h"
 #include "Cube.h"
+#include "Camera.h"
 
 
 
@@ -27,36 +31,42 @@ int main()
 	{
 		constexpr int screenWidth = 500;
 		constexpr int screenHeight = 500;
-		ImageBMP image(screenWidth, screenHeight, ColorEnum::Black);
+		
 
-		float zFar = 3.0f; 
-		float zNear = 1.0f; 
-		float fovY = M_PI / 2; 
+		Cube cube{}; 
 
-		auto colors = Color::getBroadColorPalette(); 
-		/*Loopy*/
-		for (int i = 0; i < 5; ++i)
+		auto cubeVerts = cube.getCubeVerts();
+
+		float fovY = (M_PI / 2);
+		Camera camera(fovY);
+
+		int loopCount = 0; 
+		while (true)
 		{
-			float xPos = -1.2f + 0.9f * i;  // spread along x-axis
-			float yPos = 0.0f;              // all centered vertically
-			float zOffset = -1.5f - i * 1.0f; // step farther back each time
-			float scale = 0.3f;             // uniform scale for clarity
+			auto currentEyePos = camera.getEyePosition(); 
 
-			Cube c(xPos, yPos, scale, zOffset); // (we'll tweak constructor below)
+			float delta = 1.0f; 
 
-			auto normalizedCubeVerts = c.getCubeVerts();
+			Vec4 newEyePos(currentEyePos.x + delta, currentEyePos.y, currentEyePos.z, 1.0f);
+			//moves camera along positive X axis delta units every 5 seconds (see sleep below)
 
-			CoordinateTransformer ct(normalizedCubeVerts);
+			camera.setEyePosition(newEyePos);
+			auto screenSpaceCubeVerts = camera.projectToScreen(cubeVerts, screenWidth, screenHeight);
 
-			auto screenSpaceCubeVerts = ct.getScreenSpaceVerts(zFar, zNear, screenWidth, screenHeight, fovY);
+			auto rasterPoints = cube.rasterize(screenSpaceCubeVerts);
+			
+			
+			ImageBMP image(screenWidth, screenHeight, ColorEnum::Black);
 
-			auto rasterPoints = c.rasterize(screenSpaceCubeVerts);
+			image.fillPixelMatrix(rasterPoints, ColorEnum::Purple);
 
-			image.fillPixelMatrix(rasterPoints, colors[i]);
+			image.saveAsPNG("Camera_based_cube" + Utils::getTimestampForFilename() + ".png");
+			camera.logCameraInfo("CameraLog" + Utils::getTimestampForFilename() + ".log");
+
+			loopCount++; 
+
+			std::this_thread::sleep_for(std::chrono::seconds(5));
 		}
-		/*end loopy*/
-
-		image.saveAsPNG("ROW_of_cubes_" + Utils::getTimestampForFilename() + ".png");
 	}
 
 	catch (const MyException& e)

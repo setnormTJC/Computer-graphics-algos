@@ -6,6 +6,11 @@ Vec4::Vec4(const float x, const float y, const float z, const float w)
 {
 }
 
+std::ostream& operator<<(std::ostream& os, const Vec4& v)
+{
+	os << "(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")";
+	return os;
+}
 
 
 Vec2 Vec4::xy()
@@ -13,7 +18,7 @@ Vec2 Vec4::xy()
 	return Vec2(x,y);
 }
 
-bool Vec4::operator==(const Vec4& rhs)
+bool Vec4::operator==(const Vec4& rhs) const
 {
 	constexpr float epsilon = 1e-4; //tolerance for floating point comparison
 
@@ -23,13 +28,15 @@ bool Vec4::operator==(const Vec4& rhs)
 		std::fabs(w - rhs.w) < epsilon;
 }
 
-Vec4& Vec4::operator*(const float& rhs)
+
+
+Vec4& Vec4::operator*(const float& rhs) const
 {
 	Vec4 scalarMultiple = { x * rhs, y * rhs, z * rhs, w * rhs };
 	return scalarMultiple;
 }
 
-float Vec4::operator*(const Vec4& rhs)
+float Vec4::operator*(const Vec4& rhs) const
 {
 	float dotProduct =
 		(x * rhs.x) + (y * rhs.y) + (z * rhs.z) + (w * rhs.w);
@@ -56,9 +63,41 @@ float& Vec4::operator[](const int pos)
 }
 
 
+/*New guys:*/
 
-std::ostream& operator<<(std::ostream& os, const Vec4& v)
+Vec4 Vec4::operator-(const Vec4& rhs) const
 {
-	os << "(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")"; 
-	return os; 
+	return { (x - rhs.x), (y - rhs.y), (z - rhs.z), 0.0f };
 }
+
+float Vec4::getMagnitude() const
+{
+	return sqrt(x * x + y * y + z * z); //ignore w 
+}
+
+Vec4 Vec4::normalize() const
+{
+	float magnitude = getMagnitude(); 
+	
+	return { x / magnitude, y / magnitude, z / magnitude, 0.0f };
+}
+
+
+Vec4 Vec4::cross(const Vec4& rhs) const
+{
+	//see "Matrix notation" section of: https://en.wikipedia.org/wiki/Cross_product#Computing	
+	auto firstTerm = (y * rhs.z) - (z * rhs.y); 
+	auto secondTerm = (z * rhs.x) - (x * rhs.z); 
+	auto thirdTerm = (x * rhs.y) - (y * rhs.x);
+
+	//NOTE: cross product is defined for 3D vector - not a Vec4 - set w = 0.0f 
+	Vec4 crossProduct = { firstTerm, secondTerm, thirdTerm, 0.0f };
+	return crossProduct;
+}
+
+float Vec4::dot(const Vec4& rhs) const
+{
+	return x * rhs.x + y * rhs.y + z*rhs.z + 0.0f;
+}
+
+

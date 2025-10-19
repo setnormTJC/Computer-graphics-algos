@@ -145,9 +145,10 @@ void ImageBMP::saveAsPNG(const std::string& PNGfilename)
 
 ImageBMP::ImageBMP(unsigned int imageWidth, unsigned int imageHeight, const Color& fillColor)
 {
-	infoHeader.imageWidth = imageWidth;
-	infoHeader.imageHeight = imageHeight;
-	infoHeader.sizeOfPixelData = imageWidth * imageHeight * (infoHeader.bitsPerPixel / 8);
+	constexpr int PADDING = 1; 
+	infoHeader.imageWidth = imageWidth + 1;
+	infoHeader.imageHeight = imageHeight + 1;
+	infoHeader.sizeOfPixelData = infoHeader.imageWidth * infoHeader.imageHeight * (infoHeader.bitsPerPixel / 8);
 	//NOTE: fileheader size should always be 14 (I think) 
 	fileHeader.fileSize = 14 + infoHeader.getInfoHeaderSize() + infoHeader.sizeOfPixelData;
 
@@ -171,7 +172,7 @@ ImageBMP::ImageBMP(const string& filepath)
 ImageBMP::ImageBMP(const std::vector<Vec2>& points, Color bgrdColor)
 {
 	auto boundingBox = Utils::getExtrema(points);
-	const int PADDING = 2;
+	const int PADDING = 0;
 
 	int imageWidth = boundingBox[1].x - boundingBox[0].x + PADDING;
 	int imageHeight = boundingBox[1].y - boundingBox[0].y + PADDING;

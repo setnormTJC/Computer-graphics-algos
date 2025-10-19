@@ -1,6 +1,41 @@
 #include "Cube.h"
 
 
+Cube::Cube()
+{
+	float xLeft = -1.0f; 
+	float xRight = +1.0f; 
+
+	float yBottom = -1.0f; 
+	float yTop = 1.0f; 
+
+	float zBack = -2.0f; 
+	float zFront = zBack + 1.0f; 
+
+	float w = 1.0f; 
+
+	localCubeVerts =
+	{
+		{xLeft, yBottom, zBack, w},
+		{xLeft, yTop, zBack, w},
+		{xRight, yBottom, zBack, w},
+		{xRight, yTop, zBack, w},
+
+		{xLeft, yBottom, zFront, w},
+		{xLeft, yTop, zFront, w},
+		{xRight, yBottom, zFront, w},
+		{xRight, yTop, zFront, w}
+	};
+
+	cubeEdgeIndices =
+	{
+		{0,1}, {0,2}, {1,3}, {2,3}, // back face
+		{4,5}, {4,6}, {5,7}, {6,7}, // front face
+		{0,4}, {1,5}, {2,6}, {3,7}  // connecting edges
+	};
+
+}
+
 Cube::Cube(float xPos, float yPos, float scale, float zOffset)
 {
 	float xMin = -1.0f * scale + xPos;
@@ -15,7 +50,7 @@ Cube::Cube(float xPos, float yPos, float scale, float zOffset)
 	float w = 1.0f; 
 	//etc.
 	//NORMALIZED
-	normalizedCubeVerts =
+	localCubeVerts =
 	{
 		{xMin, yMin, zMin, w}, //back bottom left
 		{xMin, yMax, zMin, w}, //back top left
@@ -39,7 +74,7 @@ Cube::Cube(float xPos, float yPos, float scale, float zOffset)
 
 std::vector<Vec4> Cube::getCubeVerts()
 {
-	return normalizedCubeVerts;
+	return localCubeVerts;
 }
 
 

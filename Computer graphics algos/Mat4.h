@@ -32,7 +32,14 @@ public:
 	* @param fovY  -> set to M_PI/2 usually; example use: zooming in should DECREASE this value (to a minimum of 0.0 - lest the object FLIPS!)
 	*/
 	static Mat4 getProjectionMatrix(const float zFar, const float zNear, float fovY, float aspectRatio = 1.0f);
-
+	
+	/*@brief The "view" matrix essentially controls where the camera points
+	* @param eye -> the position of the camera; ex: {0, 0, 0, 1}
+	* @param target -> the spot to look at; ex: {0, 0, -1, 1}
+	* @param up -> which way is up for the camera; conventionally = {0, 1, 0, 0} (positive y -axis is up)
+	* @returns the simple IDENTITY matrix for the above inputs*/
+	static Mat4 getViewMatrix(const Vec4& eye, const Vec4& target, const Vec4& up);
+	
 	/**
  * @brief Generates a standard right-handed perspective projection matrix.
  * @param zFar  Positive distance from the camera to the far clipping plane.
