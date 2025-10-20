@@ -1,37 +1,54 @@
 #include "Cube.h"
 
 
+#pragma region Cube 
 Cube::Cube()
 {
-	float xLeft = -0.25f; 
-	float xRight = +0.25f; 
+	float xLeft = 0.0f; 
+	float xRight = +1.0f; 
 
-	float yBottom = -0.25f; 
-	float yTop = 0.25f; 
+	float yBottom = 0.0f; 
+	float yTop = 1.0f; 
 
 	float zBack = -2.0f; 
 	float zFront = zBack + 1.0f; 
 
 	float w = 1.0f; 
 
-	localCubeVerts =
-	{
-		{xLeft, yBottom, zBack, w},
-		{xLeft, yTop, zBack, w},
-		{xRight, yBottom, zBack, w},
-		{xRight, yTop, zBack, w},
+	//localCubeVerts =
+	//{
+	//	{xLeft, yBottom, zBack, w},
+	//	{xLeft, yTop, zBack, w},
+	//	{xRight, yBottom, zBack, w},
+	//	{xRight, yTop, zBack, w},
 
-		{xLeft, yBottom, zFront, w},
-		{xLeft, yTop, zFront, w},
-		{xRight, yBottom, zFront, w},
-		{xRight, yTop, zFront, w}
+	//	{xLeft, yBottom, zFront, w},
+	//	{xLeft, yTop, zFront, w},
+	//	{xRight, yBottom, zFront, w},
+	//	{xRight, yTop, zFront, w}
+	//};
+
+	//NOTE: this is a tetrahedron - just a temporary change
+	localCubeVerts = 
+	{
+		Vec4(1.0f, 1.0f, 1.0f, 1.0f),
+		Vec4(-1.0f, -1.0f, 1.0f, 1.0f),
+		Vec4(-1.0f, 1.0f, -1.0f, 1.0f),
+		Vec4(1.0f, -1.0f, -1.0f, 1.0f)
 	};
 
+	//cubeEdgeIndices =
+	//{
+	//	{0,1}, {0,2}, {1,3}, {2,3}, // back face
+	//	{4,5}, {4,6}, {5,7}, {6,7}, // front face
+	//	{0,4}, {1,5}, {2,6}, {3,7}  // connecting edges
+	//};
+
+	//tetrahedron vertices - just a temp. change
 	cubeEdgeIndices =
 	{
-		{0,1}, {0,2}, {1,3}, {2,3}, // back face
-		{4,5}, {4,6}, {5,7}, {6,7}, // front face
-		{0,4}, {1,5}, {2,6}, {3,7}  // connecting edges
+		{0,1}, {0,2}, {0,3},
+		{1,2}, {1, 3}, {2, 3}
 	};
 
 }
@@ -104,4 +121,32 @@ std::vector<Vec2> Cube::rasterize(const std::vector<Vec2>& screenVerts)
 		rasterPoints.insert(rasterPoints.end(), line.begin(), line.end());
 	}
 	return rasterPoints;
+}
+
+std::unordered_map<Vec2, Color> Cube::rasterize(const std::vector<Vec2>& screenVerts, 
+	const std::vector<Color>& colors)
+{
+	std::unordered_map<Vec2, Color> positionsToColors; 
+
+	auto edges = getCubeEdges(screenVerts); 
+
+	for (int i = 0; i < edges.size(); ++i)
+	{
+		auto line = edges[i].getPointsOfLineSegment();
+
+		Color currentColor = colors[i % colors.size()];
+
+		for (const auto& pointOfLine : line)
+		{
+			positionsToColors.insert({ pointOfLine, currentColor });
+		}
+	}
+	return positionsToColors;
+}
+
+#pragma endregion
+
+std::vector<Vec4> Polyhedron::getVerticesFromBlenderObjFile(const std::string& blenderFilename)
+{
+	return std::vector<Vec4>();
 }

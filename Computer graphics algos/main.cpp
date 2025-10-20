@@ -41,9 +41,9 @@ int main()
 		/*Construct a Mesh that (possibly) applies transformations (rot, scale, trans) on the cube
 		* - this converts from "local" to "world" coordinates
 		*/
-		Vec4 rot(0.0f, M_PI/4, 0.0f, 0.0f); //units: radians, rotate about y-axis 45 degrees (w = 0.0f here?) 
+		Vec4 rot(M_PI / 4, M_PI/6, M_PI/5, 0.0f); //units: radians, rotate about y-axis 45 degrees (w = 0.0f here?) 
 		Vec4 scale(1.0f, 1.0f, 1.0f, 0.0f); //again, not sure if w = 0.0f or 1.0f here 
-		Vec4 trans(1.0f, 0.0f, -2.0f, 1.0f); //ensure that z < 0.0f  (default camera pos) for zInit + zTrans
+		Vec4 trans(0.0f, 0.0f, -3.0f, 1.0f); //ensure that z < 0.0f  (default camera pos) for zInit + zTrans
 
 		Mesh mesh(localCubeVerts, trans, rot, scale);
 
@@ -54,12 +54,20 @@ int main()
 
 		auto screenSpaceCubeVerts = camera.projectToScreen(worldCubeVerts, screenWidth, screenHeight);
 
-		auto rasterPoints = cube.rasterize(screenSpaceCubeVerts);
+		std::vector<Color> colors; 
+		auto colorEnums = Color::getGrayColorPalette(); 
+		for (const auto& current : colorEnums)
+		{
+			colors.push_back(Color(current));
+		}
+		//auto rasterPoints = cube.rasterize(screenSpaceCubeVerts);
+		auto rasteredPixels = cube.rasterize(screenSpaceCubeVerts, colors);
 
+		ImageBMP image(screenWidth, screenHeight, ColorEnum::Pink);
 
-		ImageBMP image(screenWidth, screenHeight, ColorEnum::Black);
+		//image.fillPixelMatrix(rasteredPoints, ColorEnum::Purple);
 
-		image.fillPixelMatrix(rasterPoints, ColorEnum::Purple);
+		image.fillPixelMatrix(rasteredPixels);
 
 		image.saveAsPNG("Cube_with_transformations_" + Utils::getTimestampForFilename() + ".png");
 		//camera.logCameraInfo("CameraLog" + Utils::getTimestampForFilename() + ".log");			

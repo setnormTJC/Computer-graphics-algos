@@ -6,6 +6,7 @@
 #include "Mat4.h"
 #include"MyException.h"
 
+/*Class name was not my idea - not the most clear*/
 class Mesh
 {
 	Vec4 trans; 
