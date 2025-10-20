@@ -42,5 +42,9 @@ public:
 private: 
 	/*Helper called by `projectToScreen`*/
 	Vec2 ndcToScreen(const Vec4& v, int screenWidth, int screenHeight);
+
+	void applyPerspectiveDivide(std::vector<Vec4>& vpVerts); 
+
+	std::vector<Vec4> multiplyByViewProjectionVerts(const std::vector<Vec4>& worldSpaceCoords);
 };
 

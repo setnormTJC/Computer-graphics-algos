@@ -31,22 +31,43 @@ int main()
 	{
 		constexpr int screenWidth = 500;
 		constexpr int screenHeight = 500;
-		
-		Cube cube{}; 
+
+
+		Cube cube{};
 
 		auto cubeVerts = cube.getCubeVerts();
 
-		Camera camera;
+		float fovY = (M_PI / 2);
+		Camera camera(fovY);
 
-		auto screenSpaceCubeVerts = camera.projectToScreen(cubeVerts, screenWidth, screenHeight);
+		int loopCount = 0;
+		while (true)
+		{
+			auto currentEyePos = camera.getEyePosition();
 
-		auto rasterPoints = cube.rasterize(screenSpaceCubeVerts);
-			
-		ImageBMP image(screenWidth, screenHeight, ColorEnum::Black);
+			float delta = 1.0f;
 
-		image.fillPixelMatrix(rasterPoints, ColorEnum::Purple);
+			Vec4 newEyePos(currentEyePos.x + delta, currentEyePos.y, currentEyePos.z, 1.0f);
+			//moves camera along positive X axis delta units every 5 seconds (see sleep below)
 
-		image.saveAsPNG("Camera_based_cube" + Utils::getTimestampForFilename() + ".png");
+			camera.setEyePosition(newEyePos);
+			auto screenSpaceCubeVerts = camera.projectToScreen(cubeVerts, screenWidth, screenHeight);
+
+			auto rasterPoints = cube.rasterize(screenSpaceCubeVerts);
+
+
+			ImageBMP image(screenWidth, screenHeight, ColorEnum::Black);
+
+			image.fillPixelMatrix(rasterPoints, ColorEnum::Purple);
+
+			image.saveAsPNG("Camera_based_cube" + Utils::getTimestampForFilename() + ".png");
+			camera.logCameraInfo("CameraLog" + Utils::getTimestampForFilename() + ".log");
+
+			loopCount++;
+
+			std::this_thread::sleep_for(std::chrono::seconds(5));
+		}
+
 
 	}
 

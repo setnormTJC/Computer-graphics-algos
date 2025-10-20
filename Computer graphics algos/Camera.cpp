@@ -20,36 +20,11 @@ Camera::Camera(float fovY, float aspectRatio)
 
 std::vector<Vec2> Camera::projectToScreen(const std::vector<Vec4>& worldSpaceCoords, int screenWidth, int screenHeight)
 {
-	auto viewMatrix = Mat4::getViewMatrix(eye, target, up);
-	//auto view(orCamera)SpaceCoords = viewMatrix * worldSpaceCoords; //just for my understanding of terminology
-
-	auto projectionMatrix = Mat4::getProjectionMatrix(zFar, zNear, fovY, aspectRatio);
-
-	Mat4 viewProjectionProduct = projectionMatrix * viewMatrix; //recall: order must be PVM (not MVP)
-
 	/*vp-> viewprojection*/
-	std::vector<Vec4> vpVerts; 
-	vpVerts.reserve(worldSpaceCoords.size());
-
-	for (const auto& vert : worldSpaceCoords)
-	{
-		auto temp = viewProjectionProduct * vert;
-		vpVerts.push_back(temp); 
-	}
+	std::vector<Vec4> vpVerts = multiplyByViewProjectionVerts(worldSpaceCoords); 
 	
 	//perspective divide
-	for (auto& vert : vpVerts) //not const 
-	{
-		if (abs(vert.z) < zNear)
-		{
-			std::cout << vert << " will be clipped\n";
-		}
-		vert = projectionMatrix * vert;
-		//"perspective divide" -> THIS is where points further away get "pushed back"
-		vert.x /= vert.w; 
-		vert.y /= vert.w;
-		vert.z /= vert.w;
-	}
+	applyPerspectiveDivide(vpVerts);
 
 	std::vector<Vec2> screenSpaceVerts;
 	screenSpaceVerts.reserve(worldSpaceCoords.size()); 
@@ -110,4 +85,42 @@ Vec2 Camera::ndcToScreen(const Vec4& v, int screenWidth, int screenHeight)
 	
 
 	return Vec2(x, y);
+}
+
+void Camera::applyPerspectiveDivide(std::vector<Vec4>& vpVerts)
+{
+	for (auto& vert : vpVerts) //not const 
+	{
+		if (abs(vert.z) < zNear)
+		{
+			std::cout << vert << " will be clipped\n";
+		}
+
+		//"perspective divide" -> THIS is where points further away get "pushed back"
+		vert.x /= vert.w;
+		vert.y /= vert.w;
+		vert.z /= vert.w;
+	}
+}
+
+std::vector<Vec4> Camera::multiplyByViewProjectionVerts(const std::vector<Vec4>& worldSpaceCoords)
+{
+	auto viewMatrix = Mat4::getViewMatrix(eye, target, up);
+	//auto view(orCamera)SpaceCoords = viewMatrix * worldSpaceCoords; //just for my understanding of terminology
+
+	auto projectionMatrix = Mat4::getProjectionMatrix(zFar, zNear, fovY, aspectRatio);
+
+	Mat4 viewProjectionProduct = projectionMatrix * viewMatrix; //recall: order must be PVM (not MVP)
+
+	std::vector<Vec4> vpVerts; 
+
+	vpVerts.reserve(worldSpaceCoords.size());
+
+	for (const auto& vert : worldSpaceCoords)
+	{
+		auto temp = viewProjectionProduct * vert;
+		vpVerts.push_back(temp);
+	}
+
+	return vpVerts; 
 }
