@@ -31,11 +31,29 @@ Cube::Cube()
 	//NOTE: this is a tetrahedron - just a temporary change
 	localCubeVerts = 
 	{
-		Vec4(1.0f, 1.0f, 1.0f, 1.0f),
-		Vec4(-1.0f, -1.0f, 1.0f, 1.0f),
-		Vec4(-1.0f, 1.0f, -1.0f, 1.0f),
-		Vec4(1.0f, -1.0f, -1.0f, 1.0f)
+		Vec4(1.0f, 1.0f, 1.0f, 1.0f), //top
+		Vec4(-1.0f, -1.0f, 1.0f, 1.0f), //left bottom front
+		Vec4(-1.0f, 1.0f, -1.0f, 1.0f),//left top back
+		Vec4(1.0f, -1.0f, -1.0f, 1.0f) //right bottom back
 	};
+
+
+
+	//now a "mystery object"
+
+	//localCubeVerts =
+	//{
+	//	Vec4(-1.0f, 0.0f, 0.0f, 1.0f),
+	//	Vec4(1.0f, 0.0f, 0.0f, 1.0f),
+	//	Vec4(0.0f, 1.0f, 0.0f, 1.0f),
+	//	Vec4(0.0f, -1.0f, 0.0f, 1.0f),
+	//	Vec4(0.0f, 0.0f, 1.0f, 1.0f),
+	//	Vec4(0.0f, 0.0f, -1.0f, 1.0f),
+	//	Vec4(0.5f, 0.5f, 0.5f, 1.0f),
+	//	Vec4(-0.5f, -0.5f, 0.5f, 1.0f),
+	//	Vec4(-0.5f, 0.5f, -0.5f, 1.0f),
+	//	Vec4(0.5f, -0.5f, -0.5f, 1.0f)
+	//};
 
 	//cubeEdgeIndices =
 	//{
@@ -51,6 +69,20 @@ Cube::Cube()
 		{1,2}, {1, 3}, {2, 3}
 	};
 
+	faceIndices = {
+		{0, 1, 2}, // top-left-front triangle
+		{0, 1, 3}, // top-left-back triangle
+		{0, 2, 3}, // top-right-back triangle
+		{1, 2, 3}  // bottom triangle
+	};
+
+	//cubeEdgeIndices = 
+	//{
+	//	{ 0,2 }, { 0,3 }, { 0,4 }, { 0,5 },
+	//	{ 1,2 }, { 1,3 }, { 1,4 }, { 1,5 },
+	//	{ 2,4 }, { 2,5 }, { 3,4 }, { 3,5 },
+	//	{ 6,7 }, { 7,8 }, { 8,9 }
+	//};
 }
 
 Cube::Cube(float xPos, float yPos, float scale, float zOffset)
@@ -109,6 +141,24 @@ std::vector<Edge> Cube::getCubeEdges(const std::vector<Vec2>& screenSpaceCubeVer
 	return edges; 
 }
 
+std::vector<Triangle> Cube::getFaces(const std::vector<Vec2>& screenSpaceVerts) const
+{
+	std::vector<Triangle> faces; 
+
+	for (const auto& index : faceIndices)
+	{
+		std::array<Vec2, 3> verts =
+		{
+			screenSpaceVerts[index[0]],
+			screenSpaceVerts[index[1]],
+			screenSpaceVerts[index[2]]
+		};
+		faces.push_back(verts);
+	}
+
+	return faces; 
+}
+
 std::vector<Vec2> Cube::rasterize(const std::vector<Vec2>& screenVerts)
 {
 	std::vector<Vec2> rasterPoints; 
@@ -142,6 +192,26 @@ std::unordered_map<Vec2, Color> Cube::rasterize(const std::vector<Vec2>& screenV
 		}
 	}
 	return positionsToColors;
+}
+
+std::unordered_map<Vec2, Color> Cube::filledRasterize(const std::vector<Vec2>& screenVerts, const std::vector<Color>& colors)
+{
+	std::unordered_map<Vec2, Color> positionsToColors;
+
+	auto faces = getFaces(screenVerts); 
+
+	for (int i = 0; i < faces.size(); ++i)
+	{
+		auto points = faces[i].getPointsThatFillTriangle(); 
+		Color currentColor = colors[i % colors.size()];
+
+		for (const auto& point : points)
+		{
+			positionsToColors.insert({ point, currentColor });
+		}
+	}
+
+	return positionsToColors; 
 }
 
 #pragma endregion
