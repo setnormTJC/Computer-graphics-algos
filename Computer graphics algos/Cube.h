@@ -18,7 +18,7 @@ public:
 	@param zOffset -> this calculates "zMax", zMax (AKA: zNear) MUST be > 0*/
 	Cube(float xPos, float yPos, float scale, float zOffset);
 
-	std::vector<Vec4> getCubeVerts();
+	std::vector<Vec4> getLocalCubeVerts();
 	/*A la "index buffer"*/
 
 	std::vector<Vec2> rasterize(const std::vector<Vec2>& screenVerts);

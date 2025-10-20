@@ -22,6 +22,7 @@
 //#include "CoordinateTransformer.h"
 #include "Cube.h"
 #include "Camera.h"
+#include "Mesh.h"
 
 
 
@@ -35,40 +36,33 @@ int main()
 
 		Cube cube{};
 
-		auto cubeVerts = cube.getCubeVerts();
+		std::vector<Vec4> localCubeVerts = cube.getLocalCubeVerts();
+
+		/*Construct a Mesh that (possibly) applies transformations (rot, scale, trans) on the cube
+		* - this converts from "local" to "world" coordinates
+		*/
+		Vec4 rot(0.0f, M_PI/4, 0.0f, 0.0f); //units: radians, rotate about y-axis 45 degrees (w = 0.0f here?) 
+		Vec4 scale(1.0f, 1.0f, 1.0f, 0.0f); //again, not sure if w = 0.0f or 1.0f here 
+		Vec4 trans(1.0f, 0.0f, -2.0f, 1.0f); //ensure that z < 0.0f  (default camera pos) for zInit + zTrans
+
+		Mesh mesh(localCubeVerts, trans, rot, scale);
+
+		std::vector<Vec4> worldCubeVerts = mesh.applyModelMatrix(); 
 
 		float fovY = (M_PI / 2);
 		Camera camera(fovY);
 
-		int loopCount = 0;
-		while (true)
-		{
-			auto currentEyePos = camera.getEyePosition();
+		auto screenSpaceCubeVerts = camera.projectToScreen(worldCubeVerts, screenWidth, screenHeight);
 
-			float delta = 1.0f;
-
-			Vec4 newEyePos(currentEyePos.x + delta, currentEyePos.y, currentEyePos.z, 1.0f);
-			//moves camera along positive X axis delta units every 5 seconds (see sleep below)
-
-			camera.setEyePosition(newEyePos);
-			auto screenSpaceCubeVerts = camera.projectToScreen(cubeVerts, screenWidth, screenHeight);
-
-			auto rasterPoints = cube.rasterize(screenSpaceCubeVerts);
+		auto rasterPoints = cube.rasterize(screenSpaceCubeVerts);
 
 
-			ImageBMP image(screenWidth, screenHeight, ColorEnum::Black);
+		ImageBMP image(screenWidth, screenHeight, ColorEnum::Black);
 
-			image.fillPixelMatrix(rasterPoints, ColorEnum::Purple);
+		image.fillPixelMatrix(rasterPoints, ColorEnum::Purple);
 
-			image.saveAsPNG("Camera_based_cube" + Utils::getTimestampForFilename() + ".png");
-			camera.logCameraInfo("CameraLog" + Utils::getTimestampForFilename() + ".log");
-
-			loopCount++;
-
-			std::this_thread::sleep_for(std::chrono::seconds(5));
-		}
-
-
+		image.saveAsPNG("Cube_with_transformations_" + Utils::getTimestampForFilename() + ".png");
+		//camera.logCameraInfo("CameraLog" + Utils::getTimestampForFilename() + ".log");			
 	}
 
 	catch (const MyException& e)

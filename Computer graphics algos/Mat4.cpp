@@ -85,6 +85,68 @@ Vec4 Mat4::operator*(const Vec4& rhs) const
     return newVec;
 }
 
+Mat4 Mat4::getRotationMatrix(const Vec4& rot)
+{
+    Mat4 x; 
+
+    x.elements =
+    { {
+        {1.0f,  0.0f,           0.0f,           0.0f},
+        {0.0f,  cos(rot.x),     -sin(rot.x),    0.0f},
+        {0.0f,  sin(rot.x),     cos(rot.x),     0.0f},
+        {0.0f,  0.0f,           0.0f,           1.0f}
+    } };
+
+    Mat4 y; 
+    y.elements =
+    { {
+        {cos(rot.y),    0.0f,           sin(rot.y),     0.0f},
+        {0.0f,          1.0f,           0.0f,           0.0f},
+        {-sin(rot.y),   0.0f,           cos(rot.y),     0.0f},
+        {0.0f,          0.0f,           0.0f,           1.0f}
+    } };
+
+    Mat4 z;
+    z.elements =
+    { {
+        { cos(rot.z),   -sin(rot.z),    0.0f,   0.0f },
+        { sin(rot.z),    cos(rot.z),    0.0f,   0.0f },
+        { 0.0f,          0.0f,          1.0f,   0.0f },
+        { 0.0f,          0.0f,          0.0f,   1.0f }
+    } };
+
+    return z * y * x; //again, column-major order, I suppose
+}
+
+Mat4 Mat4::getModelMatrix(const Vec4& trans, const Vec4& rot, const Vec4& scale)
+{
+    //see (among others) figure 1 in: https://www.mdpi.com/2227-7390/10/11/1859
+    Mat4 transMatrix;
+    transMatrix.elements =
+    { {
+        {1.0f,  0.0f,   0.0f,   trans.x},
+        {0.0f,  1.0f,   0.0f,   trans.y},
+        {0.0f,  0.0f,   1.0f,   trans.z},
+        {0.0f,  0.0f,   0.0f,   1.0f}
+    } };
+
+    float theta{}; // = ? (arccos(rot.y/rot.x)?
+    
+    Mat4 rotMatrix = getRotationMatrix(rot); 
+
+    Mat4 scaleMatrix;
+    scaleMatrix.elements =
+    { {
+        {scale.x,   0.0f,       0.0f,       0.0f},
+        {0.0f,      scale.y,    0.0f,       0.0f},
+        {0.0f,      0.0f,       scale.z,    0.0f},
+        {0.0f,      0.0f,       0.0f,       1.0f}
+    } };
+
+    return transMatrix * rotMatrix * scaleMatrix;//TRS is COLUMN-MAJOR order 
+
+}
+
 Mat4 Mat4::getProjectionMatrix(const float zFar, const float zNear, float fovY, float aspectRatio)
 {
 
@@ -152,30 +214,30 @@ Mat4 Mat4::getViewMatrix(const Vec4& eye, const Vec4& target, const Vec4& up)
     return viewMatrix;
 }
 
-Mat4 Mat4::getProjectionMatrix(const float zFar, const float zNear)
-{
-    Mat4 projectionMatrix;
-
-    float a = 1.0f; 
-    float b = 1.0f;
-
-    float c = -(zFar + zNear) / (zFar - zNear);
-    //float c = -(zFar) / (zFar - zNear);
-    float d = -(2.0f * zFar * zNear) / (zFar - zNear); //magic 2 has to do with NDC: [-1 to 1]
-    //float d = -(zFar * zNear) / (zFar - zNear);
-
-    float e = -1.0f;
-
-    projectionMatrix =    
-    { {
-        {a,         0.0f,       0.0f,       0.0f},
-        {0.0f,      b,          0.0f,       0.0f},
-        {0.0f,      0.0f,       c,          d},
-        {0.0f,      0.0f,       e,          0.0f}
-    } };
-
-    return projectionMatrix;
-}
+//Mat4 Mat4::getProjectionMatrix(const float zFar, const float zNear)
+//{
+//    Mat4 projectionMatrix;
+//
+//    float a = 1.0f; 
+//    float b = 1.0f;
+//
+//    float c = -(zFar + zNear) / (zFar - zNear);
+//    //float c = -(zFar) / (zFar - zNear);
+//    float d = -(2.0f * zFar * zNear) / (zFar - zNear); //magic 2 has to do with NDC: [-1 to 1]
+//    //float d = -(zFar * zNear) / (zFar - zNear);
+//
+//    float e = -1.0f;
+//
+//    projectionMatrix =    
+//    { {
+//        {a,         0.0f,       0.0f,       0.0f},
+//        {0.0f,      b,          0.0f,       0.0f},
+//        {0.0f,      0.0f,       c,          d},
+//        {0.0f,      0.0f,       e,          0.0f}
+//    } };
+//
+//    return projectionMatrix;
+//}
 
 std::ostream& operator<<(std::ostream& os, const Mat4& m)
 {

@@ -27,6 +27,12 @@ public:
 	/*Multiply a vector by a matrix*/
 	Vec4 operator* (const Vec4& rhs) const; 
 
+	static Mat4 getRotationMatrix(const Vec4& rot); 
+
+	static Mat4 getModelMatrix(const Vec4& trans, const Vec4& rot, const Vec4& scale);
+
+
+
 	/*@brief no fovX needed - taken care of by fovY calc
 	@param aspectRatio -> screenWidth/screenHeight; I default this to 1.0f for now (simple square screens)
 	* @param fovY  -> set to M_PI/2 usually; example use: zooming in should DECREASE this value (to a minimum of 0.0 - lest the object FLIPS!)
@@ -53,6 +59,6 @@ public:
  * - Vertices with z < -zFar or z > -zNear will be clipped.
  * - The matrix assumes a right-handed coordinate system with the camera looking along -Z.
  */
-	static Mat4 getProjectionMatrix(const float zFar, const float zNear);
+	//static Mat4 getProjectionMatrix(const float zFar, const float zNear);
 };
 

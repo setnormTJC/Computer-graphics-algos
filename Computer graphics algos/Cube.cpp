@@ -72,7 +72,7 @@ Cube::Cube(float xPos, float yPos, float scale, float zOffset)
 
 }
 
-std::vector<Vec4> Cube::getCubeVerts()
+std::vector<Vec4> Cube::getLocalCubeVerts()
 {
 	return localCubeVerts;
 }
