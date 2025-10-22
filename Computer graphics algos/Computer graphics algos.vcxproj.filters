@@ -54,7 +54,7 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mainPrime.cpp">
+    <ClCompile Include="mainSDL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

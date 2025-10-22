@@ -137,7 +137,7 @@
     <ClCompile Include="GraphicsDemo.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ImageBMP.cpp" />
-    <ClCompile Include="mainPrime.cpp" />
+    <ClCompile Include="mainSDL.cpp" />
     <ClCompile Include="Mat4.cpp" />
     <ClCompile Include="MyException.cpp" />
     <ClCompile Include="Mesh.cpp" />

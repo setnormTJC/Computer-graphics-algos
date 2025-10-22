@@ -18,6 +18,8 @@
 #include"Vec2.h"
 
 
+#include <SDL3/SDL_stdinc.h> // for Uint8
+
 #ifdef __cplusplus
 #if __cplusplus >= 201703L
 using std::cout, std::ifstream, std::ofstream, std::vector, std::string, std::ios, std::ostream, std::array;
@@ -156,15 +158,28 @@ public:
 	Color(unsigned int r, unsigned int g, unsigned int b);
 	Color(ColorEnum colorEnum);
 
+	static std::vector<ColorEnum> getBroadColorPalette(); 
+	static std::vector<ColorEnum> getGreenColorPalette(); 
+	static std::vector<ColorEnum> getGrayColorPalette();
+
 	std::array<unsigned int, 3> getRGB() const;
 	
 	void setB(unsigned int b);
 	void setG(unsigned int g);
 	void setR(unsigned int r);
 
-	static std::vector<ColorEnum> getBroadColorPalette(); 
-	static std::vector<ColorEnum> getGreenColorPalette(); 
-	static std::vector<ColorEnum> getGrayColorPalette();
+	/*Methods for interfacing with SDL:*/
+
+    Uint8 getR8() const { return static_cast<Uint8>(getR()); }
+    Uint8 getG8() const { return static_cast<Uint8>(getG()); }
+    Uint8 getB8() const { return static_cast<Uint8>(getB()); }
+
+	void getRGB8(Uint8& r, Uint8& g, Uint8& b) const {
+		r = static_cast<Uint8>(getR());
+		g = static_cast<Uint8>(getG());
+		b = static_cast<Uint8>(getB());
+	}
+
 
 	friend class ImageBMP; 
 };
