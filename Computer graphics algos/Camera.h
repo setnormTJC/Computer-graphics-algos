@@ -29,22 +29,26 @@ public:
 	/*NOTE: this function has TWO matrix multiplications on a potentially-large number of vertices
 	* It is LIKELY to be one of the most expensive function calls. 
 	*/
-	std::vector<Vec2> projectToScreen(const std::vector<Vec4>& worldSpaceCoords, int screenWidth, int screenHeight);
+	std::vector<Vec2> projectToScreen(const std::vector<Vec4>& worldSpaceCoords, 
+		int screenWidth, int screenHeight) const;
 	
 	/*@brief NOTE! `Camera::projectToScreen` must be called AFTER modifying the eye position to get expected result
 	@param newEyePosition -> set z component >= -1 (the default nearZ plane) AND set w = 1.0f
 	*/
 	void setEyePosition(const Vec4& newEyePosition);
 
-	Vec4 getEyePosition(); 
+	Vec4 getEyePosition() const; 
 
-	void logCameraInfo(const std::string& logFilename);
+	void moveForward(float delta);
+	void moveBackward(float delta);
+
+	void logCameraInfo(const std::string& logFilename) const;
 private: 
 	/*Helper called by `projectToScreen`*/
-	Vec2 ndcToScreen(const Vec4& v, int screenWidth, int screenHeight);
+	Vec2 ndcToScreen(const Vec4& v, int screenWidth, int screenHeight) const;
 
-	void applyPerspectiveDivide(std::vector<Vec4>& vpVerts); 
+	void applyPerspectiveDivide(std::vector<Vec4>& vpVerts) const; 
 
-	std::vector<Vec4> multiplyByViewProjectionVerts(const std::vector<Vec4>& worldSpaceCoords);
+	std::vector<Vec4> multiplyByViewProjectionVerts(const std::vector<Vec4>& worldSpaceCoords) const;
 };
 

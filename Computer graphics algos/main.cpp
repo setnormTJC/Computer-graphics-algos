@@ -27,20 +27,38 @@
 
 int main()
 {
-	int width = 500; 
-	int height = 500; 
+	try
+	{
+		/*Vertices of object to draw*/
+		Cube cube{};
+		std::vector<Vec4> localCubeVerts = cube.getLocalCubeVerts();
 
-	Cube cube{};
-	std::vector<Vec4> localCubeVerts = cube.getLocalCubeVerts();
+		/*Colors to draw object with*/
+		std::vector<Color> colors;
+		auto colorEnums = Color::getBroadColorPalette();
+		for (const auto& current : colorEnums)
+		{
+			colors.push_back(Color(current));
+		}
 
-	float fovY = (M_PI / 2);
+		/*Camera setup*/
+		float fovY = (M_PI / 2);
+		Camera camera(fovY);
 
-	Camera camera(fovY);
+		/*Screen dims and SDL wrapper*/
+		int width = 1000;
+		int height = 1000;
+		SDLWrapper sdlWrapper(width, height); 
 
+		/*Main loop*/
+		return (sdlWrapper.run(cube, camera, localCubeVerts, colors)); 
 
-	SDLWrapper sdlWrapper(width, height); 
+	}
 
-	return (sdlWrapper.run(cube, camera, localCubeVerts)); 
+	catch (const MyException& e)
+	{
+		std::cout << e.whatWentWrong() << "\n";
+	}
 }
 
 

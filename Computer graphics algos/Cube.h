@@ -43,7 +43,7 @@ public:
 	@param zOffset -> this calculates "zMax", zMax (AKA: zNear) MUST be > 0*/
 	Cube(float xPos, float yPos, float scale, float zOffset);
 
-	std::vector<Vec4> getLocalCubeVerts();
+	std::vector<Vec4> getLocalCubeVerts() const;
 	/*A la "index buffer"*/
 
 	/*Obtains the lines between the vertices (color is determined later by client)*/
@@ -53,8 +53,9 @@ public:
 	std::unordered_map<Vec2, Color> rasterize(const std::vector<Vec2>& screenVerts,
 		const std::vector<Color>& colors);
 
+	/*Requires the vertices composing a face of the polyhedron to be known/stored*/
 	std::unordered_map<Vec2, Color> filledRasterize(const std::vector<Vec2>& screenVerts,
-		const std::vector<Color>& colors);
+		const std::vector<Color>& colors) const;
 
 private: 
 	std::vector<Edge> getCubeEdges(const std::vector<Vec2>& screenSpaceCubeVerts);

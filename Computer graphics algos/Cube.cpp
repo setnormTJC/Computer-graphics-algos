@@ -94,7 +94,7 @@ Cube::Cube(float xPos, float yPos, float scale, float zOffset)
 
 }
 
-std::vector<Vec4> Cube::getLocalCubeVerts()
+std::vector<Vec4> Cube::getLocalCubeVerts() const
 {
 	return localVerts;
 }
@@ -167,7 +167,8 @@ std::unordered_map<Vec2, Color> Cube::rasterize(const std::vector<Vec2>& screenV
 	return positionsToColors;
 }
 
-std::unordered_map<Vec2, Color> Cube::filledRasterize(const std::vector<Vec2>& screenVerts, const std::vector<Color>& colors)
+std::unordered_map<Vec2, Color> Cube::filledRasterize(const std::vector<Vec2>& screenVerts, 
+	const std::vector<Color>& colors) const
 {
 	std::unordered_map<Vec2, Color> positionsToColors;
 

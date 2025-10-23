@@ -18,7 +18,7 @@ Camera::Camera(float fovY, float aspectRatio)
 
 }
 
-std::vector<Vec2> Camera::projectToScreen(const std::vector<Vec4>& worldSpaceCoords, int screenWidth, int screenHeight)
+std::vector<Vec2> Camera::projectToScreen(const std::vector<Vec4>& worldSpaceCoords, int screenWidth, int screenHeight) const
 {
 	/*vp-> viewprojection*/
 	std::vector<Vec4> vpVerts = multiplyByViewProjectionVerts(worldSpaceCoords); 
@@ -46,12 +46,22 @@ void Camera::setEyePosition(const Vec4& newEyePosition)
 	eye = newEyePosition;
 }
 
-Vec4 Camera::getEyePosition()
+Vec4 Camera::getEyePosition() const
 {
 	return eye;
 }
 
-void Camera::logCameraInfo(const std::string& logFilename)
+void Camera::moveForward(float delta)
+{
+	eye.z -= delta; 
+}
+
+void Camera::moveBackward(float delta)
+{
+	eye.z += delta; 
+}
+
+void Camera::logCameraInfo(const std::string& logFilename) const
 {
 	std::ofstream fout{ logFilename };
 	//fout << Camera::aspectRatio << "\n";
@@ -65,7 +75,7 @@ void Camera::logCameraInfo(const std::string& logFilename)
 	fout.close(); 
 }
 
-Vec2 Camera::ndcToScreen(const Vec4& v, int screenWidth, int screenHeight)
+Vec2 Camera::ndcToScreen(const Vec4& v, int screenWidth, int screenHeight) const
 {
 	//(vert.x + 1) maps[-1, 1] to [0, 2]
 	//multiplying by 0.5f maps[0, 2] tp [0, 1]  "normalized screen coordinates"
@@ -87,7 +97,7 @@ Vec2 Camera::ndcToScreen(const Vec4& v, int screenWidth, int screenHeight)
 	return Vec2(x, y);
 }
 
-void Camera::applyPerspectiveDivide(std::vector<Vec4>& vpVerts)
+void Camera::applyPerspectiveDivide(std::vector<Vec4>& vpVerts) const
 {
 	for (auto& vert : vpVerts) //not const 
 	{
@@ -103,7 +113,7 @@ void Camera::applyPerspectiveDivide(std::vector<Vec4>& vpVerts)
 	}
 }
 
-std::vector<Vec4> Camera::multiplyByViewProjectionVerts(const std::vector<Vec4>& worldSpaceCoords)
+std::vector<Vec4> Camera::multiplyByViewProjectionVerts(const std::vector<Vec4>& worldSpaceCoords) const
 {
 	auto viewMatrix = Mat4::getViewMatrix(eye, target, up);
 	//auto view(orCamera)SpaceCoords = viewMatrix * worldSpaceCoords; //just for my understanding of terminology
