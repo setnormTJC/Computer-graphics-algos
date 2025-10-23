@@ -4,32 +4,37 @@
 #pragma region Cube 
 Cube::Cube()
 {
-	float xLeft = 0.0f; 
-	float xRight = +1.0f; 
 
-	float yBottom = 0.0f; 
-	float yTop = 1.0f; 
-
-	float zBack = -2.0f; 
-	float zFront = zBack + 1.0f; 
-
-	float w = 1.0f; 
-
-	//localCubeVerts =
-	//{
-	//	{xLeft, yBottom, zBack, w},
-	//	{xLeft, yTop, zBack, w},
-	//	{xRight, yBottom, zBack, w},
-	//	{xRight, yTop, zBack, w},
-
-	//	{xLeft, yBottom, zFront, w},
-	//	{xLeft, yTop, zFront, w},
-	//	{xRight, yBottom, zFront, w},
-	//	{xRight, yTop, zFront, w}
+	// Cube vertices
+	//localVerts = {
+	//	Vec4(-1.0f, -1.0f, -1.0f, 1.0f), // 0: left-bottom-back
+	//	Vec4(1.0f, -1.0f, -1.0f, 1.0f), // 1: right-bottom-back
+	//	Vec4(1.0f,  1.0f, -1.0f, 1.0f), // 2: right-top-back
+	//	Vec4(-1.0f,  1.0f, -1.0f, 1.0f), // 3: left-top-back
+	//	Vec4(-1.0f, -1.0f,  1.0f, 1.0f), // 4: left-bottom-front
+	//	Vec4(1.0f, -1.0f,  1.0f, 1.0f), // 5: right-bottom-front
+	//	Vec4(1.0f,  1.0f,  1.0f, 1.0f), // 6: right-top-front
+	//	Vec4(-1.0f,  1.0f,  1.0f, 1.0f)  // 7: left-top-front
 	//};
 
+	//// Cube edges (12 edges)
+	//edgeIndices = {
+	//	{0,1}, {1,2}, {2,3}, {3,0}, // back face
+	//	{4,5}, {5,6}, {6,7}, {7,4}, // front face
+	//	{0,4}, {1,5}, {2,6}, {3,7}  // connecting edges
+	//};
+
+	//// Cube faces (6 faces, each as 4 vertices)
+	//faceIndices = {
+	//	{0,1,2,3}, // back
+	//	{4,5,6,7}, // front
+	//	{0,1,5,4}, // bottom
+	//	{2,3,7,6}, // top
+	//	{0,3,7,4}, // left
+	//	{1,2,6,5}  // right
+	//};
 	//NOTE: this is a tetrahedron - just a temporary change
-	localCubeVerts = 
+	localVerts = 
 	{
 		Vec4(1.0f, 1.0f, 1.0f, 1.0f), //top
 		Vec4(-1.0f, -1.0f, 1.0f, 1.0f), //left bottom front
@@ -37,33 +42,8 @@ Cube::Cube()
 		Vec4(1.0f, -1.0f, -1.0f, 1.0f) //right bottom back
 	};
 
-
-
-	//now a "mystery object"
-
-	//localCubeVerts =
-	//{
-	//	Vec4(-1.0f, 0.0f, 0.0f, 1.0f),
-	//	Vec4(1.0f, 0.0f, 0.0f, 1.0f),
-	//	Vec4(0.0f, 1.0f, 0.0f, 1.0f),
-	//	Vec4(0.0f, -1.0f, 0.0f, 1.0f),
-	//	Vec4(0.0f, 0.0f, 1.0f, 1.0f),
-	//	Vec4(0.0f, 0.0f, -1.0f, 1.0f),
-	//	Vec4(0.5f, 0.5f, 0.5f, 1.0f),
-	//	Vec4(-0.5f, -0.5f, 0.5f, 1.0f),
-	//	Vec4(-0.5f, 0.5f, -0.5f, 1.0f),
-	//	Vec4(0.5f, -0.5f, -0.5f, 1.0f)
-	//};
-
-	//cubeEdgeIndices =
-	//{
-	//	{0,1}, {0,2}, {1,3}, {2,3}, // back face
-	//	{4,5}, {4,6}, {5,7}, {6,7}, // front face
-	//	{0,4}, {1,5}, {2,6}, {3,7}  // connecting edges
-	//};
-
 	//tetrahedron vertices - just a temp. change
-	cubeEdgeIndices =
+	edgeIndices =
 	{
 		{0,1}, {0,2}, {0,3},
 		{1,2}, {1, 3}, {2, 3}
@@ -76,13 +56,6 @@ Cube::Cube()
 		{1, 2, 3}  // bottom triangle
 	};
 
-	//cubeEdgeIndices = 
-	//{
-	//	{ 0,2 }, { 0,3 }, { 0,4 }, { 0,5 },
-	//	{ 1,2 }, { 1,3 }, { 1,4 }, { 1,5 },
-	//	{ 2,4 }, { 2,5 }, { 3,4 }, { 3,5 },
-	//	{ 6,7 }, { 7,8 }, { 8,9 }
-	//};
 }
 
 Cube::Cube(float xPos, float yPos, float scale, float zOffset)
@@ -99,7 +72,7 @@ Cube::Cube(float xPos, float yPos, float scale, float zOffset)
 	float w = 1.0f; 
 	//etc.
 	//NORMALIZED
-	localCubeVerts =
+	localVerts =
 	{
 		{xMin, yMin, zMin, w}, //back bottom left
 		{xMin, yMax, zMin, w}, //back top left
@@ -112,7 +85,7 @@ Cube::Cube(float xPos, float yPos, float scale, float zOffset)
 		{xMax, yMax, zMax, w}, //front top right
 	};
 
-	cubeEdgeIndices = 
+	edgeIndices = 
 	{
 		{0,1}, {0,2}, {1,3}, {2,3}, // back face
 		{4,5}, {4,6}, {5,7}, {6,7}, // front face
@@ -123,7 +96,7 @@ Cube::Cube(float xPos, float yPos, float scale, float zOffset)
 
 std::vector<Vec4> Cube::getLocalCubeVerts()
 {
-	return localCubeVerts;
+	return localVerts;
 }
 
 
@@ -132,7 +105,7 @@ std::vector<Edge> Cube::getCubeEdges(const std::vector<Vec2>& screenSpaceCubeVer
 {
 	std::vector<Edge> edges; 
 
-	for (auto& [i, j] : cubeEdgeIndices)
+	for (auto& [i, j] : edgeIndices)
 	{
 		auto a = screenSpaceCubeVerts.at(i);
 		auto b = screenSpaceCubeVerts.at(j);

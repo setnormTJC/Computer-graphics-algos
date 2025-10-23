@@ -30,9 +30,9 @@ public:
 class Cube : public Polyhedron
 {
 private: 
-	std::vector<Vec4> localCubeVerts;
+	std::vector<Vec4> localVerts;
 	/*A la "index buffer"*/
-	std::vector<std::pair<int, int>> cubeEdgeIndices;
+	std::vector<std::pair<int, int>> edgeIndices;
 
 	/*NOTE: this is only for a tetrahedron (which has 3 faces) at the moment*/
 	std::vector<std::array<int, 3>> faceIndices; 
