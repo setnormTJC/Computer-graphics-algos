@@ -19,7 +19,7 @@
 #include"Utils.h"
 #include "Vec4.h"
 #include "Mat4.h"
-#include "Cube.h"
+#include "Mesh.h"
 #include "Camera.h"
 #include "Mesh.h"
 #include "SDLWrapper.h"
@@ -30,29 +30,27 @@ int main()
 	try
 	{
 		/*Vertices of object to draw*/
-		Cube cube{};
-		std::vector<Vec4> localCubeVerts = cube.getLocalCubeVerts();
+		Mesh mesh(CommonPolyhedronType::tetrahedron);
+
+		std::vector<Vec4> localVerts = mesh.getLocalVertices(); 
 
 		/*Colors to draw object with*/
 		std::vector<Color> colors;
-		auto colorEnums = Color::getBroadColorPalette();
+		auto colorEnums = Color::getGreenColorPalette(); 
 		for (const auto& current : colorEnums)
 		{
 			colors.push_back(Color(current));
 		}
 
-		/*Camera setup*/
-		float fovY = (M_PI / 2);
-		Camera camera(fovY);
-
-		/*Screen dims and SDL wrapper*/
-		int width = 1000;
-		int height = 1000;
-		SDLWrapper sdlWrapper(width, height); 
+		int screenWidth = 1'000; 
+		int screenHeight = 1'000; 
+		
+		Camera camera(screenWidth, screenHeight);
+		
+		SDLWrapper sdlWrapper(screenWidth, screenHeight); 
 
 		/*Main loop*/
-		return (sdlWrapper.run(cube, camera, localCubeVerts, colors)); 
-
+		return sdlWrapper.run(mesh, camera, localVerts, colors);
 	}
 
 	catch (const MyException& e)

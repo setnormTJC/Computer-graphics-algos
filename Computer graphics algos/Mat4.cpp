@@ -157,7 +157,7 @@ Mat4 Mat4::getProjectionMatrix(const float zFar, const float zNear, float fovY, 
 
     if (fovY <= 0.0f || fovY >= M_PI) //tan goes to infinity at multiples of pi/2
     {
-        throw MyException("Invalid field of view. fovY must be in the range (0, ?) radians.", __LINE__, __FILE__);
+        throw MyException("Invalid field of view. fovY must be in the range (0, PI) radians.", __LINE__, __FILE__);
     }
 
     if (aspectRatio <= 0.0f)

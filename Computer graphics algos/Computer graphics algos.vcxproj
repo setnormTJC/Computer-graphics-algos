@@ -132,16 +132,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="GraphicsDemo.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ImageBMP.cpp" />
-    <ClCompile Include="mainSDL.cpp" />
     <ClCompile Include="Mat4.cpp" />
     <ClCompile Include="MyException.cpp" />
-    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshInstance.cpp" />
     <ClCompile Include="Polygon.cpp" />
+    <ClCompile Include="Rasterizer.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SDLWrapper.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -149,11 +151,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Cube.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Edge.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Mat4.h" />
     <ClInclude Include="MyException.h" />
-    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshInstance.h" />
+    <ClInclude Include="Rasterizer.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="SDLWrapper.h" />
     <ClInclude Include="UnorganizedDemos.h" />
     <ClInclude Include="GraphicsDemo.h" />

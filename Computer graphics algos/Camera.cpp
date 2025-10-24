@@ -1,8 +1,10 @@
 #include "Camera.h"
 
-Camera::Camera(float fovY, float aspectRatio)
-	:fovY(fovY), aspectRatio(aspectRatio)
+Camera::Camera(const int& screenWidth, const int& screenHeight, float fovY)
+	:screenWidth(screenWidth), screenHeight(screenHeight), fovY(fovY)
 {
+	aspectRatio = (float)screenWidth / screenHeight;
+	//this->screenHeight = 123; //won't work! screen dims are reference vars!
 	constexpr float epsilon = 1e-4;
 
 	if (std::fabs(zNear - 0.0f) < epsilon)
@@ -18,7 +20,7 @@ Camera::Camera(float fovY, float aspectRatio)
 
 }
 
-std::vector<Vec2> Camera::projectToScreen(const std::vector<Vec4>& worldSpaceCoords, int screenWidth, int screenHeight) const
+std::vector<Vec2> Camera::projectToScreen(const std::vector<Vec4>& worldSpaceCoords) const
 {
 	/*vp-> viewprojection*/
 	std::vector<Vec4> vpVerts = multiplyByViewProjectionVerts(worldSpaceCoords); 
@@ -32,10 +34,18 @@ std::vector<Vec2> Camera::projectToScreen(const std::vector<Vec4>& worldSpaceCoo
 	for (const auto& vert : vpVerts)
 	{
 		Vec2 v = ndcToScreen(vert, screenWidth, screenHeight);
-		//if (v.x >= 0 && v.x < screenWidth && v.y >= 0 && v.y < screenHeight)
-		//{
-			screenSpaceVerts.push_back(v);
-		//}
+
+		//ensure that no vertex has an x or y value less than 0 or greater than screenWidth
+		
+		v.x = std::clamp(v.x, 0, screenWidth - 1);
+		v.y = std::clamp(v.y, 0, screenHeight - 1);
+
+		//example of clamp's function: 
+		// std::clamp(value, min, max)
+		//if v.x < min, set v.x to min
+		//else if v.x > max, set v.x to max
+		//otherwise, no change to v.x
+		screenSpaceVerts.push_back(v); 
 	}
 	
 	return screenSpaceVerts;
@@ -73,6 +83,13 @@ void Camera::logCameraInfo(const std::string& logFilename) const
 	//fout << Camera::zNeat
 
 	fout.close(); 
+}
+
+Box2D Camera::getScreenDims() const
+{
+	Box2D screenBox = { screenWidth, screenHeight };
+
+	return screenBox;
 }
 
 Vec2 Camera::ndcToScreen(const Vec4& v, int screenWidth, int screenHeight) const

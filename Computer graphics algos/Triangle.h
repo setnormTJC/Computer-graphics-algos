@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include<algorithm>
 #include<iostream>
 #include<map> 
 #include<tuple> //for std::tie
@@ -30,8 +31,10 @@ public:
 	/*construct an EQUILATERAL triangle given one edge*/
 	Triangle(const Edge& equilateralEdge);
 
-	/*Scanline algo! Hooray!*/
-	std::vector<Vec2> getPointsThatFillTriangle() const;
+	/*@brief Scanline algo! Hooray!
+	* @param screenWidth -> nonintuitive inclusion BUT necessary because this algo CLAMPS based on screen dims
+	*/
+	std::vector<Vec2> getPointsThatFillTriangle(int screenWidth, int screenHeight) const;
 
 	std::vector<Vec2> getPointsThatOutlineTriangle() const; 
 
@@ -46,8 +49,8 @@ private:
 	/*modifies the member variable vertices such that v[0].y <= v[1].y <= v[2].y*/
 	void sortVertices();
 
-	std::vector<Vec2> getPointsThatFillFlatBottomTriangle() const; 		
-	std::vector<Vec2> getPointsThatFillFlatTopTriangle() const;
+	std::vector<Vec2> getPointsThatFillFlatBottomTriangle(int screenWidth, int screenHeight) const;
+	std::vector<Vec2> getPointsThatFillFlatTopTriangle(int screenWidth, int screenHeight) const;
 	
 };
 

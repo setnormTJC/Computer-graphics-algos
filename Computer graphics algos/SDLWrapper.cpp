@@ -26,7 +26,7 @@ SDLWrapper::~SDLWrapper()
 
 }
 
-int SDLWrapper::run(const Cube& cube, Camera& camera, const std::vector<Vec4>& localVerts,
+int SDLWrapper::run(const Mesh& mesh, Camera& camera, const std::vector<Vec4>& localVerts,
     const std::vector<Color>& colors)
 {
 
@@ -52,7 +52,7 @@ int SDLWrapper::run(const Cube& cube, Camera& camera, const std::vector<Vec4>& l
                 quitFlag = true;
         }
 
-        if (iterate(cube, camera, localVerts, colors) == SDL_APP_FAILURE)
+        if (iterate(mesh, camera, localVerts, colors) == SDL_APP_FAILURE)
             quitFlag = true;
     }
 
@@ -63,7 +63,7 @@ int SDLWrapper::run(const Cube& cube, Camera& camera, const std::vector<Vec4>& l
 
 
 
-SDL_AppResult SDLWrapper::iterate(const Cube& cube, Camera& camera, const std::vector<Vec4>& localVerts, 
+SDL_AppResult SDLWrapper::iterate(const Mesh& mesh, Camera& camera, const std::vector<Vec4>& localVerts, 
     const std::vector<Color>& colors)
 {
 
@@ -77,14 +77,16 @@ SDL_AppResult SDLWrapper::iterate(const Cube& cube, Camera& camera, const std::v
     Vec4 trans(0.0f, 0.0f, -3.0f, 1.0f); 
 
     /*Apply the transformations and get screen-equivalent coordinates*/
-    Mesh mesh(localVerts, trans, rot, scale);
-    std::vector<Vec4> worldCubeVerts = mesh.applyModelMatrix();
-    auto screenSpaceCubeVerts = camera.projectToScreen(worldCubeVerts, width, height);
+    MeshInstance meshInstance(trans, rot, scale);
+    std::vector<Vec4> worldVerts; 
+
+    meshInstance.applyTransformation(localVerts, worldVerts);
+    auto screenVerts = camera.projectToScreen(worldVerts);
 
     /*Fill the faces of the object OR draw in wireframe mode*/
-    auto rasteredPixels = cube.filledRasterize(screenSpaceCubeVerts, colors);
-    
-    draw(rasteredPixels);
+    auto rasterizedPixels = Rasterizer::getFilledFaces(mesh, screenVerts, colors, width, height);
+
+    draw(rasterizedPixels);
 
     advanceFrame(frameStart); 
 
@@ -134,23 +136,24 @@ SDL_AppResult SDLWrapper::handleEvent(SDL_Event* pEvent, Camera& camera)
 
         std::cout << keyID << "\n";
 
-        float stepSize = 0.1f;
+        float cameraStepSize = 0.1f; 
+        bool isPaused = false; 
 
         switch (keyID)
         {
         case SDLK_P:
             std::cout << "Pausing animation...\n";
-            std::system("pause");
+            std::system("pause"); 
             break; 
 
         case SDLK_W:
             std::cout << "Moving camera forward\n";   
-            camera.moveForward(stepSize);
+            camera.moveForward(cameraStepSize);
             break;
 
         case SDLK_S: 
             std::cout << "Moving backerds\n";
-            camera.moveBackward(stepSize);
+            camera.moveBackward(cameraStepSize);
             break; 
 
         default: 

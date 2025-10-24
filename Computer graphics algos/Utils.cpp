@@ -1,6 +1,6 @@
 #include "Utils.h"
 #include <algorithm>
-#include "Cube.h"
+#include "Mesh.h"
 
 std::string Utils::getTimestampForFilename()
 {
