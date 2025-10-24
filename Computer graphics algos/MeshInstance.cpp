@@ -13,7 +13,6 @@ void MeshInstance::applyTransformation(const std::vector<Vec4>& localVerts,
 {
     Mat4 modelMatrix = Mat4::getModelMatrix(trans, rot, scale); 
 
-    
     worldVerts.reserve(localVerts.size());
 
     for (const auto& vert : localVerts)
@@ -23,8 +22,18 @@ void MeshInstance::applyTransformation(const std::vector<Vec4>& localVerts,
     }
 }
 
-void MeshInstance::logTransformationInfo(const std::string& logFilename)
+void MeshInstance::logTransformationInfo(const std::string& logFilename) const
 {
+}
+
+void MeshInstance::setRotation(const Vec4& newRotation)
+{
+    rot = newRotation; 
+}
+
+const Vec4 MeshInstance::getRotation() const
+{
+    return rot; 
 }
 
 

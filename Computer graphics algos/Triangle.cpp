@@ -177,6 +177,9 @@ std::vector<Vec2> Triangle::getPointsThatFillFlatBottomTriangle(int screenWidth,
 	{
 		for (int x = xLeft; x <= xRight; ++x)
 		{
+			//prevent floating point errors from going to -1 or screenWidth + 1
+			x = std::clamp(x, 0, screenWidth - 1);
+			y = std::clamp(y, 0, screenHeight - 1);
 			filledPoints.push_back({ x, y });
 		}
 		xLeft = xLeft + leftEdgeInverseSlope * dy; //think: xFinal = xInitial +  (dx/dt)dt [t takes the place of 'y' here]
@@ -205,10 +208,10 @@ std::vector<Vec2> Triangle::getPointsThatFillFlatTopTriangle(int screenWidth, in
 	{
 		for (int x = xLeft; x <= xRight; ++x) //again, careful with edge cases 
 		{
-			int clampedX = std::clamp(x, 0, screenWidth - 1);
-			int clampedY = std::clamp(y, 0, screenHeight - 1);
+			x = std::clamp(x, 0, screenWidth - 1); //prevent floating point errors from going to -1 or screenWidth + 1
+			y = std::clamp(y, 0, screenHeight - 1);
 
-			filledPoints.push_back({ clampedX, y });
+			filledPoints.push_back({ x, y });
 		}
 		xLeft = xLeft + leftEdgeInverseSlope; 
 		xRight += rightEdgeInverseSlope; 

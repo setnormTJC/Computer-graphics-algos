@@ -34,7 +34,7 @@ private:
 	float aspectRatio = 1.0f; 
 
 	const int& screenWidth; //reference type! (let SDLWrapper OWN these) 
-	const int& screenHeight;//reference type! (let SDLWrapper OWN these) 
+	const int& screenHeight;//reference type! (let SDLWrapper OWN these)  - and Camera CANNOT modify this (not that it would want to)
 
 public:
 	/*zNear is initialized to 1.0f by default*/

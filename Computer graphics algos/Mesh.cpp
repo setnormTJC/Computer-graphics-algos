@@ -189,13 +189,23 @@ Mesh::Mesh(const CommonPolyhedronType& commonPolyhedronType)
 	case CommonPolyhedronType::tetrahedron:
 		constructTetrahedron(); 
 		break; 
+	case CommonPolyhedronType::equilateralSquarePyramid:
+		constructSquarePyramid(); 
+		break;
+	case CommonPolyhedronType::triangularPrism: 
+		constructTriangularPrism(); 
+		break; 
+
+	case CommonPolyhedronType::octahedron: 
+		constructOctahedron(); 
+		break; 
 
 	case CommonPolyhedronType::cube: 
 		constructCube(); 
 		break; 
 		
 	default: 
-		throw MyException("Mesh constructor only accepts tetrahedron, cube, or blender obj filename",
+		throw MyException("Mesh constructor only accepts tetrahedron, pyramid, prism, octahedron, or cube, (or blender obj filename)",
 			__LINE__, __FILE__);
 	}
 }
@@ -250,6 +260,92 @@ void Mesh::constructTetrahedron()
 		{0, 1, 3}, // top-left-back triangle
 		{0, 2, 3}, // top-right-back triangle
 		{1, 2, 3}  // bottom triangle
+	};
+}
+
+void Mesh::constructSquarePyramid()
+{
+	localVerts =
+	{
+		Vec4(0.0f, 0.0f, 0.0f, 1.0f), //0: back left
+		Vec4(1.0f, 0.0f, 0.0f, 1.0f), //1: back right
+		Vec4(1.0f, 0.0f, 1.0f, 1.0f), //2: front right
+		Vec4(0.0f, 0.0f, 1.0f, 1.0f)  //3: front left
+	};
+	//the y Value of the 5th vertex:
+	float apexHeight = 1.0f / sqrt(2.0f); //this is only true for an "unit" square pyramid
+	localVerts.push_back(Vec4(0.5f, apexHeight, 0.5f, 1.0f));//4: apex
+
+	triangularFaceIndices =
+	{
+		{0, 1, 2}, //back right of base
+		{0, 2, 3}, //front left of base
+		{1, 2, 4}, //right 
+		{0, 1, 4}, //back
+		{0, 3, 4}, //left
+		{2, 3, 4} //front
+	};
+}
+
+void Mesh::constructTriangularPrism()
+{
+	localVerts =
+	{
+		// bottom triangle (y = 0)
+		Vec4(0.0f, 0.0f, 0.0f, 1.0f), //0
+		Vec4(1.0f, 0.0f, 0.0f, 1.0f), //1
+		Vec4(0.5f, 0.0f, std::sqrt(3.0f) / 2.0f, 1.0f), //2
+
+		// top triangle (y = 1)
+		Vec4(0.0f, 1.0f, 0.0f, 1.0f), //3
+		Vec4(1.0f, 1.0f, 0.0f, 1.0f), //4
+		Vec4(0.5f, 1.0f, std::sqrt(3.0f) / 2.0f, 1.0f)  //5
+	};
+
+	triangularFaceIndices =
+	{
+		// bottom
+		{0, 1, 2},
+		// top
+		{3, 5, 4},
+
+		// sides
+		{0, 1, 4},
+		{0, 4, 3},
+
+		{1, 2, 5},
+		{1, 5, 4},
+
+		{2, 0, 3},
+		{2, 3, 5}
+	};
+}
+
+void Mesh::constructOctahedron()
+{
+	localVerts =
+	{
+		Vec4(0.0f,  1.0f,  0.0f, 1.0f), //0 top
+		Vec4(1.0f,  0.0f,  0.0f, 1.0f), //1 right
+		Vec4(0.0f,  0.0f,  1.0f, 1.0f), //2 front
+		Vec4(-1.0f,  0.0f,  0.0f, 1.0f), //3 left
+		Vec4(0.0f,  0.0f, -1.0f, 1.0f), //4 back
+		Vec4(0.0f, -1.0f,  0.0f, 1.0f)  //5 bottom
+	};
+
+	triangularFaceIndices =
+	{
+		// top half
+		{0, 1, 2},
+		{0, 2, 3},
+		{0, 3, 4},
+		{0, 4, 1},
+
+		// bottom half
+		{5, 2, 1},
+		{5, 3, 2},
+		{5, 4, 3},
+		{5, 1, 4}
 	};
 }
 

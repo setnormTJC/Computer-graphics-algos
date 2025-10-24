@@ -26,7 +26,8 @@ SDLWrapper::~SDLWrapper()
 
 }
 
-int SDLWrapper::run(const Mesh& mesh, Camera& camera, const std::vector<Vec4>& localVerts,
+int SDLWrapper::run(const Mesh& mesh, MeshInstance& meshInstance, 
+    Camera& camera, const std::vector<Vec4>& localVerts,
     const std::vector<Color>& colors)
 {
 
@@ -48,11 +49,11 @@ int SDLWrapper::run(const Mesh& mesh, Camera& camera, const std::vector<Vec4>& l
         // Poll events
         while (SDL_PollEvent(&event))
         {
-            if (handleEvent(&event, camera) == SDL_APP_SUCCESS)
+            if (handleEvent(&event, camera, meshInstance) == SDL_APP_SUCCESS)
                 quitFlag = true;
         }
 
-        if (iterate(mesh, camera, localVerts, colors) == SDL_APP_FAILURE)
+        if (iterate(mesh, meshInstance, camera, localVerts, colors) == SDL_APP_FAILURE)
             quitFlag = true;
     }
 
@@ -63,21 +64,13 @@ int SDLWrapper::run(const Mesh& mesh, Camera& camera, const std::vector<Vec4>& l
 
 
 
-SDL_AppResult SDLWrapper::iterate(const Mesh& mesh, Camera& camera, const std::vector<Vec4>& localVerts, 
+SDL_AppResult SDLWrapper::iterate(const Mesh& mesh, MeshInstance& meshInstance, 
+    Camera& camera, const std::vector<Vec4>& localVerts, 
     const std::vector<Color>& colors)
 {
 
     auto frameStart = std::chrono::high_resolution_clock::now();
 
-    /*Set the transformations to be applied to object*/
-    Vec4 rot(M_PI / 6.0f * frameCount,
-        M_PI / 5.0f /** frameCount*/
-        , M_PI / 4.0f/* * frameCount*/, 0.0f); 
-    Vec4 scale(1.0f, 1.0f, 1.0f, 0.0f); 
-    Vec4 trans(0.0f, 0.0f, -3.0f, 1.0f); 
-
-    /*Apply the transformations and get screen-equivalent coordinates*/
-    MeshInstance meshInstance(trans, rot, scale);
     std::vector<Vec4> worldVerts; 
 
     meshInstance.applyTransformation(localVerts, worldVerts);
@@ -123,7 +116,7 @@ void SDLWrapper::advanceFrame(const std::chrono::steady_clock::time_point& frame
 }
 
 
-SDL_AppResult SDLWrapper::handleEvent(SDL_Event* pEvent, Camera& camera)
+SDL_AppResult SDLWrapper::handleEvent(SDL_Event* pEvent, Camera& camera, MeshInstance& meshInstance)
 {
     if (pEvent->type == SDL_EVENT_QUIT)
     {
@@ -138,23 +131,46 @@ SDL_AppResult SDLWrapper::handleEvent(SDL_Event* pEvent, Camera& camera)
 
         float cameraStepSize = 0.1f; 
         bool isPaused = false; 
+        float thetaRotation = M_PI / 10.0f; //let this be the same for x, y, and z
 
         switch (keyID)
         {
-        case SDLK_P:
+        case SDLK_P: //the K stands for "key" probably
             std::cout << "Pausing animation...\n";
             std::system("pause"); 
             break; 
-
-        case SDLK_W:
-            std::cout << "Moving camera forward\n";   
-            camera.moveForward(cameraStepSize);
-            break;
 
         case SDLK_S: 
             std::cout << "Moving backerds\n";
             camera.moveBackward(cameraStepSize);
             break; 
+
+        case SDLK_W:
+            std::cout << "Moving camera forward\n";
+            camera.moveForward(cameraStepSize);
+            break;
+
+        case SDLK_X: 
+            std::cout << "Rotating about x by " << ((180.0f) / M_PI) * thetaRotation << "\n";
+            auto newXRotation = meshInstance.getRotation(); //get the current rotation vector 
+            newXRotation.x += thetaRotation; //and update the x-component
+            meshInstance.setRotation(newXRotation);
+            break;
+
+        case SDLK_Y:
+            std::cout << "Rotating about y by " << ((180.0f) / M_PI) * thetaRotation << "\n";
+            auto newYRotation = meshInstance.getRotation();
+            newYRotation.y += thetaRotation;
+            meshInstance.setRotation(newYRotation);
+            break;
+            
+        case SDLK_Z:
+            std::cout << "Rotating about zed by " << ((180.0f) / M_PI) * thetaRotation << "\n";
+            auto newZRotation = meshInstance.getRotation();
+            newZRotation.z += thetaRotation; 
+            meshInstance.setRotation(newZRotation);
+            break;
+
 
         default: 
             std::cout << "Unhandled key pressed\n"; 

@@ -12,8 +12,11 @@
 
 enum class CommonPolyhedronType 
 { 
-	tetrahedron,
-	cube
+	tetrahedron,//4 verts
+	equilateralSquarePyramid, //5 verts 
+	triangularPrism, //6 verts 
+	octahedron, //also 6 verts
+	cube, //8 verts
 };
 
 class Mesh
@@ -25,7 +28,7 @@ private:
 
 public:
 	Mesh() = delete; 
-	/*Anticipate the default constructor reading from a Blender obj file*/
+	/*Parses vertices and faces from a Blender obj file*/
 	Mesh(const std::string& blenderObjFilename);
 	/*Constructs a tetrahedron, cube, maybe others in the future*/
 	Mesh(const CommonPolyhedronType& commonPolyhedronType); 
@@ -42,7 +45,9 @@ private:
 
 	/*runs from [-1, 1] in (x, y, z)*/
 	void constructTetrahedron(); 
-
+	void constructSquarePyramid(); 
+	void constructTriangularPrism(); 
+	void constructOctahedron(); 
 	void constructCube();
 
 	/*@brief use this for wireframe rendering*/

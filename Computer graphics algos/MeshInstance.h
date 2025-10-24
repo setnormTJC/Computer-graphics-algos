@@ -26,6 +26,9 @@ public:
 	void applyTransformation(const std::vector<Vec4>& localVerts, std::vector<Vec4>& worldVerts) const;
 
 	/*Writes rotation, scaling, and transformation data to a log file*/
-	void logTransformationInfo(const std::string& logFilename);
+	void logTransformationInfo(const std::string& logFilename) const;
+
+	void setRotation(const Vec4& newRotation);
+	const Vec4 getRotation() const; 
 };
 

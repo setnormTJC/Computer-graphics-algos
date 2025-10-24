@@ -30,13 +30,26 @@ int main()
 	try
 	{
 		/*Vertices of object to draw*/
-		Mesh mesh(CommonPolyhedronType::tetrahedron);
+		//Mesh mesh(CommonPolyhedronType::tetrahedron);
+		Mesh mesh(CommonPolyhedronType::octahedron);
 
 		std::vector<Vec4> localVerts = mesh.getLocalVertices(); 
 
+		/*Set the initial transformations to be applied to object*/
+		Vec4 rot(M_PI / 6.0f,
+			M_PI / 5.0f,
+			M_PI / 4.0f,
+			0.0f);
+
+		Vec4 scale(1.0f, 1.0f, 1.0f, 0.0f);
+		Vec4 trans(0.0f, 0.0f, -3.0f, 1.0f);
+
+		/*Apply the transformations and get screen-equivalent coordinates*/
+		MeshInstance meshInstance(trans, rot, scale);
+
 		/*Colors to draw object with*/
 		std::vector<Color> colors;
-		auto colorEnums = Color::getGreenColorPalette(); 
+		auto colorEnums = Color::getBroadColorPalette();
 		for (const auto& current : colorEnums)
 		{
 			colors.push_back(Color(current));
@@ -50,7 +63,7 @@ int main()
 		SDLWrapper sdlWrapper(screenWidth, screenHeight); 
 
 		/*Main loop*/
-		return sdlWrapper.run(mesh, camera, localVerts, colors);
+		return sdlWrapper.run(mesh, meshInstance, camera, localVerts, colors);
 	}
 
 	catch (const MyException& e)
