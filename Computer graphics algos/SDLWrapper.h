@@ -12,7 +12,7 @@
 class SDLWrapper
 {
 private: 
-	static constexpr int TARGET_FPS = 3; 
+	static constexpr int TARGET_FPS = 10; 
 	static constexpr std::chrono::milliseconds frameDelay{ 1000 / TARGET_FPS };
 
 	SDL_Window* pWindow = nullptr; 

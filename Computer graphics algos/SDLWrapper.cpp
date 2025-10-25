@@ -133,9 +133,25 @@ SDL_AppResult SDLWrapper::handleEvent(SDL_Event* pEvent, Camera& camera, MeshIns
         bool isPaused = false; 
         float thetaRotation = M_PI / 10.0f; //let this be the same for x, y, and z
 
-        switch (keyID)
+        /*Might consider moving this to a helper method (ex: handleKeyboardEvent)*/
+        switch (keyID) //note that cases are organized alphabetically (not "logically") 
         {
-        case SDLK_P: //the K stands for "key" probably
+        case SDLK_A: //note that the user is allowed to enter 'a' here 
+            std::cout << "Moving left " << cameraStepSize << "\n";
+            camera.moveLeft(cameraStepSize); 
+            break;
+
+        case SDLK_D: //the K stands for "key" probably
+            std::cout << "Moving right " << cameraStepSize << "\n";
+            camera.moveRight(cameraStepSize);
+            break;
+
+        case SDLK_DOWN:
+            std::cout << "Moving down " << cameraStepSize << "\n";
+            camera.moveDown(cameraStepSize);
+            break;
+
+        case SDLK_P:
             std::cout << "Pausing animation...\n";
             std::system("pause"); 
             break; 
@@ -145,11 +161,16 @@ SDL_AppResult SDLWrapper::handleEvent(SDL_Event* pEvent, Camera& camera, MeshIns
             camera.moveBackward(cameraStepSize);
             break; 
 
+        case SDLK_UP:
+            std::cout << "Moving up " << cameraStepSize << "\n";
+            camera.moveUp(cameraStepSize);
+            break; 
+
         case SDLK_W:
             std::cout << "Moving camera forward\n";
             camera.moveForward(cameraStepSize);
             break;
-
+  
         case SDLK_X: 
             std::cout << "Rotating about x by " << ((180.0f) / M_PI) * thetaRotation << "\n";
             auto newXRotation = meshInstance.getRotation(); //get the current rotation vector 
@@ -170,7 +191,6 @@ SDL_AppResult SDLWrapper::handleEvent(SDL_Event* pEvent, Camera& camera, MeshIns
             newZRotation.z += thetaRotation; 
             meshInstance.setRotation(newZRotation);
             break;
-
 
         default: 
             std::cout << "Unhandled key pressed\n"; 

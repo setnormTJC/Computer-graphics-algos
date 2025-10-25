@@ -42,9 +42,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MyException.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SDLWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -56,9 +53,6 @@
     </ClCompile>
     <ClCompile Include="Vec4.cpp">
       <Filter>Source Files\math</Filter>
-    </ClCompile>
-    <ClCompile Include="Polygon.cpp">
-      <Filter>Source Files\geometry</Filter>
     </ClCompile>
     <ClCompile Include="Triangle.cpp">
       <Filter>Source Files\geometry</Filter>
@@ -90,6 +84,12 @@
     <ClCompile Include="Rasterizer.cpp">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Polygon.cpp">
+      <Filter>Source Files\old stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="MyException.cpp">
+      <Filter>Source Files\old stuff</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SDLWrapper.h">
@@ -106,9 +106,6 @@
     </ClInclude>
     <ClInclude Include="Vec4.h">
       <Filter>Header Files\math</Filter>
-    </ClInclude>
-    <ClInclude Include="Polygon.h">
-      <Filter>Header Files\geometry</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
       <Filter>Header Files\geometry</Filter>
@@ -147,6 +144,9 @@
       <Filter>Header Files\rendering</Filter>
     </ClInclude>
     <ClInclude Include="MyException.h">
+      <Filter>Header Files\old stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="Polygon.h">
       <Filter>Header Files\old stuff</Filter>
     </ClInclude>
   </ItemGroup>

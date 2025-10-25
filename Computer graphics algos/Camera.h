@@ -55,10 +55,14 @@ public:
 	void moveForward(float delta);
 	void moveBackward(float delta);
 
+	void moveLeft(float delta);
+	void moveRight(float delta);
+
+	void moveUp(float delta); 
+	void moveDown(float delta);
+
 	void logCameraInfo(const std::string& logFilename) const;
 
-	/*Returns screen width and height*/
-	Box2D getScreenDims() const; 
 private: 
 	/*Helper called by `projectToScreen`*/
 	Vec2 ndcToScreen(const Vec4& v, int screenWidth, int screenHeight) const;

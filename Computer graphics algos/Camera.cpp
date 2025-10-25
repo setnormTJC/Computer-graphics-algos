@@ -71,6 +71,26 @@ void Camera::moveBackward(float delta)
 	eye.z += delta; 
 }
 
+void Camera::moveLeft(float delta)
+{
+	eye.x += delta; //PLUS here! (even though moving to the left conventionally decreases x)
+}
+
+void Camera::moveRight(float delta)
+{
+	eye.x -= delta; 
+}
+
+void Camera::moveUp(float delta)
+{
+	eye.y -= delta;  //MINUS here!
+}
+
+void Camera::moveDown(float delta)
+{
+	eye.y += delta; 
+}
+
 void Camera::logCameraInfo(const std::string& logFilename) const
 {
 	std::ofstream fout{ logFilename };
@@ -85,13 +105,7 @@ void Camera::logCameraInfo(const std::string& logFilename) const
 	fout.close(); 
 }
 
-Box2D Camera::getScreenDims() const
-{
-	Box2D screenBox = { screenWidth, screenHeight };
-
-	return screenBox;
-}
-
+#pragma region privates
 Vec2 Camera::ndcToScreen(const Vec4& v, int screenWidth, int screenHeight) const
 {
 	//(vert.x + 1) maps[-1, 1] to [0, 2]
@@ -108,8 +122,6 @@ Vec2 Camera::ndcToScreen(const Vec4& v, int screenWidth, int screenHeight) const
 	{
 		std::cout << "Point outside screen: " << x << ", " << y << "\n";
 	}
-
-	
 
 	return Vec2(x, y);
 }
@@ -151,3 +163,4 @@ std::vector<Vec4> Camera::multiplyByViewProjectionVerts(const std::vector<Vec4>&
 
 	return vpVerts; 
 }
+#pragma endregion

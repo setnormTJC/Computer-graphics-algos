@@ -36,9 +36,9 @@ int main()
 		std::vector<Vec4> localVerts = mesh.getLocalVertices(); 
 
 		/*Set the initial transformations to be applied to object*/
-		Vec4 rot(M_PI / 6.0f,
-			M_PI / 5.0f,
-			M_PI / 4.0f,
+		Vec4 rot(0.0f,
+			0.0f,
+			0.0f,
 			0.0f);
 
 		Vec4 scale(1.0f, 1.0f, 1.0f, 0.0f);
