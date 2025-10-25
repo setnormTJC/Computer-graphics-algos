@@ -225,20 +225,40 @@ const std::vector<Vec4>& Mesh::getLocalVertices() const
 
 std::vector<Triangle> Mesh::getTriangularFaces(const std::vector<Vec2>& screenSpaceVerts) const
 {
+	float screenEpsilon = 0.1f; //! don't make this too tight if dealing with "typical" screen coordinates - ex: (0, 0) to (800, 400)
+
 	std::vector<Triangle> triangularFaces; 
 
 	triangularFaces.reserve(triangularFaceIndices.size());  //prevent frequent reallocation 
 
 	for (const auto& faceIndices : triangularFaceIndices)
 	{
-		std::array<Vec2, 3> verts =
+		std::array<Vec2, 3> triangleVerts =
 		{
 			screenSpaceVerts[faceIndices[0]],
 			screenSpaceVerts[faceIndices[1]],
 			screenSpaceVerts[faceIndices[2]]
 		};
 
-		triangularFaces.emplace_back(verts);
+		if (triangleVerts[0] == triangleVerts[1] || triangleVerts[1] == triangleVerts[2] || triangleVerts[2] == triangleVerts[0])
+		{
+			continue; //NICE use of continue, don't add this particular face, move on to the next
+		}
+
+		Triangle temp({ triangleVerts[0], triangleVerts[1], triangleVerts[2] }); 
+
+		if (temp.getArea() - 0.0f < screenEpsilon) //area of triangle is "close" to 0 - don't draw it
+		{
+			continue; 
+		}
+
+		//"slightly" faster (but less readable) alternative: 
+		//float area2 = (verts[1].x - verts[0].x) * (verts[2].y - verts[0].y) -
+		//	(verts[2].x - verts[0].x) * (verts[1].y - verts[0].y);
+		//if (area2 == 0.0f)
+		//	continue;
+
+		triangularFaces.emplace_back(triangleVerts);
 	}
 	return triangularFaces; 
 }

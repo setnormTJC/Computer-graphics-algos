@@ -10,18 +10,13 @@
 #include<vector>
 
 #include"Edge.h"
-#include"GraphicsDemo.h"
-#include"ImageBMP.h"
 #include "MyException.h"
 #include"Polygon.h"
 #include"Triangle.h"
-#include"UnorganizedDemos.h"
-#include"Utils.h"
 #include "Vec4.h"
 #include "Mat4.h"
 #include "Mesh.h"
 #include "Camera.h"
-#include "Mesh.h"
 #include "SDLWrapper.h"
 
 

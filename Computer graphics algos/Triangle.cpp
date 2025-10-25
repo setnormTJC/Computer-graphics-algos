@@ -22,13 +22,16 @@ Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 		}) 
 		!= vertices.end()) 
 	{
+		__debugbreak(); 
 		throw MyException("triangle vertices cannot contain negative values", __LINE__, __FILE__);
 	}
+
 	//...continues by setting this->vertices = vertices then sorting this->vertices for scanline algo
 	if (vertices[0] == vertices[1] ||
 		vertices[1] == vertices[2] ||
 		vertices[2] == vertices[0]) 
 	{
+		__debugbreak();
 		throw MyException("triangle has duplicate vertices", __LINE__, __FILE__);
 	}
 
@@ -36,6 +39,7 @@ Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 		||
 		vertices[0].y == vertices[1].y && vertices[1].y == vertices[2].y)
 	{
+		__debugbreak();
 		throw MyException("triangle is ... in fact a line segment", __LINE__, __FILE__);
 	}
 
@@ -93,7 +97,6 @@ std::vector<Vec2> Triangle::getPointsThatFillTriangle(int screenWidth, int scree
 
 		//std::cout << "Constructing a general triangle (by making a flat top, then a flat bottom):\n";
 		
-		int y = vertices[1].y;
 		//a bit on the logic here: 
 		//since v0, v1, and v2 are sorted by ascending y AND this triangle is neither flat top nor flat bottom ...
 		//v1's y value will be between (and not equal to) either v0 or v2's y value
@@ -103,14 +106,27 @@ std::vector<Vec2> Triangle::getPointsThatFillTriangle(int screenWidth, int scree
 		//and 
 		//tUpper = {vNew, v1, v2} //a flat bottom triangle
 		//and the y-coordinate of vNew will get assigned v1's y value
-		 		 
-		//now find intermediate/new vertex's x value based on slope from v0 to v2
-		float slope = static_cast<float>(vertices[2].y - vertices[0].y) / (vertices[2].x - vertices[0].x); //dy/dx
-		float b = vertices[0].y - slope*vertices[0].x; //b = y1 - mx1
 
-		float x = (y - b)/slope; 
+		float yIntermediate = static_cast<float>(vertices[1].y); //this is ALWAYS the case (regardless of slope)		 		 
 
-		Vec2 intermediateVertex = {(int) x, (int)y };
+		float xIntermediate{}; 
+
+		if (vertices[2].x - vertices[0].x != 0) //guard against div by 0
+		{
+			//now find intermediate/new vertex's x value based on slope from v0 to v2 
+			float slope = static_cast<float>(vertices[2].y - vertices[0].y) / (vertices[2].x - vertices[0].x); //dy/dx
+			float b = vertices[0].y - slope * vertices[0].x; //b = y1 - mx1
+
+			xIntermediate = (yIntermediate - b) / slope;
+		}
+
+		else //this means the triangle's left side is a vertical line segment 
+		{
+			//so x0 = xIntermediate = x2
+			xIntermediate = static_cast<float>(vertices[2].x); 
+		}
+
+		Vec2 intermediateVertex = {(int) xIntermediate, (int)yIntermediate };
 
 		Triangle lower({ vertices[0], vertices[1], intermediateVertex });
 		Triangle upper({ intermediateVertex, vertices[1], vertices[2]});
@@ -237,6 +253,24 @@ std::array<Edge, 3> Triangle::getEdges() const
 std::array<Vec2, 3> Triangle::getVertices() const
 {
 	return vertices;
+}
+
+float Triangle::getArea() const
+{
+	const Vec2& a = vertices[0]; 
+	const Vec2& b = vertices[1]; 
+	const Vec2& c = vertices[2]; 
+
+	Vec4 ab((float)(b.x - a.x), (float)(b.y - a.y), 0.0f, 0.0f);
+	//Vec4 ac((float)(a.x - c.x), (float)(a.y - c.y), 0.0f, 0.0f); 
+	//switched subtraction order above (compared to ab) (magnitude (area) remains the same)
+	Vec4 ac((float)(c.x - a.x), (float)(c.y - a.y), 0.0f, 0.0f);
+
+	Vec4 crossProduct = ab.cross(ac); 
+
+	float area = 0.5f * crossProduct.getMagnitude();  
+
+	return area; 
 }
 
 

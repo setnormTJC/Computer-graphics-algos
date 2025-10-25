@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
 
-#include "ImageBMP.h" //for Color 
+#include "Color.h" //for Color 
 #include "Mesh.h"
 #include "Vec2.h"
 

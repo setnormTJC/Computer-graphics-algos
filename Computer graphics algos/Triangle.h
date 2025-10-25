@@ -8,7 +8,7 @@
 
 #include"Edge.h"
 #include"Vec2.h"
-
+#include"Vec4.h" //used for triangle area calculation (I defined cross product in Vec4)
 
 
 class Triangle
@@ -42,7 +42,8 @@ public:
 	std::array<Edge, 3> getEdges() const; 
 	std::array<Vec2, 3> getVertices() const; 
 
-
+	/*The area of a triangle is HALF the magnitude of the cross product of two sides of the triangle(with sides constructed as Vec4s)*/
+	float getArea() const; 
 private: 
 	/*For geometric funsies (nerd)*/
 	float getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int indexOfSecondEdge) const;

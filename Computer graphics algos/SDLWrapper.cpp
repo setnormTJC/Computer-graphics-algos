@@ -1,5 +1,7 @@
 #include "SDLWrapper.h"
 
+#include<chrono> 
+#include<thread> 
 
 
 SDLWrapper::SDLWrapper(int width, int height)
@@ -132,6 +134,7 @@ SDL_AppResult SDLWrapper::handleEvent(SDL_Event* pEvent, Camera& camera, MeshIns
         float cameraStepSize = 0.1f; 
         bool isPaused = false; 
         float thetaRotation = M_PI / 10.0f; //let this be the same for x, y, and z
+        float objectStepSize = 0.1f; 
 
         /*Might consider moving this to a helper method (ex: handleKeyboardEvent)*/
         switch (keyID) //note that cases are organized alphabetically (not "logically") 
@@ -159,6 +162,14 @@ SDL_AppResult SDLWrapper::handleEvent(SDL_Event* pEvent, Camera& camera, MeshIns
         case SDLK_S: 
             std::cout << "Moving backerds\n";
             camera.moveBackward(cameraStepSize);
+            break; 
+
+        case SDLK_T: //added this case just to test getting object off of the screen - I should improve this later
+                    //or just give a Mesh its own "natural" movement/animation that is not controlled by the user
+            std::cout << "Translating object to the right\n";
+            auto newTranslation = meshInstance.getTranslation(); 
+            newTranslation.x -= objectStepSize;
+            meshInstance.setTranslation(newTranslation); 
             break; 
 
         case SDLK_UP:

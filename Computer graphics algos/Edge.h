@@ -28,14 +28,14 @@ public:
 	//"adjacent" edges share a vertex 
 	bool isAdjacentEdge(const Edge& rhs) const;
 
-	bool intersects(const Edge& rhs) const;
+	//bool intersects(const Edge& rhs) const;
 
 	friend std::ostream& operator << (std::ostream& os, const Edge& e);
 
 	std::vector<Vec2> getPointsOfLineSegment() const;
 
 private:
-	//Naive ... and bugged, I think
+	//Naive ... and bugged
 	std::vector<Vec2> getPointsOfLineSegmentNaive() const;
 	float getSlopeOfLineSegment() const;
 

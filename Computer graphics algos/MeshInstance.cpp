@@ -36,5 +36,15 @@ const Vec4 MeshInstance::getRotation() const
     return rot; 
 }
 
+void MeshInstance::setTranslation(const Vec4& newTranslation)
+{
+    trans = newTranslation;
+}
+
+const Vec4 MeshInstance::getTranslation() const
+{
+    return trans; 
+}
+
 
 

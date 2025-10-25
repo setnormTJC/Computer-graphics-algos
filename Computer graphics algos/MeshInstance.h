@@ -30,5 +30,8 @@ public:
 
 	void setRotation(const Vec4& newRotation);
 	const Vec4 getRotation() const; 
+
+	void setTranslation(const Vec4& newTranslation); 
+	const Vec4 getTranslation() const; 
 };
 

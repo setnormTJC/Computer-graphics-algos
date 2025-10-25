@@ -5,9 +5,9 @@ Camera::Camera(const int& screenWidth, const int& screenHeight, float fovY)
 {
 	aspectRatio = (float)screenWidth / screenHeight;
 	//this->screenHeight = 123; //won't work! screen dims are reference vars!
-	constexpr float epsilon = 1e-4;
+	constexpr float zNearEpsilon = 1e-4;
 
-	if (std::fabs(zNear - 0.0f) < epsilon)
+	if (std::fabs(zNear - 0.0f) < zNearEpsilon)
 	{
 		throw MyException("zNear was within 0.0001 of 0.0", __LINE__, __FILE__);
 	}
@@ -63,12 +63,27 @@ Vec4 Camera::getEyePosition() const
 
 void Camera::moveForward(float delta)
 {
-	eye.z -= delta; 
+	//put a limit to how much camera can move forward (crossing zNear breaks things): 
+	float epsilon = 1e-3; 
+
+	float minZ = zNear + epsilon; 
+	eye.z = std::max(eye.z - delta, minZ);
+
+	if (eye.z == minZ)
+	{
+		std::cout << "No moving the camera any farther forwards";
+		std::cout << " ... you'll cross zNear and break perspective projection floating point precision\n";
+	}
 }
 
 void Camera::moveBackward(float delta)
 {
-	eye.z += delta; 
+	float epsilon = 1e-3;
+	float maxZ = zFar - epsilon; 
+	eye.z = std::min(eye.z + delta, maxZ);
+
+	if (eye.z == maxZ)
+		std::cout << "Camera reached maximum depth (far plane)." << std::endl;
 }
 
 void Camera::moveLeft(float delta)

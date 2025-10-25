@@ -20,12 +20,12 @@ Vec2 Vec4::xy()
 
 bool Vec4::operator==(const Vec4& rhs) const
 {
-	constexpr float epsilon = 1e-4; //tolerance for floating point comparison
+	constexpr float NDCepsilon = 1e-4; //tolerance for floating point comparison IF dealing with [-1 to 1] (NDC) values 
 
-	return std::fabs(x - rhs.x) < epsilon &&
-		std::fabs(y - rhs.y) < epsilon &&
-		std::fabs(z - rhs.z) < epsilon &&
-		std::fabs(w - rhs.w) < epsilon;
+	return std::fabs(x - rhs.x) < NDCepsilon &&
+		std::fabs(y - rhs.y) < NDCepsilon &&
+		std::fabs(z - rhs.z) < NDCepsilon &&
+		std::fabs(w - rhs.w) < NDCepsilon;
 }
 
 

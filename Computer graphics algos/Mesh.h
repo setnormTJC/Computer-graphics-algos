@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "Edge.h"
-#include "ImageBMP.h"
 #include"Triangle.h"
 #include "Vec4.h"
 
