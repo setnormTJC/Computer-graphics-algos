@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+
+#pragma warning(disable : 4820)
 class MyException/* : public std::exception ... ni*/
 {
 private:

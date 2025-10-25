@@ -50,10 +50,10 @@ Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 	/*Determine extrema (for bounding box and scanline algorithm)*/
 	for (const auto& v : vertices)
 	{
-		if (v.x < xMin) xMin = v.x;
-		if (v.x > xMax) xMax = v.x;
-		if (v.y < yMin) yMin = v.y;
-		if (v.y > yMax) yMax = v.y;
+		if (v.x < xMin) xMin = (int)v.x;
+		if (v.x > xMax) xMax = (int)v.x;
+		if (v.y < yMin) yMin = (int)v.y;
+		if (v.y > yMax) yMax = (int)v.y;
 	}
 
 	/*Determine if triangle is flat bottom or flat top or neither*/
@@ -126,7 +126,7 @@ std::vector<Vec2> Triangle::getPointsThatFillTriangle(int screenWidth, int scree
 			xIntermediate = static_cast<float>(vertices[2].x); 
 		}
 
-		Vec2 intermediateVertex = {(int) xIntermediate, (int)yIntermediate };
+		Vec2 intermediateVertex = {xIntermediate, yIntermediate };
 
 		Triangle lower({ vertices[0], vertices[1], intermediateVertex });
 		Triangle upper({ intermediateVertex, vertices[1], vertices[2]});
@@ -188,18 +188,26 @@ std::vector<Vec2> Triangle::getPointsThatFillFlatBottomTriangle(int screenWidth,
 	float xLeft = static_cast<float>(bottomLeft.x);
 	float xRight = static_cast<float>(bottomRight.x);
 
-	constexpr int dy = 1; //not needed, just for my understanding (dy/dx = slope)
-	for (int y = yMin; y < yMax; y = y + dy) //careful with edge case here - obviously ...
+	int yStart = static_cast<int>(std::ceil(bottomLeft.y));
+	int yEnd = static_cast<int>(std::ceil(top.y)) - 1; // top-left rule: exclude top edge
+
+	for (int y = yStart; y <= yEnd; ++y)
 	{
-		for (int x = xLeft; x <= xRight; ++x)
+		// Update x endpoints for this scanline
+		float xStart = xLeft + leftEdgeInverseSlope * (y - bottomLeft.y);
+		float xEnd = xRight + rightEdgeInverseSlope * (y - bottomRight.y);
+
+		int xMin = static_cast<int>(std::ceil(std::min(xStart, xEnd)));
+		int xMax = static_cast<int>(std::ceil(std::max(xStart, xEnd))) - 1; // exclude right edge
+
+		xMin = std::clamp(xMin, 0, screenWidth - 1);
+		xMax = std::clamp(xMax, 0, screenWidth - 1);
+
+		for (int x = xMin; x <= xMax; ++x)
 		{
-			//prevent floating point errors from going to -1 or screenWidth + 1
-			x = std::clamp(x, 0, screenWidth - 1);
-			y = std::clamp(y, 0, screenHeight - 1);
-			filledPoints.push_back({ x, y });
+			int clampedY = std::clamp(y, 0, screenHeight - 1);
+			filledPoints.push_back({ static_cast<float>(x), static_cast<float>(clampedY) });
 		}
-		xLeft = xLeft + leftEdgeInverseSlope * dy; //think: xFinal = xInitial +  (dx/dt)dt [t takes the place of 'y' here]
-		xRight += rightEdgeInverseSlope; // more concise equivalent to line above
 	}
 
 	return filledPoints;
@@ -208,32 +216,37 @@ std::vector<Vec2> Triangle::getPointsThatFillFlatBottomTriangle(int screenWidth,
 
 std::vector<Vec2> Triangle::getPointsThatFillFlatTopTriangle(int screenWidth, int screenHeight) const
 {
-	auto bottom = vertices[0]; 
-	auto topLeft = vertices[1]; 
-	auto topRight = vertices[2]; 
+	auto bottom = vertices[0];
+	auto topLeft = vertices[1];
+	auto topRight = vertices[2];
 
-	std::vector<Vec2> filledPoints; 
+	std::vector<Vec2> filledPoints;
 
 	float leftEdgeInverseSlope = static_cast<float>(topLeft.x - bottom.x) / (topLeft.y - bottom.y);
 	float rightEdgeInverseSlope = static_cast<float>(topRight.x - bottom.x) / (topRight.y - bottom.y);
 
-	float xLeft = static_cast<float>(bottom.x);
-	float xRight = static_cast<float>(bottom.x); 
+	int yStart = static_cast<int>(std::ceil(bottom.y));
+	int yEnd = static_cast<int>(std::ceil(topLeft.y)) - 1; // exclude top edge per top-left rule
 
-	for (int y = yMin; y < yMax; ++y) //step up one row of pixels at a time 
+	for (int y = yStart; y <= yEnd; ++y)
 	{
-		for (int x = xLeft; x <= xRight; ++x) //again, careful with edge cases 
-		{
-			x = std::clamp(x, 0, screenWidth - 1); //prevent floating point errors from going to -1 or screenWidth + 1
-			y = std::clamp(y, 0, screenHeight - 1);
+		float xStart = bottom.x + leftEdgeInverseSlope * (y - bottom.y);
+		float xEnd = bottom.x + rightEdgeInverseSlope * (y - bottom.y);
 
-			filledPoints.push_back({ x, y });
+		int xMin = static_cast<int>(std::ceil(std::min(xStart, xEnd)));
+		int xMax = static_cast<int>(std::ceil(std::max(xStart, xEnd))) - 1; // exclude right edge
+
+		xMin = std::clamp(xMin, 0, screenWidth - 1);
+		xMax = std::clamp(xMax, 0, screenWidth - 1);
+		int clampedY = std::clamp(y, 0, screenHeight - 1);
+
+		for (int x = xMin; x <= xMax; ++x)
+		{
+			filledPoints.push_back({ static_cast<float>(x), static_cast<float>(clampedY) });
 		}
-		xLeft = xLeft + leftEdgeInverseSlope; 
-		xRight += rightEdgeInverseSlope; 
 	}
 
-	return filledPoints; 
+	return filledPoints;
 }
 
 
@@ -292,17 +305,17 @@ Triangle::Triangle(const Edge& equilateralEdge)
 	// choose the “above-edge” orientation
 	vertices[0] = A;
 	vertices[1] = B;
-	vertices[2] = { (int)cx, (int)cy };
+	vertices[2] = { (float)cx, (float)cy };
 
 	sortVertices();
 
 	/*Determine extrema (for bounding box and scanline algorithm)*/
 	for (const auto& v : vertices)
 	{
-		if (v.x < xMin) xMin = v.x;
-		if (v.x > xMax) xMax = v.x;
-		if (v.y < yMin) yMin = v.y;
-		if (v.y > yMax) yMax = v.y;
+		if (v.x < xMin) xMin = (int)v.x;
+		if (v.x > xMax) xMax = (int)v.x;
+		if (v.y < yMin) yMin = (int)v.y;
+		if (v.y > yMax) yMax = (int)v.y;
 	}
 
 	/*Determine if triangle is flat bottom or flat top or neither*/
@@ -316,9 +329,9 @@ float Triangle::getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int in
 {
 	auto edges = getEdges();
 
-	if (indexOfFirstEdge < 0 || indexOfFirstEdge > edges.size() - 1
+	if (indexOfFirstEdge < 0 || indexOfFirstEdge > (int)edges.size() - 1
 		||
-		indexOfSecondEdge < 0 || indexOfSecondEdge > edges.size() - 1)
+		indexOfSecondEdge < 0 || indexOfSecondEdge >(int)edges.size() - 1)
 	{
 		throw std::runtime_error("Edge indices must be between 0 and 2");
 	}

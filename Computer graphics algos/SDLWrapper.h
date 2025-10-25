@@ -1,6 +1,10 @@
 #pragma once
 #define _USE_MATH_DEFINES
+
+#pragma warning(push)
+#pragma warning(disable: 4820) //padding warning
 #include <SDL3/SDL.h>
+#pragma warning(pop)
 
 #include "Camera.h"
 #include "Mesh.h"

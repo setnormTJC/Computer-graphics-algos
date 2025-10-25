@@ -10,7 +10,7 @@ Mat4::Mat4()
     {
         for (int col = 0; col < 4; ++col)
         {
-            elements[row][col] = 0;
+            elements[(size_t)row][(size_t)col] = 0;
         }
     }
 }
@@ -22,7 +22,7 @@ void Mat4::set(const int row, const int column, float value)
         throw MyException("row and column must be between 0 and 3", __LINE__, __FILE__);
     }
 
-    elements[row][column] = value; 
+    elements[(size_t)row][(size_t)column] = value;
 }
 
 void Mat4::operator=(const std::array<std::array<float, 4>, 4>& clientElements)
@@ -41,9 +41,9 @@ Mat4 Mat4::operator*(const Mat4& rhs) const
             float sum{};
             for (int k = 0; k < 4; ++k)
             {
-                sum += elements[row][k] * rhs.elements[k][col];
+                sum += elements[(size_t)row][(size_t)k] * rhs.elements[(size_t)k][(size_t)col];
             }
-            product.elements[row][col] = sum; 
+            product.elements[(size_t)row][(size_t)col] = sum;
         }
     }
 
@@ -58,8 +58,8 @@ Mat4 Mat4::operator*(const float rhs) const
     {
         for (int col = 0; col < 4; ++col)
         {
-            float newValue = elements[row][col] * rhs;
-            product.elements[row][col] += newValue;
+            float newValue = elements[(size_t)row][(size_t)col] * rhs;
+            product.elements[(size_t)row][(size_t)col] += newValue;
         }
     }
 
@@ -77,7 +77,7 @@ Vec4 Mat4::operator*(const Vec4& rhs) const
 
         for (int col = 0; col < 4; ++col)
         {
-            sum += elements[row][col] * rhs[col];
+            sum += elements[(size_t)row][(size_t)col] * rhs[(size_t)col];
         }
         newVec[row] = sum; 
     }
@@ -247,7 +247,7 @@ std::ostream& operator<<(std::ostream& os, const Mat4& m)
         {
             int COL_WIDTH = 10; 
             std::cout << std::fixed << std::setprecision(1); 
-            std::cout << std::left << std::setw(COL_WIDTH) << m.elements[row][col]; 
+            std::cout << std::left << std::setw(COL_WIDTH) << m.elements[(size_t)row][(size_t)col];
         }
         std::cout << "\n";
     }

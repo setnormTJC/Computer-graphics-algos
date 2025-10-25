@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Mat4.h"
+#include "Mesh.h"
 
 /*@brief This class is responsible for converting "world space coordinates" (x, y, z, w) 
 to screen space coordinates (x, y). 
@@ -20,21 +21,21 @@ It does this based the given params:
 class Camera
 {
 private:
+
+	Vec4 eye = { 0.0f, 0.0f, 0.0f, 1.0f }; //z = 0.0f, typically, w must equal 1.0f
+	Vec4 target = { 0.0f, 0.0f, -1.0f, 1.0f }; //point the eye in the negative z direction 
 	//set the up direction to the typical: (y = 1)
 	Vec4 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 	//NOTE: w = 1.0f for positions that get multiplied by Mat4s
 	//THIS "up" has w = 0.0f (not 1.0f)
 
-	Vec4 eye = { 0.0f, 0.0f, 0.0f, 1.0f }; //z = 0.0f, typically, w must equal 1.0f
-	Vec4 target = { 0.0f, 0.0f, -1.0f, 1.0f }; //point the eye in the negative z direction 
-
+	float aspectRatio = 1.0f; 
+	float fovY = M_PI / 2;
 	float zFar = 10.0f;
 	float zNear = 0.1f;
-	float fovY = M_PI / 2;
-	float aspectRatio = 1.0f; 
 
-	const int& screenWidth; //reference type! (let SDLWrapper OWN these) 
 	const int& screenHeight;//reference type! (let SDLWrapper OWN these)  - and Camera CANNOT modify this (not that it would want to)
+	const int& screenWidth; //reference type! (let SDLWrapper OWN these) 
 
 public:
 	/*zNear is initialized to 1.0f by default*/
@@ -43,7 +44,7 @@ public:
 	/*NOTE: this function has TWO matrix multiplications on a potentially-large number of vertices
 	* It is LIKELY to be one of the most expensive function calls. 
 	*/
-	std::vector<Vec2> projectToScreen(const std::vector<Vec4>& worldSpaceCoords) const;
+	//std::vector<Vec2> projectToScreen(const std::vector<Vec4>& worldVerts, const Mesh& mesh) const;
 	
 	/*@brief NOTE! `Camera::projectToScreen` must be called AFTER modifying the eye position to get expected result
 	@param newEyePosition -> set z component >= -1 (the default nearZ plane) AND set w = 1.0f
@@ -63,12 +64,20 @@ public:
 
 	void logCameraInfo(const std::string& logFilename) const;
 
-private: 
-	/*Helper called by `projectToScreen`*/
-	Vec2 ndcToScreen(const Vec4& v, int screenWidth, int screenHeight) const;
+//private: 
+	/*Helpers called by `projectToScreen`*/
 
-	void applyPerspectiveDivide(std::vector<Vec4>& vpVerts) const; 
+	/*Modifies world verts - transforming them (in place, for complexity considerations) to VIEW verts */
+	std::vector<Vec4> applyView(const std::vector<Vec4>& worldVerts) const;
+	/*Finds normals of all triangular faces, removes vertices whose faces point away from camera (determined by dot product)*/
+	std::vector<std::array<int, 3>> getFrontFaceIndices(const std::vector<Vec4>& viewVerts, const Mesh& mesh) const;
+	/*puts vertices into "clip space"*/
+	std::vector<Vec4>  applyProjection(const std::vector<Vec4>& viewVerts) const;
+	/*verts should be in range [-1, 1] after this function finishes*/
+	std::vector<Vec4> applyPerspectiveDivide(const std::vector<Vec4>& clippedVerts) const; 
+	/**/
+	std::vector<Vec2>  ndcToScreen(const std::vector<Vec4>& ndcVerts) const;
 
-	std::vector<Vec4> multiplyByViewProjectionVerts(const std::vector<Vec4>& worldSpaceCoords) const;
+
 };
 

@@ -37,7 +37,7 @@ int main()
 			0.0f);
 
 		Vec4 scale(1.0f, 1.0f, 1.0f, 0.0f);
-		Vec4 trans(0.0f, 0.0f, -3.0f, 1.0f);
+		Vec4 trans(0.0f, 0.0f, -5.0f, 1.0f);
 
 		/*Apply the transformations and get screen-equivalent coordinates*/
 		MeshInstance meshInstance(trans, rot, scale);

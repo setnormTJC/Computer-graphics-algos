@@ -50,6 +50,7 @@ private:
 	/*modifies the member variable vertices such that v[0].y <= v[1].y <= v[2].y*/
 	void sortVertices();
 
+	/*Applies top left "rasterization rule"*/
 	std::vector<Vec2> getPointsThatFillFlatBottomTriangle(int screenWidth, int screenHeight) const;
 	std::vector<Vec2> getPointsThatFillFlatTopTriangle(int screenWidth, int screenHeight) const;
 	

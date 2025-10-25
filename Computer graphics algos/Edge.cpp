@@ -61,10 +61,10 @@ std::vector<Vec2> Edge::getPointsOfLineSegmentNaive() const
 
 	float slope = getSlopeOfLineSegment();
 
-	int xMin = std::min(v1.x, v2.x);
-	int xMax = std::max(v1.x, v2.x);
-	int yMin = std::min(v1.y, v2.y);
-	int yMax = std::max(v1.y, v2.y);
+	int xMin = (int)std::min(v1.x, v2.x);
+	int xMax = (int)std::max(v1.x, v2.x);
+	int yMin = (int)std::min(v1.y, v2.y);
+	int yMax = (int)std::max(v1.y, v2.y);
 
 	if (abs(slope) < 1) //step in x direction ... but why?
 	{
@@ -72,7 +72,7 @@ std::vector<Vec2> Edge::getPointsOfLineSegmentNaive() const
 		for (int x = xMin; x <= xMax; ++x)
 		{
 			int y = yMin + slope * (x - xMin);
-			points.push_back({ x, y });
+			points.push_back({ (float)x, (float)y });
 		}
 	}
 
@@ -82,7 +82,7 @@ std::vector<Vec2> Edge::getPointsOfLineSegmentNaive() const
 		for (int y = yMin; y <= yMax; ++y)
 		{
 			int x = (y / slope) - (yMin / slope) + xMin;
-			points.push_back({ x, y });
+			points.push_back({ (float)x, (float)y });
 		}
 	}
 
@@ -133,7 +133,7 @@ std::vector<Vec2> Edge::getPointsOfLineSegment() const
 	int err = dx - dy;
 
 	while (true) {
-		pts.push_back({ x0, y0 });
+		pts.push_back({ (float)x0, (float)y0 });
 		if (x0 == x1 && y0 == y1) break;
 		int e2 = 2 * err;
 		if (e2 > -dy) { err -= dy; x0 += sx; }
@@ -161,7 +161,7 @@ std::vector<Vec2> Edge::getVerticalLineSegmentPoints() const
 	}
 
 	for (int y = v1.y; y <= v2.y; ++y)
-		points.push_back({ v1.x, y });
+		points.push_back({ v1.x,(float)y });
 
 	return points;
 }

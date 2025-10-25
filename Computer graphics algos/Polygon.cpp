@@ -16,16 +16,14 @@ Polygon::Polygon(const std::vector<Vec2>& vertices)
 
 bool Polygon::isConvex() const
 {
-	auto n = vertices.size(); 
+	//auto n = vertices.size(); 
 
-	for (size_t i = 0; i < n; ++i)
-	{
-		const Vec2& a = vertices[i]; 
-		const Vec2& b = vertices[(i + 1) % n];
-		const Vec2& c = vertices[(i + 2) % n];
-
-
-	}
+	//for (size_t i = 0; i < n; ++i)
+	//{
+	//	const Vec2& a = vertices[i]; 
+	//	const Vec2& b = vertices[(i + 1) % n];
+	//	const Vec2& c = vertices[(i + 2) % n];
+	//}
 
 	return true; //for now
 }
@@ -122,14 +120,14 @@ Vec2 Polygon::getApproximateCentroid() const
 {
 	Vec2 approximateCentroid = {0, 0};
 
-	for (int i = 0; i < vertices.size(); ++i)
+	for (size_t i = 0; i < vertices.size(); ++i)
 	{
 		approximateCentroid.x += vertices[i].x; 
 		approximateCentroid.y += vertices[i].y;
 	}
 
-	approximateCentroid.x = approximateCentroid.x / vertices.size();
-	approximateCentroid.y = approximateCentroid.y / vertices.size();
+	approximateCentroid.x = approximateCentroid.x / (int)vertices.size();
+	approximateCentroid.y = approximateCentroid.y / (int)vertices.size();
 
 	return approximateCentroid;
 }
@@ -150,7 +148,7 @@ std::vector<Edge> Polygon::getPolygonEdges() const
 {
 	std::vector<Edge> edges; 
 	
-	for (int i = 0; i < vertices.size() - 1; ++i)
+	for (size_t i = 0; i < vertices.size() - 1; ++i)
 	{
 		edges.push_back({ vertices[i], vertices[i + 1] });
 	}

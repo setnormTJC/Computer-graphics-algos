@@ -38,6 +38,8 @@ public:
 	/*@brief use if filling the faces of Mesh*/
 	std::vector<Triangle> getTriangularFaces(const std::vector<Vec2>& screenSpaceVerts) const;
 
+	const const std::vector<std::array<int, 3>> getTriangularFaceIndices() const;
+
 private: 
 	/*Parses a Blender .obj file to fill vertices and face indices*/
 	void getDataFromBlenderObjFile(const std::string& blenderObjFilename);
@@ -51,6 +53,14 @@ private:
 
 	/*@brief use this for wireframe rendering*/
 	std::vector<std::pair<int, int>> getEdgeIndices() const;
+
+
+	/*Required for enforcing winding order (for backface culling)*/
+	Vec4 getMeshCentroid() const;
+
+
+	/*Modifies triangularFaceIndices (for backface culling)*/
+	void enforceWindingOrder(); 
 
 };
 

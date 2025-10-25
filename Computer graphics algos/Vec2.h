@@ -6,11 +6,11 @@
 
 struct Vec2
 {
-	int x, y;
+	float x, y;
 
 	Vec2() = default;
 
-	Vec2(const int x, const int y)
+	Vec2(float x, float y)
 		:x(x), y(y)
 	{
 
@@ -67,7 +67,7 @@ struct Vec2
 
 	Vec2 midpoint(const Vec2& b)
 	{
-		return Vec2{ int((x + b.x) / 2.0), int((y + b.y) / 2.0) };
+		return Vec2{ (x + b.x) / 2.0f, (y + b.y) / 2.0f };
 	}
 
 
@@ -86,7 +86,7 @@ namespace std
 	{
 		size_t operator ()(const Vec2& v) const noexcept
 		{
-			return std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1);
+			return std::hash<float>()(v.x) ^ (std::hash<float>()(v.y) << 1);
 		}
 	};
 }

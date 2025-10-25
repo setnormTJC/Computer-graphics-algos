@@ -16,7 +16,12 @@ public:
 	/*@brief Fills the face(s) of triangular faces
 	* @param screenWidth -> NEEDED because this function clamps between 0 and screenWidth
 	*/
-	static std::unordered_map<Vec2, Color> getFilledFaces(const Mesh& mesh, const std::vector<Vec2>& screenVerts,
+	//static std::unordered_map<Vec2, Color> getFilledFaces(const Mesh& mesh, const std::vector<Vec2>& screenVerts,
+	//	const std::vector<Color>& colors, int screenWidth, int screenHeight);
+
+	static std::unordered_map<Vec2, Color> getFilledFaces(const std::vector<std::array<int, 3>>& frontFaceIndices
+		, const std::vector<Vec2>& screenVerts,
 		const std::vector<Color>& colors, int screenWidth, int screenHeight);
+
 };
 

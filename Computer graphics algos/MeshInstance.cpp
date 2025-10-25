@@ -3,9 +3,9 @@
 MeshInstance::MeshInstance(const Vec4& trans, const Vec4& rot, const Vec4& scale)
     : trans(trans), scale(scale)
 {
-    this->rot.x = fmod(rot.x, 2.0f * M_PI); //wraparound 
-    this->rot.y = fmod(rot.y, 2.0f * M_PI);
-    this->rot.z = fmod(rot.z, 2.0f * M_PI);
+    this->rot.x = fmodf(rot.x, 2.0f * (float)M_PI); //wraparound 
+    this->rot.y = fmodf(rot.y, 2.0f * (float)M_PI);
+    this->rot.z = fmodf(rot.z, 2.0f * (float)M_PI);
 }
 
 void MeshInstance::applyTransformation(const std::vector<Vec4>& localVerts, 
