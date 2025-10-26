@@ -65,8 +65,6 @@ class Color
 	//should be unsigned because 1) no "negative" colors and 2) having alpha = 255 (FF) is desirable
 	unsigned int bgra = 0x00'00'00'00;
 	unsigned int convertToUnsignedInt();
-	/*NOTE that I include 'a' but alpha is not generally supported by BMP - NOTE: I used alpha mainly to simplify "4 byte padding logic"*/
-	Color(unsigned int b, unsigned int g, unsigned int r, unsigned int a); //just in case, I suppose...
 	// Individual getters (called by Color::getRGB)
 	unsigned int getB() const;
 	unsigned int getG() const;
@@ -75,6 +73,8 @@ class Color
 public:
 	Color() = default;
 	Color(unsigned int r, unsigned int g, unsigned int b);
+	/*NOTE that I include 'a' but alpha is not generally supported by BMP - NOTE: I used alpha mainly to simplify "4 byte padding logic"*/
+	Color(unsigned int b, unsigned int g, unsigned int r, unsigned int a);
 	Color(ColorEnum colorEnum);
 
 	static std::vector<ColorEnum> getBroadColorPalette();

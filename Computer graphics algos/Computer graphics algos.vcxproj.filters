@@ -84,6 +84,12 @@
     <ClCompile Include="Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageBMP.cpp">
+      <Filter>Source Files\old stuff</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SDLWrapper.h">
@@ -130,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="Color.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageBMP.h">
+      <Filter>Header Files\old stuff</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

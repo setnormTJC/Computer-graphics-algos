@@ -3,7 +3,7 @@
 #include<algorithm>
 #include<iostream>
 #include<map> 
-#include<tuple> //for std::tie
+#include<tuple> //for std::tie ... and std::tuple (DUH!)
 #include <vector>
 
 #include"Edge.h"
@@ -44,6 +44,11 @@ public:
 
 	/*The area of a triangle is HALF the magnitude of the cross product of two sides of the triangle(with sides constructed as Vec4s)*/
 	float getArea() const; 
+
+	/*For texture mapping - this is related to the distance of a point from the 3 vertices of the triangle
+	@returns parameters commonly called alpha, beta, gamma*/
+	std::tuple<float, float, float> getBarycentric(const Vec2& point);
+
 private: 
 	/*For geometric funsies (nerd)*/
 	float getAngleOfAdjacentEdges(const int indexOfFirstEdge, const int indexOfSecondEdge) const;

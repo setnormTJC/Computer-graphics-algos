@@ -2,6 +2,7 @@
 
 #include<chrono> 
 #include<thread> 
+#include "Texture.h"
 
 
 SDLWrapper::SDLWrapper(int width, int height)
@@ -76,25 +77,20 @@ SDL_AppResult SDLWrapper::iterate(const Mesh& mesh, MeshInstance& meshInstance,
     std::vector<Vec4> worldVerts; 
 
     meshInstance.applyTransformation(localVerts, worldVerts);
-    //auto screenVerts = camera.projectToScreen(worldVerts, mesh);
-
 
     /*In the functions below, I am returning potentially-large vectors<Vec4> - modify to void in the future*/
-
     auto viewVerts = camera.applyView(worldVerts); 
-    //cull -> pass "surviving" triangle face indices to Rasterizer below
     auto frontFaceIndices = camera.getFrontFaceIndices(viewVerts, mesh); 
-    
-    /*Apply remaining 3 operations to project to screen space*/
     auto projectedVerts = camera.applyProjection(viewVerts);
     auto ndcVerts = camera.applyPerspectiveDivide(projectedVerts);
     auto screenVerts = camera.ndcToScreen(ndcVerts);
 
-    /*Fill the faces of the object OR draw in wireframe mode*/
-    //auto rasterizedPixels = Rasterizer::getFilledFaces(mesh, screenVerts, colors, width, height);
-
-    auto rasterizedPixels = Rasterizer::getFilledFaces(frontFaceIndices, screenVerts, colors, width, height);
-
+    //auto rasterizedPixels = Rasterizer::getFilledFaces(frontFaceIndices, screenVerts, colors, width, height);
+    
+    std::vector<Vec2> localUVs = mesh.getLocalUVs(); 
+    auto rasterizedPixels = Rasterizer::getTextureFilledFaces(frontFaceIndices, screenVerts, localUVs, width, height);
+    
+    
     draw(rasterizedPixels);
 
     advanceFrame(frameStart); 

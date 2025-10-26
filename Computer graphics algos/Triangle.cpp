@@ -43,6 +43,11 @@ Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 		throw MyException("triangle is ... in fact a line segment", __LINE__, __FILE__);
 	}
 
+	//if (std::abs(getArea()) < 1e-6f)
+	//{
+	//	throw MyException("Triangle has near-zero area", __LINE__, __FILE__);
+	//}
+
 	this->vertices = vertices; 
 
 	sortVertices(); 
@@ -284,6 +289,29 @@ float Triangle::getArea() const
 	float area = 0.5f * crossProduct.getMagnitude();  
 
 	return area; 
+}
+
+std::tuple<float, float, float> Triangle::getBarycentric(const Vec2& point)
+{
+	Vec2 v0 = vertices[0];
+	Vec2 v1 = vertices[1]; 
+	Vec2 v2 = vertices[2]; 
+
+	Triangle t0({ v1, v2, point });	
+	Triangle t1({ v0, v2, point });
+	Triangle t2({ v0, v1, point });
+
+	float areaOfThisTriangle = getArea(); //get area finds cross product of two triangle edges
+	float areaOfT0 = t0.getArea(); 
+	float areaOfT1 = t1.getArea(); 
+	float areaOfT2 = t2.getArea(); 
+
+	float alpha = areaOfT0 / areaOfThisTriangle;
+	float beta = areaOfT1 / areaOfThisTriangle;
+	float gamma = areaOfT2 / areaOfThisTriangle;
+
+
+	return {alpha, beta, gamma};
 }
 
 

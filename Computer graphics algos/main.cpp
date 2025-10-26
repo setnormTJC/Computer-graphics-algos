@@ -18,17 +18,21 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "SDLWrapper.h"
+#include "Texture.h"
 
 
 int main()
 {
 	try
 	{
+		//Texture texture("bmpOutputs/checkerboard.bmp");//this is POSSIBLY just a temporary (expensive) approach
+
 		/*Vertices of object to draw*/
-		//Mesh mesh(CommonPolyhedronType::tetrahedron);
-		Mesh mesh(CommonPolyhedronType::octahedron);
+		//Mesh mesh(CommonPolyhedronType::octahedron);
+		Mesh mesh(CommonPolygonType::triangle);
 
 		std::vector<Vec4> localVerts = mesh.getLocalVertices(); 
+
 
 		/*Set the initial transformations to be applied to object*/
 		Vec4 rot(0.0f,
@@ -37,7 +41,7 @@ int main()
 			0.0f);
 
 		Vec4 scale(1.0f, 1.0f, 1.0f, 0.0f);
-		Vec4 trans(0.0f, 0.0f, -5.0f, 1.0f);
+		Vec4 trans(0.0f, 0.0f, -1.0f, 1.0f);  //set z = -3.0 or so here for polyhedrons with their current coords
 
 		/*Apply the transformations and get screen-equivalent coordinates*/
 		MeshInstance meshInstance(trans, rot, scale);

@@ -18,20 +18,30 @@ enum class CommonPolyhedronType
 	cube, //8 verts
 };
 
+enum class CommonPolygonType
+{
+	triangle,
+	rectangle,
+	pentagon
+};
+
 class Mesh
 {
 private:
 	std::vector<Vec4> localVerts;
-	//std::vector<std::pair<int, int>> edgeIndices;
 	std::vector<std::array<int, 3>> triangularFaceIndices; 
-
+	
+	
+	std::vector<Vec2> localUVs; //for texture mapping
+ 
 public:
 	Mesh() = delete; 
 	/*Parses vertices and faces from a Blender obj file*/
 	Mesh(const std::string& blenderObjFilename);
 	/*Constructs a tetrahedron, cube, maybe others in the future*/
 	Mesh(const CommonPolyhedronType& commonPolyhedronType); 
-	
+	Mesh(const CommonPolygonType& commonPolygonType);
+
 	const std::vector<Vec4>& getLocalVertices() const;
 
 
@@ -39,6 +49,8 @@ public:
 	std::vector<Triangle> getTriangularFaces(const std::vector<Vec2>& screenSpaceVerts) const;
 
 	const const std::vector<std::array<int, 3>> getTriangularFaceIndices() const;
+
+	const std::vector<Vec2> getLocalUVs() const; 
 
 private: 
 	/*Parses a Blender .obj file to fill vertices and face indices*/
@@ -50,6 +62,9 @@ private:
 	void constructTriangularPrism(); 
 	void constructOctahedron(); 
 	void constructCube();
+
+	/*polygons*/
+	void constructTriangle(); 
 
 	/*@brief use this for wireframe rendering*/
 	std::vector<std::pair<int, int>> getEdgeIndices() const;

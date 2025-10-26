@@ -41,6 +41,23 @@ Mesh::Mesh(const CommonPolyhedronType& commonPolyhedronType)
 	//ALTERS the order of triangularFaceIndices so that back face culling can be done
 }
 
+Mesh::Mesh(const CommonPolygonType& commonPolygonType)
+{
+	switch (commonPolygonType)
+	{
+	case CommonPolygonType::triangle: 
+		constructTriangle();
+		break; 
+
+		//fill in the others later
+	default:
+		throw MyException("Unsupported polygon type", __LINE__, __FILE__);
+	}
+
+	enforceWindingOrder();
+	//ALTERS the order of triangularFaceIndices so that back face culling can be done
+}
+
 void Mesh::getDataFromBlenderObjFile(const std::string& blenderFilename)
 {
 	//Build me up, Buttercup, baby:
@@ -97,6 +114,11 @@ std::vector<Triangle> Mesh::getTriangularFaces(const std::vector<Vec2>& screenSp
 const std::vector<std::array<int, 3>> Mesh::getTriangularFaceIndices() const
 {
 	return triangularFaceIndices;
+}
+
+const std::vector<Vec2> Mesh::getLocalUVs() const
+{
+	return localUVs;
 }
 
 #pragma region private Mesh function implementations
@@ -279,6 +301,31 @@ void Mesh::constructCube()
 		// Top face (+y)
 		{3, 2, 6}, {3, 6, 7}
 	};
+}
+
+void Mesh::constructTriangle()
+{
+	localVerts =
+	{
+		//note the z = -1.0f here: 
+		Vec4(-1.0f, -1.0f, -1.0f, 1.0f), //0: bottom left 
+		Vec4(1.0f, -1.0f, -1.0f, 1.0f), //1: bottom right
+		Vec4(0.0f, 1.0f, -1.0f, 1.0f)
+	};
+
+	triangularFaceIndices = 
+	{
+		{ 0, 1, 2 }
+	}; //only one of 'em for a single triangle ... 
+
+	
+	localUVs =
+	{
+		Vec2(0,0),
+		Vec2(1,0),
+		Vec2(0.5,1)
+	};
+
 }
 
 std::vector<std::pair<int, int>> Mesh::getEdgeIndices() const

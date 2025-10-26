@@ -102,7 +102,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="ImageBMP.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -145,12 +146,14 @@
     <ClCompile Include="Rasterizer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SDLWrapper.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Vec4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="ImageBMP.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Edge.h" />
     <ClInclude Include="Light.h" />
@@ -161,6 +164,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SDLWrapper.h" />
     <ClInclude Include="Polygon.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec4.h" />

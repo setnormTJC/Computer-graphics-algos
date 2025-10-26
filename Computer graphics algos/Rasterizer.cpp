@@ -1,4 +1,6 @@
 #include "Rasterizer.h"
+#include "Texture.h"
+#include "MyException.h"
 
 
 std::unordered_map<Vec2, Color> Rasterizer::getWireframeLines(const Mesh& mesh, const std::vector<Vec2>& screenVerts,
@@ -31,7 +33,6 @@ std::unordered_map<Vec2, Color> Rasterizer::getFilledFaces(const std::vector<std
 {
 	std::unordered_map<Vec2, Color> positionsToColors;
 
-
 	positionsToColors.reserve(screenVerts.size()); 
 
 	for (size_t i = 0; i < frontFaceIndices.size(); ++i)
@@ -55,6 +56,60 @@ std::unordered_map<Vec2, Color> Rasterizer::getFilledFaces(const std::vector<std
 
 	return positionsToColors;
 }
+
+std::unordered_map<Vec2, Color> Rasterizer::getTextureFilledFaces(const std::vector<std::array<int, 3>>& frontFaceIndices, 
+	const std::vector<Vec2>& screenVerts, const std::vector<Vec2>& localUVs, int screenWidth, int screenHeight)
+{
+	//Texture texture("bmpOutputs/checkerboard.bmp");//this is just a temporary (expensive) approach
+					//pass this as YET ANOTHER arg or possibly make a member variable of Rasterizer...
+
+
+	Texture texture("textures/catFace.bmp");//this is just a temporary (expensive) approach
+
+	std::unordered_map<Vec2, Color> positionsToColors;
+
+	positionsToColors.reserve(screenVerts.size());  //NOTE that this (almost certainly) will NOT be enough
+
+	for (size_t i = 0; i < frontFaceIndices.size(); ++i)
+	{
+		const auto& faceIndices = frontFaceIndices[i];
+
+		Vec2 v0 = screenVerts[faceIndices[0]];
+		Vec2 v1 = screenVerts[faceIndices[1]];
+		Vec2 v2 = screenVerts[faceIndices[2]];
+
+		Triangle currentFace({ v0, v1, v2 });
+
+		Vec2 uv0 = localUVs[faceIndices[0]]; 
+		Vec2 uv1 = localUVs[faceIndices[1]];
+		Vec2 uv2 = localUVs[faceIndices[2]];
+
+		std::vector<Vec2> points = currentFace.getPointsThatFillTriangle(screenWidth, screenHeight);
+
+		for (const Vec2& point : points)
+		{
+
+			auto [alpha, beta, gamma] = currentFace.getBarycentric(point);
+			float sanityCheckSum = alpha + beta + gamma;
+
+			if (std::abs(sanityCheckSum - 1.0f) > 1e-3)
+				throw MyException("sum of alpha, beta, gamma delta should be within 1e-3 of 1", __LINE__, __FILE__);
+
+			Vec2 uv = uv0 * alpha + uv1 * beta + uv2 * gamma;
+			//NOTE: uv.x and uv.y should be between 0 and 1 -> may break otherwise ?
+			//if (uv.x < 0.0f || uv.x > 1.0f || )
+
+			Color texColor = texture.sample(uv); //u and v typically range from [0, 1]
+
+			positionsToColors[point] = texColor; 
+		}
+	}
+
+	return positionsToColors;
+
+}
+
+
 
 //std::unordered_map<Vec2, Color> Rasterizer::getFilledFaces(const Mesh& mesh, const std::vector<Vec2>& screenVerts,
 //	const std::vector<Color>& colors, int screenWidth, int screenHeight)
