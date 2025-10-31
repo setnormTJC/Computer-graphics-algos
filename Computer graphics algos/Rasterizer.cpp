@@ -64,7 +64,7 @@ std::unordered_map<Vec2, Color> Rasterizer::getTextureFilledFaces_barycentric(co
 					//pass this as YET ANOTHER arg or possibly make a member variable of Rasterizer...
 
 
-	Texture texture("textures/100pixelWidthCatface.bmp");//this is just a temporary (expensive) approach
+	Texture texture("textures/dice.bmp");//this is just a temporary (expensive) approach
 
 	std::unordered_map<Vec2, Color> positionsToColors;
 
@@ -112,7 +112,7 @@ std::unordered_map<Vec2, Color> Rasterizer::getTextureFilledFaces_barycentric(co
 std::unordered_map<Vec2, Color> Rasterizer::getTextureFilledFaces_simple(const std::vector<std::array<int, 3>>& frontFaceIndices,
 	const std::vector<Vec2>& screenVerts, const std::vector<Vec2>& localUVs, int screenWidth, int screenHeight)
 {
-	Texture texture("textures/100pixelWidthCatface.bmp");//this is just a temporary (expensive) approach
+	Texture texture("textures/50x50Ramona.bmp");//this is just a temporary (expensive) approach
 
 	std::unordered_map<Vec2, Color> positionsToColors;
 

@@ -19,7 +19,7 @@ Texture::Texture(const std::string& imageFilename)
 
 Color Texture::sample(const Vec2& uv) const
 {
-    float u = std::clamp(uv.x, 0.0f, 1.0f); 
+    float u = std::clamp(uv.x, 0.0f, 1.0f); //NORMALIZING u and v allows textures of different resolutions!
     float v = std::clamp(uv.y, 0.0f, 1.0f);
 
 

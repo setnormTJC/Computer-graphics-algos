@@ -142,8 +142,8 @@ void Mesh::enforceWindingOrder()
 
 		if (triangleSurfaceNormal.dot(toCentroid) > 0) 
 		{
-			//either swap here or don't - not sure which? 
 			std::swap(faceIndices[1], faceIndices[2]);
+
 		}
 	}
 }
@@ -291,20 +291,72 @@ void Mesh::constructCube()
 	};
 
 	// UVs (one per vertex, aligned to each face)
-	localUVs = {
-		// Back face
-		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
-		// Front face
-		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
-		// Left face
-		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
-		// Right face
-		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
-		// Bottom face
-		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
-		// Top face
-		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1)
-	};
+	//localUVs = {
+	//	// Back face
+	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+	//	// Front face
+	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+	//	// Left face
+	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+	//	// Right face
+	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+	//	// Bottom face
+	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+	//	// Top face
+	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1)
+	//};
+
+	/*These are SPECIFIC to the dice image file in the textures folder!*/
+// Back face (-Z, 5 dots: U=[0.25, 0.5], V=[0.25, 0.5])
+	// Vertex order: (BL), (TL), (TR), (BR)
+
+	localUVs = { 
+		Vec2(0.25, 0.25), Vec2(0.25, 0.5), Vec2(0.5, 0.5), Vec2(0.5, 0.25),
+
+		// Front face (+Z, 2 dots: U=[0.25, 0.5], V=[0.5, 0.75])
+		// Vertex order: (BL), (TL), (TR), (BR)
+		Vec2(0.25, 0.5), Vec2(0.25, 0.75), Vec2(0.5, 0.75), Vec2(0.5, 0.5),
+
+		// Left face (-X, 4 dots: U=[0.0, 0.25], V=[0.25, 0.5])
+		// Vertex order: (BL), (TL), (TR), (BR)
+		Vec2(0.0, 0.25), Vec2(0.0, 0.5), Vec2(0.25, 0.5), Vec2(0.25, 0.25),
+
+		// Right face (+X, 3 dots: U=[0.5, 0.75], V=[0.25, 0.5])
+		// Vertex order: (BL), (TL), (TR), (BR)
+		Vec2(0.5, 0.25), Vec2(0.5, 0.5), Vec2(0.75, 0.5), Vec2(0.75, 0.25),
+
+		// Bottom face (-Y, 1 dot: U=[0.25, 0.5], V=[0.0, 0.25])
+		// Vertex order: (BL), (TL), (TR), (BR)
+		Vec2(0.25, 0.0), Vec2(0.25, 0.25), Vec2(0.5, 0.25), Vec2(0.5, 0.0),
+
+		// Top face (+Y, 6 dots: U=[0.25, 0.5], V=[0.75, 1.0])
+		// Vertex order: (BL), (TL), (TR), (BR)
+		Vec2(0.25, 0.75), Vec2(0.25, 1.0), Vec2(0.5, 1.0), Vec2(0.5, 0.75)
+};
+
+	//localUVs = {
+	//	// Back face (-Z, 5 dots: U=[0.25, 0.5], V=[0.25, 0.5])
+	//	Vec2(0.25,0.25), Vec2(0.5,0.25), Vec2(0.5,0.5), Vec2(0.25,0.5),
+
+	//	// Front face (+Z, 2 dots: U=[0.25, 0.5], V=[0.5, 0.75])
+	//	Vec2(0.25,0.5), Vec2(0.5,0.5), Vec2(0.5,0.75), Vec2(0.25,0.75),
+
+	//	// Left face (-X, 4 dots: U=[0.0, 0.25], V=[0.25, 0.5])
+	//	Vec2(0.0,0.25), Vec2(0.25,0.25), Vec2(0.25,0.5), Vec2(0.0,0.5),
+
+	//	// Right face (+X, 3 dots: U=[0.5, 0.75], V=[0.25, 0.5])
+	//	Vec2(0.5,0.25), Vec2(0.75,0.25), Vec2(0.75,0.5), Vec2(0.5,0.5),
+
+	//	// Bottom face (-Y, 1 dot: U=[0.25, 0.5], V=[0.0, 0.25])
+	//	Vec2(0.25,0.0), Vec2(0.5,0.0), Vec2(0.5,0.25), Vec2(0.25,0.25),
+
+	//	// Top face (+Y, 6 dots: U=[0.25, 0.5], V=[0.75, 1.0])
+	//	Vec2(0.25,0.75), Vec2(0.5,0.75), Vec2(0.5,1.0), Vec2(0.25,1.0)
+	//};
+
+	/*NOTE to see why textures require the 24 indices below (instead of just 8), see the following (Chili link):  
+	https://youtu.be/UaOJxtWxICc?si=6GPugT9Q09d2qGWb&t=1528
+	*/
 
 	// Face indices (2 triangles per face)
 	triangularFaceIndices = {
