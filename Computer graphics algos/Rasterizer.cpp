@@ -57,14 +57,14 @@ std::unordered_map<Vec2, Color> Rasterizer::getFilledFaces(const std::vector<std
 	return positionsToColors;
 }
 
-std::unordered_map<Vec2, Color> Rasterizer::getTextureFilledFaces(const std::vector<std::array<int, 3>>& frontFaceIndices, 
+std::unordered_map<Vec2, Color> Rasterizer::getTextureFilledFaces_barycentric(const std::vector<std::array<int, 3>>& frontFaceIndices, 
 	const std::vector<Vec2>& screenVerts, const std::vector<Vec2>& localUVs, int screenWidth, int screenHeight)
 {
 	//Texture texture("bmpOutputs/checkerboard.bmp");//this is just a temporary (expensive) approach
 					//pass this as YET ANOTHER arg or possibly make a member variable of Rasterizer...
 
 
-	Texture texture("textures/catFace.bmp");//this is just a temporary (expensive) approach
+	Texture texture("textures/100pixelWidthCatface.bmp");//this is just a temporary (expensive) approach
 
 	std::unordered_map<Vec2, Color> positionsToColors;
 
@@ -100,13 +100,61 @@ std::unordered_map<Vec2, Color> Rasterizer::getTextureFilledFaces(const std::vec
 			//if (uv.x < 0.0f || uv.x > 1.0f || )
 
 			Color texColor = texture.sample(uv); //u and v typically range from [0, 1]
-
+			//std::cout << "Mapping x, y = " << point << " to u, v = " << uv << "\n";
 			positionsToColors[point] = texColor; 
 		}
 	}
 
 	return positionsToColors;
 
+}
+
+std::unordered_map<Vec2, Color> Rasterizer::getTextureFilledFaces_simple(const std::vector<std::array<int, 3>>& frontFaceIndices,
+	const std::vector<Vec2>& screenVerts, const std::vector<Vec2>& localUVs, int screenWidth, int screenHeight)
+{
+	Texture texture("textures/100pixelWidthCatface.bmp");//this is just a temporary (expensive) approach
+
+	std::unordered_map<Vec2, Color> positionsToColors;
+
+	for (size_t i = 0; i < frontFaceIndices.size(); ++i)
+	{
+		const auto& faceIndices = frontFaceIndices[i];
+		
+		Vec2 v0 = screenVerts[faceIndices[0]];
+		Vec2 v1 = screenVerts[faceIndices[1]];
+		Vec2 v2 = screenVerts[faceIndices[2]];
+
+		Triangle currentFace({ v0, v1, v2 });
+
+		Vec2 uv0 = localUVs[faceIndices[0]];
+		Vec2 uv1 = localUVs[faceIndices[1]];
+		Vec2 uv2 = localUVs[faceIndices[2]];
+
+		std::vector<Vec2> points = currentFace.getPointsThatFillTriangle(screenWidth, screenHeight);
+
+		for (const Vec2& point : points)
+		{
+			//update positions to colors
+			Vec2 uv; //calculate by converting "point" (in screen space) to its equivalent uv-space value
+					//this will require referring to uv0, uv1, uv2 and some form of interpolation
+
+			//uv = ... tbd
+			float du_dx = (uv1.x - uv0.x) / (v1.x - v0.x); //this is called "affine" interpolation 
+			float du_dy = (uv2.x - uv0.x) / (v2.y - v0.y); //one Reddit user described "affine" as being analogous to "orthogonal"
+										//orthogonal extends the concept of "perpindicular" to n dimensions
+										// "affine" extends the concept of "parallel" to n dimensions 
+
+
+			//uv.x = (point.x - 0.0f) / (screenWidth - 0.0f);
+			//uv.y = (point.y - 0.0f) / (screenHeight - 0.0f);
+
+
+			Color textureColor = texture.sample(uv);
+		}
+
+	}
+
+	return positionsToColors; 
 }
 
 

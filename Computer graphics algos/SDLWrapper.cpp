@@ -88,8 +88,9 @@ SDL_AppResult SDLWrapper::iterate(const Mesh& mesh, MeshInstance& meshInstance,
     //auto rasterizedPixels = Rasterizer::getFilledFaces(frontFaceIndices, screenVerts, colors, width, height);
     
     std::vector<Vec2> localUVs = mesh.getLocalUVs(); 
-    auto rasterizedPixels = Rasterizer::getTextureFilledFaces(frontFaceIndices, screenVerts, localUVs, width, height);
-    
+    auto rasterizedPixels = Rasterizer::getTextureFilledFaces_barycentric(frontFaceIndices, screenVerts, localUVs, width, height);
+    //auto rasterizedPixels = Rasterizer::getTextureFilledFaces_simple(frontFaceIndices, screenVerts, localUVs, width, height);
+
     
     draw(rasterizedPixels);
 

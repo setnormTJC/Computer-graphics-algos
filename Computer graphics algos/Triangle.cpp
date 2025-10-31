@@ -22,8 +22,9 @@ Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 		}) 
 		!= vertices.end()) 
 	{
-		__debugbreak(); 
-		throw MyException("triangle vertices cannot contain negative values", __LINE__, __FILE__);
+		std::cout << "Triangle vertices contain at least one negative value\n";
+		//__debugbreak(); 
+		//throw MyException("triangle vertices cannot contain negative values", __LINE__, __FILE__);
 	}
 
 	//...continues by setting this->vertices = vertices then sorting this->vertices for scanline algo
@@ -31,16 +32,18 @@ Triangle::Triangle(const std::array<Vec2, 3>& vertices)
 		vertices[1] == vertices[2] ||
 		vertices[2] == vertices[0]) 
 	{
-		__debugbreak();
-		throw MyException("triangle has duplicate vertices", __LINE__, __FILE__);
+		std::cout << "Triangle has duplicate verts\n";
+		//__debugbreak();
+		//throw MyException("triangle has duplicate vertices", __LINE__, __FILE__);
 	}
 
 	if (vertices[0].x == vertices[1].x && vertices[1].x == vertices[2].x
 		||
 		vertices[0].y == vertices[1].y && vertices[1].y == vertices[2].y)
 	{
-		__debugbreak();
-		throw MyException("triangle is ... in fact a line segment", __LINE__, __FILE__);
+		std::cout << "All 3 triangle verts have same x value or same y value (a line segment)\n";
+		//__debugbreak();
+		//throw MyException("triangle is ... in fact a line segment", __LINE__, __FILE__);
 	}
 
 	//if (std::abs(getArea()) < 1e-6f)

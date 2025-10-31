@@ -27,7 +27,12 @@ public:
 		const std::vector<Color>& colors, int screenWidth, int screenHeight);
 
 	/*@brief an overload that uses textures to fill faces*/
-	static std::unordered_map<Vec2, Color> getTextureFilledFaces(const std::vector<std::array<int, 3>>& frontFaceIndices
+	static std::unordered_map<Vec2, Color> getTextureFilledFaces_barycentric(const std::vector<std::array<int, 3>>& frontFaceIndices
+		, const std::vector<Vec2>& screenVerts,
+		const std::vector<Vec2>& localUVs, int screenWidth, int screenHeight);
+
+
+	static std::unordered_map<Vec2, Color> getTextureFilledFaces_simple(const std::vector<std::array<int, 3>>& frontFaceIndices
 		, const std::vector<Vec2>& screenVerts,
 		const std::vector<Vec2>& localUVs, int screenWidth, int screenHeight);
 

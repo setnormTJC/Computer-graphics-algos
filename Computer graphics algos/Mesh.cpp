@@ -45,10 +45,12 @@ Mesh::Mesh(const CommonPolygonType& commonPolygonType)
 {
 	switch (commonPolygonType)
 	{
-	case CommonPolygonType::triangle: 
-		constructTriangle();
+	case CommonPolygonType::isocelesTriangle: 
+		constructIsocelesTriangle();
 		break; 
-
+	case CommonPolygonType::rectangle:
+		constructRectangle(); 
+		break; 
 		//fill in the others later
 	default:
 		throw MyException("Unsupported polygon type", __LINE__, __FILE__);
@@ -272,46 +274,87 @@ void Mesh::constructOctahedron()
 
 void Mesh::constructCube()
 {
-	// 8 vertices of a cube centered at origin, w=1
-	localVerts = 
-	{
-		Vec4(-1.0f, -1.0f, -1.0f, 1.0f), // 0: left-bottom-back
-		Vec4(1.0f, -1.0f, -1.0f, 1.0f), // 1: right-bottom-back
-		Vec4(1.0f,  1.0f, -1.0f, 1.0f), // 2: right-top-back
-		Vec4(-1.0f,  1.0f, -1.0f, 1.0f), // 3: left-top-back
-		Vec4(-1.0f, -1.0f,  1.0f, 1.0f), // 4: left-bottom-front
-		Vec4(1.0f, -1.0f,  1.0f, 1.0f), // 5: right-bottom-front
-		Vec4(1.0f,  1.0f,  1.0f, 1.0f), // 6: right-top-front
-		Vec4(-1.0f,  1.0f,  1.0f, 1.0f)  // 7: left-top-front
+	// Vertices (4 per face, 6 faces = 24)
+	localVerts = {
+		// Back face (-Z)
+		Vec4(-1,-1,-1,1), Vec4(1,-1,-1,1), Vec4(1,1,-1,1), Vec4(-1,1,-1,1),
+		// Front face (+Z)
+		Vec4(-1,-1,1,1), Vec4(1,-1,1,1), Vec4(1,1,1,1), Vec4(-1,1,1,1),
+		// Left face (-X)
+		Vec4(-1,-1,-1,1), Vec4(-1,-1,1,1), Vec4(-1,1,1,1), Vec4(-1,1,-1,1),
+		// Right face (+X)
+		Vec4(1,-1,-1,1), Vec4(1,-1,1,1), Vec4(1,1,1,1), Vec4(1,1,-1,1),
+		// Bottom face (-Y)
+		Vec4(-1,-1,-1,1), Vec4(1,-1,-1,1), Vec4(1,-1,1,1), Vec4(-1,-1,1,1),
+		// Top face (+Y)
+		Vec4(-1,1,-1,1), Vec4(1,1,-1,1), Vec4(1,1,1,1), Vec4(-1,1,1,1)
 	};
 
-	// Each face split into two triangles
-	triangularFaceIndices = 
-	{
-		// Back face (-z)
-		{0, 1, 2}, {0, 2, 3},
-		// Front face (+z)
-		{4, 5, 6}, {4, 6, 7}, //is indeed the only front face after culling with 0 rotation and 0 translation 
-		// Left face (-x)
-		{0, 3, 7}, {0, 7, 4},
-		// Right face (+x)
-		{1, 5, 6}, {1, 6, 2},
-		// Bottom face (-y)
-		{0, 1, 5}, {0, 5, 4},
-		// Top face (+y)
-		{3, 2, 6}, {3, 6, 7}
+	// UVs (one per vertex, aligned to each face)
+	localUVs = {
+		// Back face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+		// Front face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+		// Left face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+		// Right face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+		// Bottom face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+		// Top face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1)
 	};
+
+	// Face indices (2 triangles per face)
+	triangularFaceIndices = {
+		{0,1,2}, {0,2,3},       // back
+		{4,5,6}, {4,6,7},       // front
+		{8,9,10}, {8,10,11},    // left
+		{12,13,14}, {12,14,15}, // right
+		{16,17,18}, {16,18,19}, // bottom
+		{20,21,22}, {20,22,23}  // top
+	};
+	//// 8 vertices of a cube centered at origin, w=1
+	//localVerts = 
+	//{
+	//	Vec4(-1.0f, -1.0f, -1.0f, 1.0f), // 0: left-bottom-back
+	//	Vec4(1.0f, -1.0f, -1.0f, 1.0f), // 1: right-bottom-back
+	//	Vec4(1.0f,  1.0f, -1.0f, 1.0f), // 2: right-top-back
+	//	Vec4(-1.0f,  1.0f, -1.0f, 1.0f), // 3: left-top-back
+	//	Vec4(-1.0f, -1.0f,  1.0f, 1.0f), // 4: left-bottom-front
+	//	Vec4(1.0f, -1.0f,  1.0f, 1.0f), // 5: right-bottom-front
+	//	Vec4(1.0f,  1.0f,  1.0f, 1.0f), // 6: right-top-front
+	//	Vec4(-1.0f,  1.0f,  1.0f, 1.0f)  // 7: left-top-front
+	//};
+
+	//// Each face split into two triangles
+	//triangularFaceIndices = 
+	//{
+	//	// Back face (-z)
+	//	{0, 1, 2}, {0, 2, 3},
+	//	// Front face (+z)
+	//	{4, 5, 6}, {4, 6, 7}, //is indeed the only front face after culling with 0 rotation and 0 translation 
+	//	// Left face (-x)
+	//	{0, 3, 7}, {0, 7, 4},
+	//	// Right face (+x)
+	//	{1, 5, 6}, {1, 6, 2},
+	//	// Bottom face (-y)
+	//	{0, 1, 5}, {0, 5, 4},
+	//	// Top face (+y)
+	//	{3, 2, 6}, {3, 6, 7}
+	//};
 }
 
-void Mesh::constructTriangle()
+void Mesh::constructIsocelesTriangle()
 {
 	localVerts =
 	{
 		//note the z = -1.0f here: 
 		Vec4(-1.0f, -1.0f, -1.0f, 1.0f), //0: bottom left 
 		Vec4(1.0f, -1.0f, -1.0f, 1.0f), //1: bottom right
-		Vec4(0.0f, 1.0f, -1.0f, 1.0f)
-	};
+		Vec4(0.0f, 1.0f, -1.0f, 1.0f) //2: top
+ 	};
 
 	triangularFaceIndices = 
 	{
@@ -321,12 +364,46 @@ void Mesh::constructTriangle()
 	
 	localUVs =
 	{
-		Vec2(0,0),
-		Vec2(1,0),
-		Vec2(0.5,1)
+		Vec2(0,0), //bottom left 
+		Vec2(1,0), //bottom right
+		Vec2(0.5,1) //top
+	};
+}
+
+void Mesh::constructRectangle()
+{
+	localVerts =
+	{
+		//note the z = -1.0f here: 
+		Vec4(-1.0f, 0.0f, -1.0f, 1.0f), //0: bottom left 
+		Vec4(2.0f, 0.0f, -1.0f, 1.0f), //1: bottom right (deltaX = 3)
+		Vec4(2.0f, 2.0f, -1.0f, 1.0f), //2: top right (deltaY = 2)  
+
+		Vec4(-1.0f, 0.0f, -1.0f, 1.0f), //bottom left (again) 
+		Vec4(2.0f, 0.0f, -1.0f, 1.0f), //bottom right (again) 
+		Vec4(-1.0f, 2.0f, -1.0f, 1.0f) //top left 
+
 	};
 
+	triangularFaceIndices =
+	{
+		{0, 1, 2}, 
+		{0, 1, 5} //bottom left, bottom right, top left 
+	}; //two for a rectangle 
+
+
+	localUVs =
+	{
+		Vec2(0.0f, 0.0f),
+		Vec2(1.0f, 0.0f),
+		Vec2(1.0f, 0.67f), 
+
+		Vec2(0.0f, 0.0f),
+		Vec2(1.0f, 0.0f),
+		Vec2(0.0f, 0.67f),
+	};
 }
+
 
 std::vector<std::pair<int, int>> Mesh::getEdgeIndices() const
 {

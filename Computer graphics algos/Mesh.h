@@ -20,7 +20,7 @@ enum class CommonPolyhedronType
 
 enum class CommonPolygonType
 {
-	triangle,
+	isocelesTriangle,
 	rectangle,
 	pentagon
 };
@@ -64,7 +64,9 @@ private:
 	void constructCube();
 
 	/*polygons*/
-	void constructTriangle(); 
+	void constructIsocelesTriangle();
+	void constructRectangle();
+
 
 	/*@brief use this for wireframe rendering*/
 	std::vector<std::pair<int, int>> getEdgeIndices() const;
@@ -81,45 +83,3 @@ private:
 
 
 
-//class Cube : public Mesh
-//{
-//	//...to be continued
-//private: 
-//	std::vector<Vec4> localVerts;
-//	/*A la "index buffer"*/
-//	std::vector<std::pair<int, int>> edgeIndices;
-//
-//	/*NOTE: this is only for a tetrahedron (which has 3 faces) at the moment*/
-//	std::vector<std::array<int, 3>> faceIndices; 
-//
-//public: 
-//	Cube(); 
-//	/*@brief NOTE: by convention, z = 0 is taken as camera (eye) plane
-//	@param zOffset -> this calculates "zMax", zMax (AKA: zNear) MUST be > 0*/
-//	Cube(float xPos, float yPos, float scale, float zOffset);
-//
-//	std::vector<Vec4> getLocalCubeVerts() const;
-//	/*A la "index buffer"*/
-//
-//	/*Obtains the lines between the vertices (color is determined later by client)*/
-//	std::vector<Vec2> rasterize(const std::vector<Vec2>& screenVerts);
-//
-//	/*Obtains the lines between the vertices and applies particular colors*/
-//	std::unordered_map<Vec2, Color> rasterize(const std::vector<Vec2>& screenVerts,
-//		const std::vector<Color>& colors);
-//
-//	/*Requires the vertices composing a face of the polyhedron to be known/stored*/
-//	std::unordered_map<Vec2, Color> filledRasterize(const std::vector<Vec2>& screenVerts,
-//		const std::vector<Color>& colors) const;
-//
-//private: 
-//	std::vector<Edge> getCubeEdges(const std::vector<Vec2>& screenSpaceCubeVerts);
-//
-//	/*ONLY works for tetrahedron at the moment*/
-//	std::vector<Triangle> getFaces(const std::vector<Vec2>& screenSpaceVerts) const;
-//};
-//
-//class Tetrahedron : public Mesh
-//{
-//
-//};

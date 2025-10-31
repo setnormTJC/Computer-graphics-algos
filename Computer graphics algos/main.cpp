@@ -28,8 +28,9 @@ int main()
 		//Texture texture("bmpOutputs/checkerboard.bmp");//this is POSSIBLY just a temporary (expensive) approach
 
 		/*Vertices of object to draw*/
-		//Mesh mesh(CommonPolyhedronType::octahedron);
-		Mesh mesh(CommonPolygonType::triangle);
+		Mesh mesh(CommonPolyhedronType::cube);
+		//Mesh mesh(CommonPolygonType::isocelesTriangle);
+		//Mesh mesh(CommonPolygonType::rectangle);
 
 		std::vector<Vec4> localVerts = mesh.getLocalVertices(); 
 
@@ -41,7 +42,7 @@ int main()
 			0.0f);
 
 		Vec4 scale(1.0f, 1.0f, 1.0f, 0.0f);
-		Vec4 trans(0.0f, 0.0f, -1.0f, 1.0f);  //set z = -3.0 or so here for polyhedrons with their current coords
+		Vec4 trans(0.0f, 0.0f, -3.0f, 1.0f);  //set z = -3.0 or so here for polyhedrons with their current coords
 
 		/*Apply the transformations and get screen-equivalent coordinates*/
 		MeshInstance meshInstance(trans, rot, scale);
