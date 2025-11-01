@@ -31,6 +31,7 @@ private:
 	std::vector<Vec4> localVerts;
 	std::vector<std::array<int, 3>> triangularFaceIndices; 
 	
+	std::vector<Vec4> localNormals;
 	
 	std::vector<Vec2> localUVs; //for texture mapping
  
@@ -51,6 +52,8 @@ public:
 	const const std::vector<std::array<int, 3>> getTriangularFaceIndices() const;
 
 	const std::vector<Vec2> getLocalUVs() const; 
+
+	const std::vector<Vec4> getLocalVertexNormals() const; 
 
 private: 
 	/*Parses a Blender .obj file to fill vertices and face indices*/

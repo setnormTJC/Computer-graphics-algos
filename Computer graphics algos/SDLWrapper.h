@@ -29,7 +29,7 @@ public:
 	SDLWrapper(int width, int height); 
 	int run(const Mesh& mesh, MeshInstance& meshInstance, 
 		Camera& camera, const std::vector<Vec4>& localVerts,
-		const std::vector<Color>& colors);
+		std::vector<Color>& colors);
 
 	/*Prevents memory leak if exception throws and bypasses SDL calling the quit*/
 	~SDLWrapper();
@@ -40,7 +40,7 @@ private:
 	/*The beast*/
 	SDL_AppResult iterate(const Mesh& mesh, MeshInstance& meshInstance, 
 		Camera& camera, const std::vector<Vec4>& localVerts,
-		const std::vector<Color>& colors);
+		std::vector<Color>& colors);
 
 	/*handleEvent can update camera (zooming and panning) and meshInstance (rotating, scaling, translating object)*/
 	SDL_AppResult handleEvent(SDL_Event* pEvent, Camera& camera, MeshInstance& meshInstance);

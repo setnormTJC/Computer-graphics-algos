@@ -2,9 +2,12 @@
 
 #define _USE_MATH_DEFINES 
 
-#include "Vec4.h"
+#include "Color.h"
+#include "Light.h"
 #include "Mat4.h"
+#include"Mesh.h"
 #include"MyException.h"
+#include "Vec4.h"
 
 /*A "mesh" is a set of 3D vertices. The mesh's faces are composed of Triangles. 
 "MeshInstance" means that a particular set of transformations are applied to that "base" mesh (asset)
@@ -33,5 +36,8 @@ public:
 
 	void setTranslation(const Vec4& newTranslation); 
 	const Vec4 getTranslation() const; 
+
+	/*@param vertexColors -> will be MODIFIED based on dot product of light and vertexNormals (a member of Mesh)*/
+	void applyLight(const Mesh& mesh, std::vector<Color>& vertexColors, const Light& light);
 };
 

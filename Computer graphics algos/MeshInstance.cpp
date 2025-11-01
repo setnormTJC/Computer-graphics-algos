@@ -46,5 +46,41 @@ const Vec4 MeshInstance::getTranslation() const
     return trans; 
 }
 
+/*@param vertexColors -> will be MODIFIED based on dot product of light and vertexNormals (a member of Mesh)*/
+void MeshInstance::applyLight(const Mesh& mesh, std::vector<Color>& vertexColors, const Light& light)
+{
+
+    auto localVerts = mesh.getLocalVertices(); 
+    auto localVertexNormals = mesh.getLocalVertexNormals(); 
+
+    auto lightPosition = light.getPosition(); 
+    float intensity = light.getIntensity(); 
+
+    if (localVerts.size() != vertexColors.size()
+        ||
+        localVerts.size() != localVertexNormals.size())
+    {
+        throw MyException("Mesh vertices, colors, and normals must match in size.", __LINE__, __FILE__);
+    }
+
+    for (size_t i = 0; i < localVerts.size(); ++i)
+    {
+        Vec4 L = lightPosition - localVerts[i]; 
+        //normalize L: 
+        L = L.normalize(); 
+
+        Vec4 N = localVertexNormals[i].normalize(); 
+
+
+        float NdotL = N.dot(L);         //diffuse factor??
+
+        float brightness = NdotL * intensity;
+
+        vertexColors[i].setR(std::min(1.0f, vertexColors[i].getR8() * brightness));
+        vertexColors[i].setG(std::min(1.0f, vertexColors[i].getG8() * brightness));
+        vertexColors[i].setB(std::min(1.0f, vertexColors[i].getB8() * brightness));
+    }
+}
+
 
 

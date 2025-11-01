@@ -31,7 +31,7 @@ SDLWrapper::~SDLWrapper()
 
 int SDLWrapper::run(const Mesh& mesh, MeshInstance& meshInstance, 
     Camera& camera, const std::vector<Vec4>& localVerts,
-    const std::vector<Color>& colors)
+    std::vector<Color>& colors)
 {
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -66,42 +66,53 @@ int SDLWrapper::run(const Mesh& mesh, MeshInstance& meshInstance,
 }
 
 
-
-SDL_AppResult SDLWrapper::iterate(const Mesh& mesh, MeshInstance& meshInstance, 
-    Camera& camera, const std::vector<Vec4>& localVerts, 
-    const std::vector<Color>& colors)
+SDL_AppResult SDLWrapper::iterate(const Mesh& mesh, MeshInstance& meshInstance,
+    Camera& camera, const std::vector<Vec4>& localVerts,
+    std::vector<Color>& colors)
 {
-
     auto frameStart = std::chrono::high_resolution_clock::now();
 
-    std::vector<Vec4> worldVerts; 
-
+    std::vector<Vec4> worldVerts;
     meshInstance.applyTransformation(localVerts, worldVerts);
 
-    /*In the functions below, I am returning potentially-large vectors<Vec4> - modify to void in the future*/
-    auto viewVerts = camera.applyView(worldVerts); 
-    auto frontFaceIndices = camera.getFrontFaceIndices(viewVerts, mesh); 
+    // Copy base colors
+    std::vector<Color> vertexColors = colors;
+
+    // Animate light in X/Y/Z for more visible motion
+    float amplitude = 1.5f;         // range of motion
+    float frequency = 0.5f;        // speed of oscillation
+    //float zOffset = -2.0f;          // slightly in front of camera
+
+    Vec4 baseEye = camera.getEyePosition();
+    float x = baseEye.x + amplitude * std::sin(frequency * frameCount);
+    float y = baseEye.y + amplitude * std::cos(frequency * frameCount);
+    float z = baseEye.z /*+ zOffset*/;
+
+    Light sceneLight(Vec4(x, y, z, 1.0f), 1.0f);
+
+    meshInstance.applyLight(mesh, vertexColors, sceneLight);
+
+    auto viewVerts = camera.applyView(worldVerts);
+    auto frontFaceIndices = camera.getFrontFaceIndices(viewVerts, mesh);
     auto projectedVerts = camera.applyProjection(viewVerts);
     auto ndcVerts = camera.applyPerspectiveDivide(projectedVerts);
     auto screenVerts = camera.ndcToScreen(ndcVerts);
 
-    //auto rasterizedPixels = Rasterizer::getFilledFaces(frontFaceIndices, screenVerts, colors, width, height);
-    
-    std::vector<Vec2> localUVs = mesh.getLocalUVs(); 
-    auto rasterizedPixels = Rasterizer::getTextureFilledFaces_barycentric(frontFaceIndices, screenVerts, localUVs, width, height);
-    //auto rasterizedPixels = Rasterizer::getTextureFilledFaces_simple(frontFaceIndices, screenVerts, localUVs, width, height);
+    auto rasterizedPixels = Rasterizer::getFilledFaces(frontFaceIndices, screenVerts, vertexColors, width, height);
 
-    
     draw(rasterizedPixels);
 
-    advanceFrame(frameStart); 
+    advanceFrame(frameStart);
 
-    return SDL_APP_CONTINUE; //what is a fail condition in this function? 
+    return SDL_APP_CONTINUE;
 }
+
 
 void SDLWrapper::draw(const std::unordered_map<Vec2, Color>& rasteredPixels) const
 {
-    SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 255);
+    Color bgrdColor(ColorEnum::G4);
+
+    SDL_SetRenderDrawColor(pRenderer, bgrdColor.getR8(), bgrdColor.getG8(), bgrdColor.getB8(), 255);
     SDL_RenderClear(pRenderer);
 
     for (auto& [pos, color] : rasteredPixels)

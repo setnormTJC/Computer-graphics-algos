@@ -123,6 +123,11 @@ const std::vector<Vec2> Mesh::getLocalUVs() const
 	return localUVs;
 }
 
+const std::vector<Vec4> Mesh::getLocalVertexNormals() const
+{
+	return localNormals; 
+}
+
 #pragma region private Mesh function implementations
 
 void Mesh::enforceWindingOrder()
@@ -290,69 +295,23 @@ void Mesh::constructCube()
 		Vec4(-1,1,-1,1), Vec4(1,1,-1,1), Vec4(1,1,1,1), Vec4(-1,1,1,1)
 	};
 
-	// UVs (one per vertex, aligned to each face)
-	//localUVs = {
-	//	// Back face
-	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
-	//	// Front face
-	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
-	//	// Left face
-	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
-	//	// Right face
-	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
-	//	// Bottom face
-	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
-	//	// Top face
-	//	Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1)
-	//};
+	 //UVs (one per vertex, aligned to each face)
+	localUVs = {
+		// Back face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+		// Front face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+		// Left face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+		// Right face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+		// Bottom face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1),
+		// Top face
+		Vec2(0,0), Vec2(1,0), Vec2(1,1), Vec2(0,1)
+	};
 
-	/*These are SPECIFIC to the dice image file in the textures folder!*/
-// Back face (-Z, 5 dots: U=[0.25, 0.5], V=[0.25, 0.5])
-	// Vertex order: (BL), (TL), (TR), (BR)
 
-	localUVs = { 
-		Vec2(0.25, 0.25), Vec2(0.25, 0.5), Vec2(0.5, 0.5), Vec2(0.5, 0.25),
-
-		// Front face (+Z, 2 dots: U=[0.25, 0.5], V=[0.5, 0.75])
-		// Vertex order: (BL), (TL), (TR), (BR)
-		Vec2(0.25, 0.5), Vec2(0.25, 0.75), Vec2(0.5, 0.75), Vec2(0.5, 0.5),
-
-		// Left face (-X, 4 dots: U=[0.0, 0.25], V=[0.25, 0.5])
-		// Vertex order: (BL), (TL), (TR), (BR)
-		Vec2(0.0, 0.25), Vec2(0.0, 0.5), Vec2(0.25, 0.5), Vec2(0.25, 0.25),
-
-		// Right face (+X, 3 dots: U=[0.5, 0.75], V=[0.25, 0.5])
-		// Vertex order: (BL), (TL), (TR), (BR)
-		Vec2(0.5, 0.25), Vec2(0.5, 0.5), Vec2(0.75, 0.5), Vec2(0.75, 0.25),
-
-		// Bottom face (-Y, 1 dot: U=[0.25, 0.5], V=[0.0, 0.25])
-		// Vertex order: (BL), (TL), (TR), (BR)
-		Vec2(0.25, 0.0), Vec2(0.25, 0.25), Vec2(0.5, 0.25), Vec2(0.5, 0.0),
-
-		// Top face (+Y, 6 dots: U=[0.25, 0.5], V=[0.75, 1.0])
-		// Vertex order: (BL), (TL), (TR), (BR)
-		Vec2(0.25, 0.75), Vec2(0.25, 1.0), Vec2(0.5, 1.0), Vec2(0.5, 0.75)
-};
-
-	//localUVs = {
-	//	// Back face (-Z, 5 dots: U=[0.25, 0.5], V=[0.25, 0.5])
-	//	Vec2(0.25,0.25), Vec2(0.5,0.25), Vec2(0.5,0.5), Vec2(0.25,0.5),
-
-	//	// Front face (+Z, 2 dots: U=[0.25, 0.5], V=[0.5, 0.75])
-	//	Vec2(0.25,0.5), Vec2(0.5,0.5), Vec2(0.5,0.75), Vec2(0.25,0.75),
-
-	//	// Left face (-X, 4 dots: U=[0.0, 0.25], V=[0.25, 0.5])
-	//	Vec2(0.0,0.25), Vec2(0.25,0.25), Vec2(0.25,0.5), Vec2(0.0,0.5),
-
-	//	// Right face (+X, 3 dots: U=[0.5, 0.75], V=[0.25, 0.5])
-	//	Vec2(0.5,0.25), Vec2(0.75,0.25), Vec2(0.75,0.5), Vec2(0.5,0.5),
-
-	//	// Bottom face (-Y, 1 dot: U=[0.25, 0.5], V=[0.0, 0.25])
-	//	Vec2(0.25,0.0), Vec2(0.5,0.0), Vec2(0.5,0.25), Vec2(0.25,0.25),
-
-	//	// Top face (+Y, 6 dots: U=[0.25, 0.5], V=[0.75, 1.0])
-	//	Vec2(0.25,0.75), Vec2(0.5,0.75), Vec2(0.5,1.0), Vec2(0.25,1.0)
-	//};
 
 	/*NOTE to see why textures require the 24 indices below (instead of just 8), see the following (Chili link):  
 	https://youtu.be/UaOJxtWxICc?si=6GPugT9Q09d2qGWb&t=1528
@@ -367,35 +326,25 @@ void Mesh::constructCube()
 		{16,17,18}, {16,18,19}, // bottom
 		{20,21,22}, {20,22,23}  // top
 	};
-	//// 8 vertices of a cube centered at origin, w=1
-	//localVerts = 
-	//{
-	//	Vec4(-1.0f, -1.0f, -1.0f, 1.0f), // 0: left-bottom-back
-	//	Vec4(1.0f, -1.0f, -1.0f, 1.0f), // 1: right-bottom-back
-	//	Vec4(1.0f,  1.0f, -1.0f, 1.0f), // 2: right-top-back
-	//	Vec4(-1.0f,  1.0f, -1.0f, 1.0f), // 3: left-top-back
-	//	Vec4(-1.0f, -1.0f,  1.0f, 1.0f), // 4: left-bottom-front
-	//	Vec4(1.0f, -1.0f,  1.0f, 1.0f), // 5: right-bottom-front
-	//	Vec4(1.0f,  1.0f,  1.0f, 1.0f), // 6: right-top-front
-	//	Vec4(-1.0f,  1.0f,  1.0f, 1.0f)  // 7: left-top-front
-	//};
 
-	//// Each face split into two triangles
-	//triangularFaceIndices = 
-	//{
-	//	// Back face (-z)
-	//	{0, 1, 2}, {0, 2, 3},
-	//	// Front face (+z)
-	//	{4, 5, 6}, {4, 6, 7}, //is indeed the only front face after culling with 0 rotation and 0 translation 
-	//	// Left face (-x)
-	//	{0, 3, 7}, {0, 7, 4},
-	//	// Right face (+x)
-	//	{1, 5, 6}, {1, 6, 2},
-	//	// Bottom face (-y)
-	//	{0, 1, 5}, {0, 5, 4},
-	//	// Top face (+y)
-	//	{3, 2, 6}, {3, 6, 7}
-	//};
+
+	//For lighting: 
+		// Normals (one per vertex)
+	localNormals = {
+		// Back face (-Z)
+		Vec4(0,0,-1,0), Vec4(0,0,-1,0), Vec4(0,0,-1,0), Vec4(0,0,-1,0),
+		// Front face (+Z)
+		Vec4(0,0,1,0), Vec4(0,0,1,0), Vec4(0,0,1,0), Vec4(0,0,1,0),
+		// Left face (-X)
+		Vec4(-1,0,0,0), Vec4(-1,0,0,0), Vec4(-1,0,0,0), Vec4(-1,0,0,0),
+		// Right face (+X)
+		Vec4(1,0,0,0), Vec4(1,0,0,0), Vec4(1,0,0,0), Vec4(1,0,0,0),
+		// Bottom face (-Y)
+		Vec4(0,-1,0,0), Vec4(0,-1,0,0), Vec4(0,-1,0,0), Vec4(0,-1,0,0),
+		// Top face (+Y)
+		Vec4(0,1,0,0), Vec4(0,1,0,0), Vec4(0,1,0,0), Vec4(0,1,0,0)
+	};
+
 }
 
 void Mesh::constructIsocelesTriangle()
@@ -454,6 +403,7 @@ void Mesh::constructRectangle()
 		Vec2(1.0f, 0.0f),
 		Vec2(0.0f, 0.67f),
 	};
+
 }
 
 

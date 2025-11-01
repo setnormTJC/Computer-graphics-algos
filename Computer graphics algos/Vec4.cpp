@@ -70,6 +70,11 @@ Vec4 Vec4::operator-(const Vec4& rhs) const
 	return { (x - rhs.x), (y - rhs.y), (z - rhs.z), 0.0f };
 }
 
+Vec4 Vec4::operator+(const Vec4& rhs) const
+{
+	return { (x + rhs.x), (y + rhs.y), (z + rhs.z), 0.0f };
+}
+
 float Vec4::getMagnitude() const
 {
 	return sqrt(x * x + y * y + z * z); //ignore w 

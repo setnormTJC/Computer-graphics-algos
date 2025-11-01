@@ -38,6 +38,9 @@ public:
 	/*NOTE: returns w = 0!*/
 	Vec4 operator - (const Vec4& rhs) const;
 
+	Vec4 operator + (const Vec4& rhs) const;
+
+
 	Vec4 normalize() const; 
 
 	Vec4 cross(const Vec4& rhs) const; 

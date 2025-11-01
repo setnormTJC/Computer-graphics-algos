@@ -50,9 +50,10 @@ int main()
 		/*Colors to draw object with*/
 		std::vector<Color> colors;
 		auto colorEnums = Color::getBroadColorPalette();
-		for (const auto& current : colorEnums)
+		for (size_t i = 0; i < mesh.getLocalVertices().size(); ++i) //make the number of colors = the number of verts (in the Mesh object) 
 		{
-			colors.push_back(Color(current));
+			Color currentColor = colorEnums[i % colorEnums.size()];
+			colors.push_back(currentColor);
 		}
 
 		int screenWidth = 1'000; 
